@@ -1,0 +1,2 @@
+class CONST:
+    WINDOW_SIZE = [640, 360]
