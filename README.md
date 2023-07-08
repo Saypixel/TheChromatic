@@ -1,5 +1,5 @@
 # The Chromatic
-![logo](https://i.imgur.com/P6GGWEVh.png)
+![logo](https://i.imgur.com/P6GGWEV.png)
 
 기나긴 여정을 탐험하게 되는 한 주인공의 이야기.
  > **Note**: 세이픽셀 팀 제작
