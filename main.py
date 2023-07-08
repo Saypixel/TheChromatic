@@ -13,7 +13,7 @@ is_running = True  # 게임이 실행되고 있는가?
 game_started = True  # 게임이 시작되어 플레이어와 상호작용이 가능한가?
 game_paused = False  # 게임이 일시중지되었는가?
 
-player = Player('resources/images/Emilia.png', (100, 100), (200, 200))  # 주인공
+player = Player('assets/images/Emilia.png', (100, 100), (200, 200))  # 주인공
 
 
 def main():
