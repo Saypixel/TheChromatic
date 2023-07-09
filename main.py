@@ -16,7 +16,7 @@ is_running = True  # 게임이 실행되고 있는가?
 game_started = True  # 게임이 시작되어 플레이어와 상호작용이 가능한가?
 game_paused = False  # 게임이 일시중지되었는가?
 
-player = Player('assets/images/Emilia.png', (100, 100), (200, 200))  # 주인공
+player = Player('assets/images/chr_base.png', (100, 100), (200, 200))  # 주인공
 
 
 def main():
@@ -83,19 +83,22 @@ def update_intro():
 def update_menu():
     global is_running
 
-    mixer.music.load('assets/audio/bg_main_theme_demo.ogg')
+    mixer.music.load('assets/audio/bg_main_theme_demo2.ogg')
     mixer.music.set_volume(0.7)
     mixer.music.play()
 
     while is_running:
         clock.tick(FPS)
-        screen.fill(CONST.COL_MAIN_BACKGROUND_DARK)
+        screen.fill(CONST.COL_MAIN_BACKGROUND_BLUE)
 
         menu_mouse_pos = pygame.mouse.get_pos()
-        menu_title = Font.get(Font.TITLE1, 80).render('The Chromatic', True, CONST.COL_WHITE)
+        menu_title = pygame.image.load('assets/images/menu_title.png')
+        menu_title = pygame.transform.scale(menu_title, (302, 120))
+        # menu_title = Font.get(Font.TITLE1, 80).render('The Chromatic', True, CONST.COL_WHITE)
         rect_menu = menu_title.get_rect(center=(320, 100))
+
         button_menu_play = Button(image=pygame.image.load('assets/images/menu_play_rect.png'), pos=(320, 250),
-                                  text_input='시작', font=Font.get(Font.TITLE1, 75), base_color='#d7fcd4',
+                                  text_input='시작', font=Font.get(Font.TITLE1, 75), base_color='#ffffff',
                                   hovering_color='White')
 
         screen.blit(menu_title, rect_menu)
