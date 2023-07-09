@@ -1,9 +1,11 @@
 import pygame
-from button import Button
+from pygame import mixer
 
 from const import CONST
+from button import Button
 from player import Player
 from font import Font
+from sfx_collection import SFX
 
 FPS = 30
 
@@ -19,25 +21,82 @@ player = Player('assets/images/Emilia.png', (100, 100), (200, 200))  # 주인공
 
 def main():
     pygame.init()
+    mixer.init()
+    SFX.init()
+
     pygame.display.set_caption('The Chromatic')
     pygame.key.set_repeat(5, 40)  # 키 중복 허용
 
-    update_menu()
+    update_intro()
+
+
+def update_intro():
+    cooldown = 3000  # ms
+    last = pygame.time.get_ticks()
+    colon_count = 0
+
+    mixer.Sound.play(SFX.INTRO)
+
+    global is_running
+
+    while is_running:
+        clock.tick(FPS)
+        screen.fill(CONST.COL_MAIN_BACKGROUND)
+
+        now = pygame.time.get_ticks()
+
+        #region 인트로 : 동적 Saypixel ....
+        # if now - last >= cooldown:
+        #     if colon_count == 4:
+        #         update_menu()
+        #         return
+        #
+        #     last = now
+        #     text = 'Saypixel' + '.' * colon_count
+        #
+        #     colon_count += 1
+        #     menu_title = Font.get(Font.TITLE3, 40).render(text, True, CONST.COL_WHITE)
+        #     rect_menu = menu_title.get_rect(center=(320, 180))
+        #
+        #     screen.blit(menu_title, rect_menu)
+        #     pygame.display.update()
+        #endregion
+        #region 인트로 : 정적
+        menu_title = Font.get(Font.TITLE3, 40).render('Saypixel', True, CONST.COL_WHITE)
+        rect_menu = menu_title.get_rect(center=(320, 180))
+
+        screen.blit(menu_title, rect_menu)
+        pygame.display.update()
+
+        if now - last >= cooldown:
+            update_menu()
+            return
+
+        #endregion
+
+        for event in pygame.event.get():  # 이벤트 확인
+            match event.type:
+                case pygame.QUIT:  # 게임 종료 이벤트 발생 시
+                    is_running = False
 
 
 def update_menu():
     global is_running
+
+    mixer.music.load('assets/audio/bg_main_theme_demo.ogg')
+    mixer.music.set_volume(0.7)
+    mixer.music.play()
 
     while is_running:
         clock.tick(FPS)
         screen.fill(CONST.COL_MAIN_BACKGROUND_DARK)
 
         menu_mouse_pos = pygame.mouse.get_pos()
-        menu_title = Font.get(Font.TITLE1, 50).render("The Chromatic", True, CONST.COL_WHITE)
+        menu_title = Font.get(Font.TITLE1, 80).render('The Chromatic', True, CONST.COL_WHITE)
         rect_menu = menu_title.get_rect(center=(320, 100))
-        button_menu_play = Button(image=pygame.image.load("assets/images/menu_play_rect.png"), pos=(320, 250),
-                                  text_input="시작", font=Font.get(Font.TITLE1, 75), base_color="#d7fcd4",
-                                  hovering_color="White")
+        button_menu_play = Button(image=pygame.image.load('assets/images/menu_play_rect.png'), pos=(320, 250),
+                                  text_input='시작', font=Font.get(Font.TITLE1, 75), base_color='#d7fcd4',
+                                  hovering_color='White')
 
         screen.blit(menu_title, rect_menu)
 
@@ -49,12 +108,15 @@ def update_menu():
             match event.type:
                 case pygame.MOUSEBUTTONDOWN:  # 마우스 클릭 시
                     if button_menu_play.check_for_input(menu_mouse_pos):
+                        mixer.music.stop()
                         update_ingame()
+                        return
 
                 case pygame.QUIT:  # 게임 종료 이벤트 발생 시
                     is_running = False
 
         pygame.display.update()
+
 
 def update_ingame():
     global is_running, player
@@ -78,6 +140,7 @@ def update_ingame():
 
         screen.blit(player.image, player.get_pos())
         pygame.display.update()
+
 
 if __name__ == '__main__':
     main()

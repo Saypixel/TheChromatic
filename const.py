@@ -1,5 +1,6 @@
 class CONST:
     WINDOW_SIZE = [640, 360]
+
     COL_WHITE = (255, 255, 255)
     COL_BLACK = (0, 0, 0)
     COL_MAIN_BACKGROUND = (55, 222, 172)

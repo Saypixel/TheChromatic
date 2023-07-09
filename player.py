@@ -2,6 +2,7 @@ import pygame
 
 from const import CONST
 
+
 class Player:
     image: pygame.Surface | pygame.SurfaceType
     pos_x: int
