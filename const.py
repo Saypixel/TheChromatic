@@ -1,5 +1,5 @@
 class CONST:
-    WINDOW_SIZE = [640, 360]
+    SCREEN_SIZE = [640, 360]
 
     COL_WHITE = (255, 255, 255)
     COL_BLACK = (0, 0, 0)
