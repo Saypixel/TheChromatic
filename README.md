@@ -5,6 +5,10 @@
  > **Note**: 세이픽셀 팀 제작
 
 ## 시작하기
+### 필수 구성
+- [파이썬 3.11](https://www.python.org/downloads/release/python-3114/)
+
+### 실행
 ```
 python main.py
 ```
