@@ -186,7 +186,7 @@ def process_event(f=None):
     공통 이벤트 확인 및 처리
     :param f: 이벤트를 처리할 함수
     '''
-    global is_running, is_fullscreen, screen
+    global is_running, is_fullscreen
 
     for event in pygame.event.get():  # 이벤트 확인
         match event.type:
