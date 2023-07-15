@@ -6,6 +6,7 @@ from button import Button
 from player import Player
 from font import Font
 from sfx_collection import SFX
+from text import Text
 
 FPS = 30
 
@@ -31,6 +32,18 @@ game_started = True
 
 game_paused = False
 '''게임이 일시중지되었는가?'''
+
+dialog_delayed = False
+'''대화창의 텍스트 출력이 지연되었는가? (REFRESH 이슈 대응)'''
+
+dialog_paused = False
+'''대화창의 텍스트 출력이 완성되었는가?'''
+
+dialog_current: Text
+'''현재 대화 텍스트'''
+
+dialog_next: Text
+'''다음 대화 텍스트'''
 
 player = Player('assets/images/chr_base.png', (100, 100), (200, 200))  # 주인공
 
@@ -95,7 +108,7 @@ def update_intro():
 
 def update_menu():
     def process_event_menu(event: pygame.event.Event):
-        '''인게임 이벤트 처리용 (process_event() child 함수)'''
+        """인게임 이벤트 처리용 (process_event() child 함수)"""
         match event.type:
             case pygame.MOUSEBUTTONDOWN:  # 마우스 클릭 시
                 if button_menu_play.check_for_input(menu_mouse_pos):
@@ -136,20 +149,58 @@ def update_menu():
 
 
 def update_ingame():
-    global is_running, player
+    global is_running, player, dialog_current, dialog_next
 
     def process_event_ingame(event: pygame.event.Event):
-        '''인게임 이벤트 처리용 (process_event() child 함수)'''
-        global player
+        """인게임 이벤트 처리용 (process_event() child 함수)"""
+        global player, dialog_current, dialog_next, dialog_paused, dialog_delayed
 
         match event.type:
             case pygame.KEYDOWN:
-                if game_started and not game_paused:  # 플레이어와 상호작용 가능할 때
+                if is_interactive():  # 플레이어와 상호작용 가능할 때
                     match event.key:
                         case pygame.K_a | pygame.K_LEFT:  # 왼쪽으로 이동
                             player.move(-1)
                         case pygame.K_d | pygame.K_RIGHT:  # 오른쪽으로 이동
                             player.move(1)
+
+            case pygame.KEYUP:
+                if is_interactive():
+                    match event.key:
+                        case pygame.K_SPACE:
+                            if dialog_paused:  # 대화창의 텍스트 출력이 완성되었을 때
+                                if dialog_current is None:  # 대화창의 텍스트가 더이상 없을 때
+                                    print('대화창 닫힘')
+                                else:
+                                    print('대화창 넘김')
+                                    dialog_current = dialog_next
+                                    dialog_delayed = False
+                                    dialog_paused = False
+
+                            else:
+                                dialog_current.jump_to_last_index()
+                                dialog_delayed = True  # 텍스트 미리 모두 출력
+                                dialog_paused = True
+
+            case CONST.PYGAME_EVENT_DIALOG:  # 텍스트 애니메이션 이벤트
+                if is_interactive():
+                    if dialog_delayed or dialog_paused:  # 대화창이 지연되었거나 완성된 경우
+                        dialog_current.write_until_next((320, 180), surface)  # 완성된 텍스트를 화면에 출력
+                    else:
+                        delay = dialog_current.write_until_next((320, 180), surface)  # 진행 중인 텍스트를 화면에 출력
+
+                        if delay > 0:
+                            dialog_delayed = True  # delay 만큼 지연
+                            pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG_NEXT_INDEX, delay, 1)  # delay ms 후 다음 텍스트 진행
+                        else:
+                            dialog_paused = True
+
+            case CONST.PYGAME_EVENT_DIALOG_NEXT_INDEX:
+                if dialog_current.jump_to_next_index(False):  # 다음 텍스트 진행
+                    dialog_delayed = False
+
+    dialog_current = Text('*안녕!*')
+    dialog_next = Text('나는 에밀리아야.')
 
     while is_running:
         clock.tick(FPS)  # 프레임 조절
@@ -158,13 +209,14 @@ def update_ingame():
         process_event(process_event_ingame)
 
         surface.blit(player.image, player.get_pos())
+        pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)  # 텍스트 테스트용
         update_screen()
 
 
 def update_screen():
-    '''
+    """
     화면 업스케일링이 적용된 디스플레이 업데이트 기능
-    '''
+    """
     transformed_screen = pygame.transform.scale(surface, window_size)  # 업스케일링
     screen.blit(transformed_screen, (0, 0))  # 화면 표시
 
@@ -172,9 +224,9 @@ def update_screen():
 
 
 def update_screen_resolution():
-    '''
+    """
     화면 해상도 업데이트
-    '''
+    """
     if is_fullscreen:
         screen = pygame.display.set_mode(window_size, pygame.FULLSCREEN)
     else:
@@ -182,10 +234,10 @@ def update_screen_resolution():
 
 
 def process_event(f=None):
-    '''
+    """
     공통 이벤트 확인 및 처리
     :param f: 이벤트를 처리할 함수
-    '''
+    """
     global is_running, is_fullscreen
 
     for event in pygame.event.get():  # 이벤트 확인
@@ -208,16 +260,20 @@ def process_event(f=None):
                         is_fullscreen = not is_fullscreen
                         update_screen_resolution()
 
+                    case _:
+                        if f is not None:
+                            f(event)
+
             case _:
                 if f is not None:
                     f(event)
 
 
 def get_mouse_pos():
-    '''
+    """
     화면 업스케일링이 적용된 마우스 위치 가져오기
     :return:
-    '''
+    """
     mouse_pos = pygame.mouse.get_pos()
 
     if window_scale == 1:
@@ -225,6 +281,11 @@ def get_mouse_pos():
 
     transformed_mouse_pos = (mouse_pos[0] // window_scale, mouse_pos[1] // window_scale)
     return transformed_mouse_pos
+
+
+def is_interactive():
+    """플레이어와 상호작용 가능한가?"""
+    return game_started and not game_paused
 
 
 if __name__ == '__main__':

@@ -1,3 +1,6 @@
+import pygame.constants
+
+
 class CONST:
     SCREEN_SIZE = [640, 360]
 
@@ -6,3 +9,6 @@ class CONST:
     COL_MAIN_BACKGROUND = (55, 222, 172)
     COL_MAIN_BACKGROUND_DARK = (108, 172, 130)
     COL_MAIN_BACKGROUND_BLUE = (96, 189, 214)
+
+    PYGAME_EVENT_DIALOG = pygame.USEREVENT + 1
+    PYGAME_EVENT_DIALOG_NEXT_INDEX = pygame.USEREVENT + 2
