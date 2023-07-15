@@ -6,8 +6,8 @@
 
 ## 시작하기
 ### 필수 구성
-- [파이썬 3.11](https://www.python.org/downloads/release/python-3114/)
-- [pygame](https://github.com/pygame/pygame)
+- [Python 3.11](https://www.python.org/downloads/release/python-3114/)
+- [Pygame](https://github.com/pygame/pygame)
 
 ### 실행
 ```
