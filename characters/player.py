@@ -1,6 +1,6 @@
 import pygame
 
-from const import CONST
+from components.config import CONST
 
 
 class Player:
