@@ -1,8 +1,10 @@
 import pygame
 
-from mutual_text import MutualText
-from font import Font
+from ..config import Fonts
+from .mutual_text import MutualText
+from ..font import Font
 
+__all__ = ['Text', 'MutualText']
 
 class Text:
     DEFAULT_DELAY = 30
@@ -45,7 +47,7 @@ class Text:
 
         for prefix in ['*', '#', '/', '^', '<']:
             if prefix in self.pure:
-                has_prefix = True
+                self.has_prefix = True
                 self.pure = self.pure.replace(prefix, '')
 
         is_started = False
@@ -92,13 +94,13 @@ class Text:
             mutual = self.texts[i]
 
             for j in range(0, mutual.index + 1):
-                font = Font.DIALOG
+                font = Fonts.DIALOG
                 pt = 20
                 px = 26.66
 
                 match mutual.prefix:
                     case '*':
-                        font = Font.TITLE3
+                        font = Fonts.TITLE3
                     case '#':
                         pt += 10
                     case '/':
@@ -106,7 +108,7 @@ class Text:
 
                 px = pt / 3.0 * 4.0
 
-                ch = Font.render(font, pt, mutual.text[j], (0, 0, 0))
+                ch = Font(font, pt).render(mutual.text[j], (0, 0, 0))
                 surface.blit(ch, (ch_x, ch_y))
 
                 ch_x += px
