@@ -1,3 +1,6 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" # "pygame 2.5.0 (SDL 2.28.0, Python 3.10.6)" 메세지 지움
+
 import pygame
 from screens import intro
 from icecream import ic
