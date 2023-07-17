@@ -27,8 +27,9 @@ def process(f=None):
                     case pygame.KMOD_ALT | pygame.K_F4:  # ALT + F4
                         CONFIG.s_running = False
 
-                    case pygame.K_ESCAPE:
+                    case pygame.K_ESCAPE: # ESC
                         CONFIG.is_running = False
+                        
                     case _:
                         if f is not None:
                             f(event)
