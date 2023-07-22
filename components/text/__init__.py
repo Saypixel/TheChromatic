@@ -3,6 +3,7 @@ import pygame
 from ..config import Fonts
 from .mutual_text import MutualText
 from ..font import Font
+from ..config import debug
 
 __all__ = ['Text', 'MutualText']
 
@@ -155,4 +156,4 @@ class Text:
 
     def print_index(self):
         '''(디버깅용) index 출력'''
-        print(self.index, self.texts[self.index].index)
+        debug("(" + str(self.index) + ", " + str(self.texts[self.index].index) + ")")

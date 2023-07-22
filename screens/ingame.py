@@ -4,6 +4,7 @@ from characters.player import Player
 from components.config import CONFIG, CONST, debug
 from components.events import process
 from components.text import Text
+from components.text.text_collection import TextCollection
 
 dialog_delayed = False
 '''대화창의 텍스트 출력이 지연되었는가? (REFRESH 이슈 대응)'''
@@ -11,20 +12,17 @@ dialog_delayed = False
 dialog_paused = False
 '''대화창의 텍스트 출력이 완성되었는가?'''
 
-dialog_current: Text
-'''현재 대화 텍스트'''
-
-dialog_next: Text
-'''다음 대화 텍스트'''
+dialog: TextCollection
+'''대화창 (Text 배열)'''
 
 player = Player('assets/images/chr_base.png', (100, 100), (200, 200))  # 주인공
 
 def update_ingame():
-    global player, dialog_current, dialog_next
+    global player, dialog
 
     def process_ingame(event: pygame.event.Event):
         """인게임 이벤트 처리용 (process() child 함수)"""
-        global player, dialog_current, dialog_next, dialog_paused, dialog_delayed
+        global player, dialog, dialog_paused, dialog_delayed
 
         match event.type:
             case pygame.KEYDOWN:
@@ -40,25 +38,31 @@ def update_ingame():
                     match event.key:
                         case pygame.K_SPACE:
                             if dialog_paused:  # 대화창의 텍스트 출력이 완성되었을 때
-                                if dialog_current is None:  # 대화창의 텍스트가 더이상 없을 때
-                                    debug('대화창 닫힘')
-                                else:
+                                if dialog.index == 0:  # 대화창이 처음으로 출력될 때
+                                    debug('대화창 열림')
+
+                                if dialog.jump_to_next():
                                     debug('대화창 넘김')
-                                    dialog_current = dialog_next
-                                    dialog_delayed = False
-                                    dialog_paused = False
+
+                                else:  # 대화창의 텍스트가 더이상 없을 때
+                                    debug('대화창 닫힘')
+
+                                    dialog.reset_text_index()
+
+                                dialog_delayed = False
+                                dialog_paused = False
 
                             else:
-                                dialog_current.jump_to_last_index()
+                                dialog.current.jump_to_last_index()
                                 dialog_delayed = True  # 텍스트 미리 모두 출력
                                 dialog_paused = True
 
             case CONST.PYGAME_EVENT_DIALOG:  # 텍스트 애니메이션 이벤트
                 if CONFIG.is_interactive():
                     if dialog_delayed or dialog_paused:  # 대화창이 지연되었거나 완성된 경우
-                        dialog_current.write_until_next((320, 180), CONFIG.surface)  # 완성된 텍스트를 화면에 출력
+                        dialog.current.write_until_next((320, 180), CONFIG.surface)  # 완성된 텍스트를 화면에 출력
                     else:
-                        delay = dialog_current.write_until_next((320, 180), CONFIG.surface)  # 진행 중인 텍스트를 화면에 출력
+                        delay = dialog.current.write_until_next((320, 180), CONFIG.surface)  # 진행 중인 텍스트를 화면에 출력
 
                         if delay > 0:
                             dialog_delayed = True  # delay 만큼 지연
@@ -67,11 +71,10 @@ def update_ingame():
                             dialog_paused = True
 
             case CONST.PYGAME_EVENT_DIALOG_NEXT_INDEX:
-                if dialog_current.jump_to_next_index(False):  # 다음 텍스트 진행
+                if dialog.current.jump_to_next_index(False):  # 다음 텍스트 진행
                     dialog_delayed = False
 
-    dialog_current = Text('*안녕!*')
-    dialog_next = Text('나는 에밀리아야.')
+    dialog = TextCollection([Text('*안녕!*'), Text('나는 에밀리아야.')])
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
