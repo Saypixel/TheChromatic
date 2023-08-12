@@ -28,7 +28,7 @@ def process(f=None):
                         CONFIG.s_running = False
 
                     case pygame.K_ESCAPE: # ESC
-                        CONFIG.is_running = False
+                        CONFIG.is_running = False # TODO: 종료 화면 띄우기
                         
                     case _:
                         if f is not None:

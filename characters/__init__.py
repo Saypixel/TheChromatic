@@ -5,7 +5,10 @@ class Character(ABC):
     image: pygame.Surface | pygame.SurfaceType
     pos_x: int
     pos_y: int
-    def __init__(self, path: str, scale: tuple, position: tuple):
+    
+    is_playable: bool
+
+    def __init__(self, path: str, scale: tuple, position: tuple, is_playable = False):
         """
         캐릭터 클래스 생성
 
@@ -18,6 +21,8 @@ class Character(ABC):
 
         self.pos_x = position[0]
         self.pos_y = position[1]
+
+        self.is_playable = is_playable
 
     def get_pos(self) -> tuple:
         return (self.pos_x, self.pos_y)

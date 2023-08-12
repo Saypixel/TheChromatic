@@ -8,8 +8,11 @@ from screens.menu import update_menu
 
 
 def update():
-    cooldown = 3000  # ms
+    cooldown = 1000  # ms
     last = pygame.time.get_ticks()
+
+    text = 'Saypixel'
+    colon_count = 1
 
     mixer.Sound.play(SFX.INTRO)
 
@@ -20,23 +23,18 @@ def update():
         now = pygame.time.get_ticks()
 
         # region 인트로 : 동적 Saypixel ....
-        # if now - last >= cooldown:
-        #     if colon_count == 4:
-        #         update_menu()
-        #         return
-        #
-        #     last = now
-        #     text = 'Saypixel' + '.' * colon_count
-        #
-        #     colon_count += 1
-        #     menu_title = Font.get(Font.TITLE3, 40).render(text, True, CONST.COL_WHITE)
-        #     rect_menu = menu_title.get_rect(center=(320, 180))
-        #
-        #     screen.blit(menu_title, rect_menu)
-        #     pygame.display.update()
+        if now - last >= cooldown:
+            if colon_count == 4:
+                update_menu()
+                return
+        
+            last = now
+            text = 'Saypixel' + '.' * colon_count
+        
+            colon_count += 1
         # endregion
         # region 인트로 : 정적
-        menu_title = Font(Fonts.TITLE3, 40).render('Saypixel', CONST.COL_WHITE)
+        menu_title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)
         rect_menu = menu_title.get_rect(center=(320, 180))
 
         CONFIG.surface.blit(menu_title, rect_menu)

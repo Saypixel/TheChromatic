@@ -54,6 +54,10 @@ class CONFIG:
     game_paused = False
     '''게임이 일시중지되었는가?'''
 
+    player_pos_x = 0
+    player_pos_y = 0
+    '''플레이어 좌표 (동기화됨)'''
+
     def update_screen():
         """
         화면 업스케일링이 적용된 디스플레이 업데이트 기능

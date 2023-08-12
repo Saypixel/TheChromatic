@@ -1,42 +1,45 @@
 import pygame
-
+from typing import Optional, List
 from ..config import Fonts
 from .mutual_text import MutualText
 from ..font import Font
 from ..config import debug
 
-__all__ = ['Text', 'MutualText']
+__all__ = ['Text', 'MutualText', 'TextCollection']
 
 class Text:
-    DEFAULT_DELAY = 30
-    '''기본 지연 시간 (ms)'''
-
-    raw = ''
+    raw: str = ''
     '''날 것의 텍스트. 접두어 포함'''
 
-    pure = ''
+    pure: str = ''
     '''순수 텍스트. 접두어 미포함'''
 
-    has_prefix = False
+    has_prefix: bool = False
     '''접두어가 포함되어있는가?'''
 
-    texts: list[MutualText]
+    texts: List[MutualText]
     '''텍스트 리스트 (상호작용 배열)'''
 
-    index = 0
+    index: int = 0
     '''텍스트 리스트 index (상호작용 배열)'''
+
+    delay: int = 30
+    '''기본 지연 시간 (ms)'''
+
+    position: tuple[int, int] = (0, 0)
+    '''텍스트 절대좌표값 (TextCollection에서 상속)'''
 
     '''
     https://gist.github.com/ihoneymon/652be052a0727ad59601 : 일부 문법은 깃허브 마크다운 문법을 참조하였습니다.
 
     * : 굵게
     # : 크게
+    < : 느리게
     / : 얇게 (미지원)
     ^ : 흔들리게 (미지원)
-    < : 느리게
     '''
 
-    def __init__(self, text: str):
+    def __init__(self, text: str, delay: Optional[int] = 30):
         """
         Text 클래스를 생성합니다.
         :param text: 텍스트
@@ -45,6 +48,7 @@ class Text:
 
         self.raw = text
         self.pure = text  # 일단 저장. 어차피 replace() 함수를 통해 접두어를 제거하기 때문.
+        self.delay = delay
 
         for prefix in ['*', '#', '/', '^', '<']:
             if prefix in self.pure:
@@ -54,7 +58,6 @@ class Text:
         is_started = False
         mutual_text_ = ''
         prefix = ''
-        delay = self.DEFAULT_DELAY
 
         for ch in self.raw:
             match ch:
@@ -64,14 +67,13 @@ class Text:
                     if mutual_text_:  # mutual text가 비어있지 않은 경우
                         mutual = MutualText(mutual_text_, prefix, delay)
                         mutual_text_ = ''
-                        delay = self.DEFAULT_DELAY
                         self.texts.append(mutual)
 
                     prefix = ch if is_started else ''
 
                     if ch == '<':
                         prefix = ''
-                        delay = self.DEFAULT_DELAY - 10
+                        delay = delay - 10
 
                 case _:
                     mutual_text_ += ch
