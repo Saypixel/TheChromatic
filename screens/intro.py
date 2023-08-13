@@ -20,6 +20,13 @@ def update():
         CONFIG.clock.tick(CONFIG.FPS)
         CONFIG.surface.fill(CONST.COL_MAIN_BACKGROUND)
 
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_BACKQUOTE:
+                            update_menu()
+
         now = pygame.time.get_ticks()
 
         # region 인트로 : 동적 Saypixel ....

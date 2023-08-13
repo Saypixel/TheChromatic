@@ -34,9 +34,9 @@ class Text:
 
     * : 굵게
     # : 크게
-    < : 느리게
-    / : 얇게 (미지원)
+    / : 작게
     ^ : 흔들리게 (미지원)
+    < : New Line
     '''
 
     def __init__(self, text: str, delay: Optional[int] = 30):
@@ -50,7 +50,7 @@ class Text:
         self.pure = text  # 일단 저장. 어차피 replace() 함수를 통해 접두어를 제거하기 때문.
         self.delay = delay
 
-        for prefix in ['*', '#', '/', '^', '<']:
+        for prefix in ['*', '#', '/', '^']:
             if prefix in self.pure:
                 self.has_prefix = True
                 self.pure = self.pure.replace(prefix, '')
@@ -61,7 +61,7 @@ class Text:
 
         for ch in self.raw:
             match ch:
-                case '*' | '#' | '/' | '^' | '<':
+                case '*' | '#' | '/' | '^':
                     is_started = not is_started
 
                     if mutual_text_:  # mutual text가 비어있지 않은 경우
@@ -71,16 +71,53 @@ class Text:
 
                     prefix = ch if is_started else ''
 
-                    if ch == '<':
-                        prefix = ''
-                        delay = delay - 10
-
                 case _:
                     mutual_text_ += ch
 
         if mutual_text_:  # mutual text가 비어있지 않은 경우
             mutual = MutualText(mutual_text_, '', delay)
             self.texts.append(mutual)
+
+    def write(self, mutual: MutualText, index: int, text_position: tuple[int, int], char_position: tuple[int, int], surface: pygame.Surface) -> tuple[int, int]:
+        """
+        특정 문자를 렌더링 (출력)합니다.
+        :param mutual: 상호작용 테스트
+        :param index: 상호작용 테스트의 index
+        :param text_position: 화면 위치
+        :param char_position: 문자 위치 (렌더링할 위치)
+        :param surface: 화면
+        :return: 갱신해야할 문자 위치
+        """
+        ch_x = char_position[0]
+        ch_y = char_position[1]
+
+        font = Fonts.DIALOG
+        pt = 15
+        px = 0
+
+        match mutual.prefix:
+            case '*':
+                font = Fonts.TITLE3
+            case '#':
+                font = Fonts.TITLE2
+                pt += 2
+            case '/':
+                font = Fonts.TITLE2
+                pt -= 3
+
+        px = pt / 3.0 * 4.0
+        chs = mutual.text[index]
+
+        if chs == '<':
+            ch_x = text_position[0]
+            ch_y += px
+        else:
+            ch = Font(font, pt).render(chs, (0, 0, 0))
+            surface.blit(ch, (ch_x, ch_y))
+
+            ch_x += px
+
+        return (ch_x, ch_y)
 
     def write_until_next(self, position: tuple[int, int], surface: pygame.Surface) -> int:
         """
@@ -97,24 +134,9 @@ class Text:
             mutual = self.texts[i]
 
             for j in range(0, mutual.index + 1):
-                font = Fonts.DIALOG
-                pt = 20
-                px = 26.66
-
-                match mutual.prefix:
-                    case '*':
-                        font = Fonts.TITLE3
-                    case '#':
-                        pt += 10
-                    case '/':
-                        pt -= 10
-
-                px = pt / 3.0 * 4.0
-
-                ch = Font(font, pt).render(mutual.text[j], (0, 0, 0))
-                surface.blit(ch, (ch_x, ch_y))
-
-                ch_x += px
+                new_ch_pos = self.write(mutual, j, position, (ch_x, ch_y), surface)
+                ch_x = new_ch_pos[0]
+                ch_y = new_ch_pos[1]
 
         last_mutual = self.texts[len(self.texts) - 1]
 

@@ -18,9 +18,9 @@ def update_menu():
                     update_ingame()
                     return
 
-    mixer.music.load('assets/audio/bg_main_theme_demo2.ogg')
+    mixer.music.load('assets/audio/bg_daily.ogg')
     mixer.music.set_volume(0.7)
-    mixer.music.play()
+    mixer.music.play(-1)
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)
