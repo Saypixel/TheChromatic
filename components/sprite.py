@@ -4,19 +4,23 @@ from components.config import debug
 class Sprite(pygame.sprite.Sprite):
     images: list[pygame.Surface]
     rect: pygame.Rect
+    position: tuple
     size: tuple
 
-    def __init__(self, path: str, columns: int, rows: int, position: tuple, size: tuple, scale: float = 1.0):
+    flipped = False
+
+    def __init__(self, path: str, columns: int, rows: int, position: tuple, size: tuple, start = (0, 0), scale: float = 1.0):
 
         super(Sprite, self).__init__()
 
         image = pygame.image.load(path)
-        images = self.strip_from_sheet(image, (0, 0), size, columns, rows)
+        images = self.strip_from_sheet(image, start, size, columns, rows)
 
         # 스케일링
         scale_x = size[0] * scale
         scale_y = size[1] * scale
 
+        self.position = position
         self.size = (scale_x, scale_y)
         self.images = [pygame.transform.scale(image, self.size) for image in images]
         self.rect = (position, self.size)
@@ -26,12 +30,12 @@ class Sprite(pygame.sprite.Sprite):
         self.image = self.images[self.index]  # 'image' is the current image of the animation.
 
 
-    def update(self):
+    def update(self, start = 0):
         # update를 통해 캐릭터의 이미지가 계속 반복해서 나타나도록 한다. 
         self.index += 1
 
         if self.index >= len(self.images):
-            self.index = 0
+            self.index = start
 
         self.image = self.images[self.index]
 
@@ -41,6 +45,13 @@ class Sprite(pygame.sprite.Sprite):
         image = pygame.transform.scale(image, self.size)
 
         self.images.append(image)
+
+
+    def flip(self):
+        self.images = [pygame.transform.flip(image, True, False) for image in self.images]
+        self.image = self.images[self.index]
+
+        self.flipped = not self.flipped
 
 
     def strip_from_sheet(self, sheet: pygame.Surface, start: tuple, size: tuple, columns: int, rows: int = 1) -> list[pygame.Surface]:

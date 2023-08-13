@@ -8,11 +8,11 @@ from components.text import Text
 from components.text.text_collection import TextCollection
 from components.sprite import Sprite
 
-player = Player('assets/images/chr_player.png', (200, 228), 0.4, False, True)  # 주인공
+player = Player.get_from_sprite(Sprite('assets/images/chr_player_stay.png', 4, 1, (200, 225), (160, 315), (35, 50), 0.4), True)  # 주인공
 emilia = Player('assets/images/chr_emilia.png', (400, 220), 0.4)  # 에밀리아
 
 sign = Player('assets/images/sign_big.png', (300, 100), 0.3)
-hp = pygame.sprite.Group(Sprite('assets/images/hp_bar.png', 31, 1, (0, 0), (500, 165), 0.4))
+hp = pygame.sprite.Group(Sprite('assets/images/hp_bar.png', 31, 1, (0, 0), (500, 165), (0, 0), 0.4))
 
 background = Player('assets/images/background.png', (0, 0), 1, True)
 ground = Player('assets/images/ground.png', (0, 0), 1, True, False)
@@ -38,8 +38,10 @@ def update_ingame():
                     match event.key:
                         case pygame.K_SPACE:
                             if emilia.is_bound(100):
-                                sign.refresh()
                                 TextEvent.process_next_event()
+
+                                if not TextEvent.dialog_delayed:
+                                    sign.refresh()
                                 
                                 if not TextEvent.dialog_closed:
                                     pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
@@ -53,7 +55,7 @@ def update_ingame():
 
     TextEvent.dialog = TextCollection([Text('*안녕!*'), Text('나는 에밀리아야.'), Text('*절대 *#하는게 #/아니라구../ 알겠지?')], sign.width)
     pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
-    count = 5
+    count = 0
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
@@ -62,11 +64,17 @@ def update_ingame():
 
         hp.draw(CONFIG.surface)
 
-        count -= 1
+        count += 1
 
-        if count == 0:
+        if count % 5 == 0:
             hp.update()
-            count = 5
+
+        if (player.velocity > 0 and player.sprite.flipped) or (player.velocity < 0 and not player.sprite.flipped):  # 방향이 반대인 경우
+                player.sprite.flip()
+
+        if count == 10:
+            count = 0
+            player.sprite.update()
 
         if not TextEvent.dialog_closed: 
             emilia.speech(sign)

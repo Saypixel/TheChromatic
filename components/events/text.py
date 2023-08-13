@@ -77,6 +77,7 @@ class TextEvent(object):
 
             if i + 1 > len(cls.dialog.current.texts):
                 cls.dialog_paused = True
+                cls.dialog_delayed = False
                 return
 
             mutual = cls.dialog.current.texts[i]
@@ -91,7 +92,10 @@ class TextEvent(object):
                 j = 0
 
             if mutual.delay > 0:
-                Timer(mutual.delay / 1000.0, write_each).start()
+                if not cls.dialog_delayed:
+                    Timer(mutual.delay / 1000.0, write_each).start()
+                else:
+                    write_each()
 
         if surface is None:
             surface = CONFIG.surface

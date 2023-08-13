@@ -1,19 +1,26 @@
 import pygame
 from abc import ABC
+
 from components.text.text_collection import TextCollection
 from components.events.text import TextEvent
 from components.config import CONFIG, CONST, debug
+from components.sprite import Sprite
 
 class Character(ABC):
     image: pygame.Surface | pygame.SurfaceType
     image_path: str
+
+    sprite: Sprite
+    sprite_group: pygame.sprite.Group
     
-    x: int
-    y: int
-    width: int
-    height: int
+    x: int = 0
+    y: int = 0
+    width: int = 0
+    height: int = 0
+
+    velocity = 0.0
     
-    is_playable: bool
+    is_playable: bool = False
 
     sign = None
 
@@ -25,6 +32,10 @@ class Character(ABC):
         :param scale: 캐릭터 크기
         :param position: 캐릭터가 위치한 절대좌표
         """
+        if path == '':
+            self.image_path = ''
+            return
+
         self.image_path = path
         self.image = pygame.image.load(path)
 
@@ -69,7 +80,14 @@ class Character(ABC):
         if other_surface is None:
             other_surface = CONFIG.surface
 
-        other_surface.blit(self.image, self.get_pos())
+        if self.image_path != '':  # 정적 이미지인 경우
+            other_surface.blit(self.image, self.get_pos())
+        else:  # 스프라이트인 경우
+            #debug(str(self.get_pos()[0]) + ', ' + str(self.get_pos()[1]))
+            self.sprite.position = self.get_pos()
+            self.sprite.rect = (self.sprite.position[0], self.sprite.position[1], self.sprite.size[0], self.sprite.size[1])
+
+            self.sprite_group.draw(other_surface)
 
         if self.sign is not None:
             other_surface.blit(self.sign.image, self.sign.get_pos())
