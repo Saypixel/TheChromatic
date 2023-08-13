@@ -59,7 +59,8 @@ def update_ingame():
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
-        CONFIG.surface.blit(background.image, (0, 0))
+        debug(CONFIG.clock.get_fps())
+        CONFIG.surface.blit(background.image.convert(), (0, 0))
         CONFIG.surface.blit(ground.image, (0, 0))
 
         hp.draw(CONFIG.surface)
@@ -85,5 +86,4 @@ def update_ingame():
 
         emilia.render()
         player.render()
-
         CONFIG.update_screen()
