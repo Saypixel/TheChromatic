@@ -1,5 +1,7 @@
-import pygame.constants
 from enum import Enum
+from random import Random
+
+import pygame.constants
 
 class CONST:
     SCREEN_SIZE = [640, 360]
@@ -40,7 +42,6 @@ class CONFIG:
     '''크기가 [640, 360]으로 고정된 화면
     surface에 렌더링하고 업스케일링 후 screen으로 화면 표시'''
 
-
     screen = pygame.display.set_mode(window_size)
     '''업스케일링된 실제로 플레이어에게 보여주는 화면'''
 
@@ -57,11 +58,20 @@ class CONFIG:
     game_paused = False
     '''게임이 일시중지되었는가?'''
 
+    game_dead = False
+    '''플레이어가 죽었는가?'''
+
+    game_fps = False
+    '''FPS를 표시하는가? (디버깅용)'''
+
     player_x = 0
     player_y = 0
     player_width = 0
     player_height = 0
     '''플레이어 값 (동기화됨)'''
+
+    random: Random = Random(100)
+    '''랜덤'''
 
     def update_screen():
         """
@@ -89,13 +99,16 @@ class CONFIG:
 
     def is_interactive() -> bool:
         """플레이어와 상호작용 가능한가?"""
-        return CONFIG.game_started and not CONFIG.game_paused
+        return CONFIG.game_started and not CONFIG.game_paused and not CONFIG.game_dead
     
     
     def is_movable() -> bool:
         """플레이어가 움직일 수 있는가?"""
         from components.events.text import TextEvent
-        return CONFIG.is_interactive() and TextEvent.dialog_closed
+        return CONFIG.is_interactive() and TextEvent.dialog_closed and not CONFIG.game_dead
+    
+    def resolution_to_str(size: tuple) -> str:
+        return str(size[0]) + 'x' + str(size[1])
 
 def debug(debug: str):
     """

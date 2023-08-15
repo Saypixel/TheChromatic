@@ -1,5 +1,7 @@
+import ctypes
 import pygame
-from ..config import CONFIG
+
+from ..config import CONFIG, CONST, debug
 
 def update_screen_resolution():
     """
@@ -9,7 +11,6 @@ def update_screen_resolution():
         CONFIG.screen = pygame.display.set_mode(CONFIG.window_size, pygame.FULLSCREEN)
     else:
         CONFIG.screen = pygame.display.set_mode(CONFIG.window_size)
-
 
 def process(f=None):
     """
@@ -28,7 +29,8 @@ def process(f=None):
                         CONFIG.is_running = False
 
                     case pygame.K_ESCAPE: # ESC
-                        CONFIG.is_running = False # TODO: 종료 화면 띄우기
+                        # CONFIG.is_running = False # TODO: 종료 화면 띄우기
+                        if f is not None: f(event)
                         
                     case _:
                         if f is not None:

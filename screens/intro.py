@@ -6,7 +6,6 @@ from components.font import Font
 from components.sfx_collection import SFX
 from screens.menu import update_menu
 
-
 def update():
     cooldown = 1000  # ms
     last = pygame.time.get_ticks()
@@ -14,7 +13,7 @@ def update():
     text = 'Saypixel'
     colon_count = 1
 
-    mixer.Sound.play(SFX.INTRO)
+    SFX.INTRO.play()
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)
@@ -26,6 +25,10 @@ def update():
                     match event.key:
                         case pygame.K_BACKQUOTE:
                             update_menu()
+                            reload()
+
+                        case pygame.K_ESCAPE:
+                            CONFIG.is_running = False
 
         now = pygame.time.get_ticks()
 
@@ -49,8 +52,23 @@ def update():
 
         if now - last >= cooldown:
             update_menu()
+            reload()
             return
 
         # endregion
 
         process()
+
+def reload():
+    import screens.menu
+
+    if screens.menu.reload:
+        screens.menu.reload = False
+        
+        pygame.mixer.music.stop()
+
+        pygame.mixer.pause()
+        pygame.mixer.unpause()
+
+        update()
+        reload()

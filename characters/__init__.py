@@ -1,28 +1,37 @@
 import pygame
 from abc import ABC
 
+from components.config import CONFIG, CONST, debug
+
 from components.text.text_collection import TextCollection
 from components.events.text import TextEvent
-from components.config import CONFIG, CONST, debug
-from components.sprite import Sprite
+
+from components.sprites.sprite_collection import SpriteCollection
+from components.sprites.sprite_handler import SpriteHandler
+from components.sprites.sprite import Sprite
 
 class Character(ABC):
     image: pygame.Surface | pygame.SurfaceType
     image_path: str
 
-    sprite: Sprite
-    sprite_group: pygame.sprite.Group
+    sprites: SpriteCollection
     
     x: int = 0
     y: int = 0
     width: int = 0
     height: int = 0
 
-    velocity = 0.0
-    
     is_playable: bool = False
+    '''플레이어인가?'''
+
+    hp = 5
+    '''플레이어의 체력'''
+
+    velocity = 0.0
+    '''플레이어의 속도'''
 
     sign = None
+    '''말풍선'''
 
     def __init__(self, path: str, position: tuple, scale: float = 1.0, fit = False, is_playable = False):
         """
@@ -64,6 +73,10 @@ class Character(ABC):
     def set_pos(self, x: int, y: int):
         self.x = x
         self.y = y
+
+        if self.is_playable:
+            CONFIG.player_x = x
+            CONFIG.player_y = y
     
     def move(self, velocity: float):
         """
@@ -73,8 +86,11 @@ class Character(ABC):
         """
         pass
 
-    def is_bound(self, error = 0) -> bool:
-        return CONFIG.player_x >= self.x - error and CONFIG.player_x <= self.x + error
+    def is_bound(self, error_x = 0, error_y = 0) -> bool:
+        is_x = CONFIG.player_x >= self.x - error_x and CONFIG.player_x <= self.x + error_x
+        is_y = CONFIG.player_y >= self.y - error_y and CONFIG.player_y <= self.y + error_y
+        
+        return is_x and is_y
 
     def render(self, other_surface: pygame.Surface = None):
         if other_surface is None:
@@ -83,11 +99,8 @@ class Character(ABC):
         if self.image_path != '':  # 정적 이미지인 경우
             other_surface.blit(self.image, self.get_pos())
         else:  # 스프라이트인 경우
-            #debug(str(self.get_pos()[0]) + ', ' + str(self.get_pos()[1]))
-            self.sprite.position = self.get_pos()
-            self.sprite.rect = (self.sprite.position[0], self.sprite.position[1], self.sprite.size[0], self.sprite.size[1])
-
-            self.sprite_group.draw(other_surface)
+            self.sprites.set_pos(self.get_pos())
+            self.sprites.get_sprite_handler().group.draw(other_surface)
 
         if self.sign is not None:
             other_surface.blit(self.sign.image, self.sign.get_pos())

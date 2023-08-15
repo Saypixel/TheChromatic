@@ -1,21 +1,39 @@
+import pygame
+
 class Button:
-    def __init__(self, image, pos, text_input, font, base_color, hovering_color):
+    image: pygame.Surface
+    x_pos: int
+    y_pos: int
+    font: pygame.font.Font
+    base_color: str
+    hovering_color: str
+    text_input: str
+    text: pygame.Surface = None
+    
+    def __init__(self, image: pygame.Surface, pos: tuple, base_color: str = '', hovering_color: str = '', text_input = '', text_offset = (0, 0), font: pygame.font.Font = None):
         self.image = image
         self.x_pos = pos[0]
         self.y_pos = pos[1]
         self.font = font
         self.base_color, self.hovering_color = base_color, hovering_color
         self.text_input = text_input
-        self.text = self.font.render(self.text_input, False, self.base_color)
+
+        if self.font is not None:
+            self.text = self.font.render(self.text_input, False, self.base_color)
+
         if self.image is None:
             self.image = self.text
+
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
-        self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+
+        if self.text is not None:
+            self.text_rect = self.text.get_rect(center=(self.x_pos + text_offset[0], self.y_pos + text_offset[1]))
 
     def update(self, screen):
         if self.image is not None:
             screen.blit(self.image, self.rect)
-        screen.blit(self.text, self.text_rect)
+        if self.text is not None:
+            screen.blit(self.text, self.text_rect)
 
     def check_for_input(self, position):
         if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top,
@@ -26,6 +44,12 @@ class Button:
     def change_color(self, position):
         if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top,
                                                                                           self.rect.bottom):
-            self.text = self.font.render(self.text_input, False, self.hovering_color)
+            if self.text is not None:
+                self.text = self.font.render(self.text_input, False, self.hovering_color)
         else:
-            self.text = self.font.render(self.text_input, False, self.base_color)
+            if self.text is not None:
+                self.text = self.font.render(self.text_input, False, self.base_color)
+
+    def change_image(self, image: pygame.Surface):
+        self.image = image
+        self.rect = image.get_rect(center=(self.x_pos, self.y_pos))

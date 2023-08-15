@@ -9,7 +9,7 @@ class Sprite(pygame.sprite.Sprite):
 
     flipped = False
 
-    def __init__(self, path: str, columns: int, rows: int, position: tuple, size: tuple, start = (0, 0), scale: float = 1.0):
+    def __init__(self, path: str, columns: int, rows: int, size: tuple, start = (0, 0), position = (0, 0), scale: float = 1.0):
 
         super(Sprite, self).__init__()
 
@@ -52,6 +52,16 @@ class Sprite(pygame.sprite.Sprite):
         self.image = self.images[self.index]
 
         self.flipped = not self.flipped
+
+
+    def set_pos(self, position: tuple):
+        self.position = position
+        self.rect = (position, self.size)
+
+    
+    def set_alpha(self, alpha: int):
+        for image in self.images:
+            image.set_alpha(alpha)
 
 
     def strip_from_sheet(self, sheet: pygame.Surface, start: tuple, size: tuple, columns: int, rows: int = 1) -> list[pygame.Surface]:
