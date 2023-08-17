@@ -119,7 +119,7 @@ def update_settings():
     button_fps_path = 'assets/images/button_checked.png' if fps else 'assets/images/button_unchecked.png'
     button_fps_image = pygame.image.load(button_fps_path)
     button_fps_image = pygame.transform.scale_by(button_fps_image, 0.2)
-    button_fps = Button(image=button_resolution_full_image, pos=(250, 150), text_offset=(50, 0),
+    button_fps = Button(image=button_fps_image, pos=(250, 150), text_offset=(50, 0),
                                     text_input='FPS 표시', font=Font(Fonts.ILLUST, 16).to_pygame(), base_color='#ffffff',
                                     hovering_color='White')
     
