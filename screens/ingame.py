@@ -8,6 +8,7 @@ from components.button import Button
 from components.config import CONFIG, CONST, debug
 from components.events import process
 from components.sfx_collection import SFX
+from components.world import World
 
 from components.font import Font, Fonts
 from components.text import Text
@@ -34,8 +35,8 @@ class Ingame:
         self.mouse_pos = CONFIG.get_mouse_pos()
 
         self.player = Player.get_from_sprite(SpriteCollection({
-        'stay': SpriteHandler(Sprite('assets/images/chr_player_stay.png', 4, 1, size=(160, 270), scale=0.4))
-        }, 'stay', position=(200, 225), size=(150, 270)), True)  # 주인공
+        'stay': SpriteHandler(Sprite('assets/images/chr_player_stay.png', 4, 1, size=(160, 270)))
+        }, 'stay', position=(200, 225), scale=0.4), True)  # 주인공
 
         self.emilia = Player('assets/images/chr_emilia.png', (400, 220), 0.4)  # 에밀리아
 
@@ -114,7 +115,7 @@ class Ingame:
             #region 플레이어 움직임
             sprite_player = self.player.sprites.get_sprite_handler().sprite
 
-            if (self.player.velocity > 0 and sprite_player.flipped) or (self.player.velocity < 0 and not sprite_player.flipped):  # 방향이 반대인 경우
+            if (self.player.velocity_x > 0 and sprite_player.flipped) or (self.player.velocity_x < 0 and not sprite_player.flipped):  # 방향이 반대인 경우
                     sprite_player.flip()
             #endregion
             #region 체력
@@ -126,6 +127,7 @@ class Ingame:
 
                 hp_count += 6
                 self.player.hp -= 1
+                self.player.move(0, 150)
                 
                 GracePeriod.update()
                 SFX.ATTACKED.play()
@@ -162,6 +164,10 @@ class Ingame:
 
             self.emilia.render()
             self.player.render()
+
+            player_pos = self.player.get_pos()
+            pygame.draw.rect(CONFIG.surface, (0, 200, 0), (player_pos[0] - 5, player_pos[1] - 5, 5, 5))
+            World.process_gravity(self.player, 333)
 
             #region 사망 이벤트
             if CONFIG.game_dead:

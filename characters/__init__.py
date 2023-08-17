@@ -27,8 +27,11 @@ class Character(ABC):
     hp = 5
     '''플레이어의 체력'''
 
-    velocity = 0.0
-    '''플레이어의 속도'''
+    velocity_x = 0.0
+    '''플레이어의 속도 (X)'''
+
+    velocity_y = 0.0
+    '''플레이어의 속도 (Y)'''
 
     sign = None
     '''말풍선'''

@@ -63,6 +63,21 @@ class Sprite(pygame.sprite.Sprite):
         for image in self.images:
             image.set_alpha(alpha)
 
+    
+    def set_scale(self, scale: float):
+        """
+        스케일링
+        """
+        scale_x = self.size[0] * scale
+        scale_y = self.size[1] * scale
+
+        self.size = (scale_x, scale_y)
+        self.images = [pygame.transform.scale(image, self.size) for image in self.images]
+        self.rect = (self.position, self.size)
+
+        # 캐릭터의 현재 이미지 (동기화)
+        self.image = self.images[self.index]  # 'image' is the current image of the animation.
+
 
     def strip_from_sheet(self, sheet: pygame.Surface, start: tuple, size: tuple, columns: int, rows: int = 1) -> list[pygame.Surface]:
         """
