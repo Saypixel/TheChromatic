@@ -34,8 +34,8 @@ class Ingame:
         self.mouse_pos = CONFIG.get_mouse_pos()
 
         self.player = Player.get_from_sprite(SpriteCollection({
-        'stay': SpriteHandler(Sprite('assets/images/chr_player_stay.png', 4, 1, size=(160, 315), start=(35, 50), scale=0.4))
-        }, 'stay', position=(200, 225), size=(160, 315)), True)  # 주인공
+        'stay': SpriteHandler(Sprite('assets/images/chr_player_stay.png', 4, 1, size=(160, 270), scale=0.4))
+        }, 'stay', position=(200, 225), size=(150, 270)), True)  # 주인공
 
         self.emilia = Player('assets/images/chr_emilia.png', (400, 220), 0.4)  # 에밀리아
 
