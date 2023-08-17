@@ -9,6 +9,11 @@
 - [Python 3.11](https://www.python.org/downloads/release/python-3114/)
 - [Pygame](https://github.com/pygame/pygame)
 
+### 필요한 패키지 설치
+```
+pip install -r requirements.txt
+```
+
 ### 실행
 ```
 python main.py

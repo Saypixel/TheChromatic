@@ -1,6 +1,6 @@
 import pygame
 from pygame import mixer
-from components.config import CONFIG, CONST, Fonts
+from components.config import CONFIG, CONST, Fonts, debug
 from components.events import process
 from components.font import Font
 from components.sfx_collection import SFX

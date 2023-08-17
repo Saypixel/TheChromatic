@@ -2,7 +2,7 @@ import pygame
 from pygame import mixer
 
 from components.button import Button
-from components.config import CONFIG, CONST, Fonts
+from components.config import CONFIG, CONST, Fonts, debug
 from components.events import process
 from components.font import Font
 from screens.ingame import Ingame

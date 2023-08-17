@@ -48,6 +48,8 @@ class CONFIG:
     clock = pygame.time.Clock()
 
     is_fullscreen = False
+    
+    is_debug = False
 
     is_running = True
     '''게임이 실행되고 있는가?'''
@@ -114,5 +116,6 @@ def debug(debug: str):
     """
     디버깅용 출력 함수
     """
-    from icecream import ic
-    ic(debug)
+    if CONFIG.is_debug:
+        from icecream import ic
+        ic(debug)

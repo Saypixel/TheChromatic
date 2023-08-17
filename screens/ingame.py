@@ -3,6 +3,7 @@ from random import Random
 import pygame
 
 from characters.player import Player
+from characters.texture import Texture
 
 from components.button import Button
 from components.config import CONFIG, CONST, debug
@@ -40,13 +41,13 @@ class Ingame:
 
         self.emilia = Player('assets/images/chr_emilia.png', (400, 220), 0.4)  # 에밀리아
 
-        self.sign = Player('assets/images/sign_big.png', (300, 100), 0.3)
+        self.sign = Texture('assets/images/sign_big.png', (300, 100), 0.3)
         self.hp = SpriteHandler(Sprite('assets/images/hp_bar.png', 31, 1, size=(500, 165), scale=0.4))
 
-        self.spike = Player('assets/images/object_spike.png', (300, 315), 0.2)
+        self.spike = Texture('assets/images/object_spike.png', (300, 315), 0.2)
 
-        self.background = Player('assets/images/background.png', (0, 0), 1, True)
-        self.ground = Player('assets/images/ground.png', (0, 0), 1, True, False)
+        self.background = Texture('assets/images/background.png', (0, 0), 1, True)
+        self.ground = Texture('assets/images/ground.png', (0, 0), 1, True, False)
 
     def update_ingame(self):
         def process_ingame_movement():
@@ -66,7 +67,7 @@ class Ingame:
                 case pygame.KEYDOWN:
                     if CONFIG.is_interactive():
                         match event.key:
-                            case pygame.K_SPACE:
+                            case pygame.K_SPACE | pygame.K_w | pygame.K_UP:
                                 if self.emilia.is_bound(100, 100):
                                     TextEvent.process_next_event()
 
@@ -127,7 +128,7 @@ class Ingame:
             #region 체력
             self.hp.group.draw(CONFIG.surface)
 
-            if self.spike.is_bound(45, 100) and not GracePeriod.is_grace_period() and CONFIG.is_interactive() and CONFIG.is_movable():
+            if self.spike.is_bound(40, 100) and not GracePeriod.is_grace_period() and CONFIG.is_interactive() and CONFIG.is_movable():
                 if hp_count == 24:
                     CONFIG.game_dead = True
 
