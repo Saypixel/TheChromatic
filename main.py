@@ -16,7 +16,7 @@ def main():
     SFX.init()
 
     pygame.display.set_caption('The Chromatic')
-    pygame.key.set_repeat(5, 40)  # 키 중복 허용
+    #pygame.key.set_repeat(5, 40)  # 키 중복 허용
 
     intro.update() # 인트로 시작
 

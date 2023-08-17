@@ -11,19 +11,25 @@ from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite import Sprite
 
 class Player(Character):
-    def move(self, velocity_x: float, velocity_y: float = 0):
+    def move_x(self, velocity: float):
         # 윈도우 내부에 위치해 있는 경우
-        if (velocity_x > 0 and self.x <= 0) or (velocity_x < 0 and self.x + self.width >= CONST.SCREEN_SIZE[0]) or (0 <= self.x <= CONST.SCREEN_SIZE[0]):
-            self.velocity_x = velocity_x
+        if round(velocity, 3) != 0.0:
+            if (velocity > 0 and self.x <= 0) or (velocity < 0 and self.x + self.width >= CONST.SCREEN_SIZE[0]) or (0 <= self.x <= CONST.SCREEN_SIZE[0]):
+                multiplied = 1 if not self.is_air else 0.7  # 공중에 떠 있으면 패널티 부여
 
-            self.x += 10 * velocity_x
+                self.velocity_x = velocity
+                self.x += 10 * velocity * multiplied
 
-            if self.is_playable:
-                CONFIG.player_x = self.x
-                CONFIG.player_y = self.y
+        if self.is_playable:
+            CONFIG.player_x = self.x
 
-        self.velocity_y = velocity_y
-        self.y -= velocity_y
+    def move_y(self, velocity: float):
+        if round(velocity, 3) != 0.0:
+            self.velocity_y = velocity
+            self.y -= velocity
+
+        if self.is_playable:
+            CONFIG.player_y = self.y
     
     @classmethod
     def get_from_sprite(cls, sprites: SpriteCollection, is_playable = False) -> 'Player':

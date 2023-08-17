@@ -49,19 +49,21 @@ class Ingame:
         self.ground = Player('assets/images/ground.png', (0, 0), 1, True, False)
 
     def update_ingame(self):
+        def process_ingame_movement():
+            """키 동시 입력 처리를 위한 움직임 이벤트 처리"""
+            keys = pygame.key.get_pressed()  # 키 동시 입력 처리
+
+            if CONFIG.is_movable():  # 플레이어가 움직일 수 있을 때 (상호작용 포함)
+                if keys[pygame.K_a] or keys[pygame.K_LEFT]:  # 왼쪽으로 이동
+                    self.player.move_x(-1)
+                if keys[pygame.K_d] or keys[pygame.K_RIGHT]:  # 오른쪽으로 이동
+                    self.player.move_x(1)
+
         def process_ingame(event: pygame.event.Event):
             """인게임 이벤트 처리용 (process() child 함수)"""
 
             match event.type:
                 case pygame.KEYDOWN:
-                    if CONFIG.is_movable():  # 플레이어가 움직일 수 있을 때 (상호작용 포함)
-                        match event.key:
-                            case pygame.K_a | pygame.K_LEFT:  # 왼쪽으로 이동
-                                self.player.move(-1)
-                            case pygame.K_d | pygame.K_RIGHT:  # 오른쪽으로 이동
-                                self.player.move(1)
-
-                case pygame.KEYUP:
                     if CONFIG.is_interactive():
                         match event.key:
                             case pygame.K_SPACE:
@@ -73,12 +75,16 @@ class Ingame:
                                     
                                     if not TextEvent.dialog_closed:
                                         pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
+                                else:
+                                    if not self.player.is_air:  # 다중 점프 금지
+                                        self.player.move_y(10)  # 점프
 
+                case pygame.KEYUP:
+                    pass
+                    if CONFIG.is_interactive():
+                        match event.key:
                             case pygame.K_ESCAPE:
-                                if CONFIG.is_interactive():
-                                    match event.key:
-                                        case pygame.K_ESCAPE:
-                                            update_pause_menu()
+                                update_pause_menu()
 
                 case CONST.PYGAME_EVENT_DIALOG:  # 텍스트 애니메이션 이벤트
                     if CONFIG.is_interactive():
@@ -127,7 +133,7 @@ class Ingame:
 
                 hp_count += 6
                 self.player.hp -= 1
-                self.player.move(0, 150)
+                self.player.move_y(5)
                 
                 GracePeriod.update()
                 SFX.ATTACKED.play()
@@ -159,15 +165,14 @@ class Ingame:
                 sprite_player.update()
 
             process(process_ingame)
+            process_ingame_movement()
 
             self.spike.render()
 
             self.emilia.render()
             self.player.render()
 
-            player_pos = self.player.get_pos()
-            pygame.draw.rect(CONFIG.surface, (0, 200, 0), (player_pos[0] - 5, player_pos[1] - 5, 5, 5))
-            World.process_gravity(self.player, 333)
+            World.process_gravity(self.player, 333)  # 중력 구현
 
             #region 사망 이벤트
             if CONFIG.game_dead:

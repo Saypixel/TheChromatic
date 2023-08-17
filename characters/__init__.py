@@ -33,6 +33,9 @@ class Character(ABC):
     velocity_y = 0.0
     '''플레이어의 속도 (Y)'''
 
+    '''플레이어가 공중에 떠 있는가?'''
+    is_air = False
+
     sign = None
     '''말풍선'''
 
@@ -81,9 +84,17 @@ class Character(ABC):
             CONFIG.player_x = x
             CONFIG.player_y = y
     
-    def move(self, velocity: float):
+    def move_x(self, velocity: float):
         """
-        캐릭터 움직임
+        캐릭터 움직임 (X 좌표)
+
+        :param velocity: 속도 (주로 1, -1 이용)
+        """
+        pass
+
+    def move_y(self, velocity: float):
+        """
+        캐릭터 움직임 (Y 좌표)
 
         :param velocity: 속도 (주로 1, -1 이용)
         """
