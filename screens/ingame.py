@@ -128,7 +128,7 @@ class Ingame:
             #region 체력
             self.hp.group.draw(CONFIG.surface)
 
-            if self.spike.is_bound(40, 100) and not GracePeriod.is_grace_period() and CONFIG.is_interactive() and CONFIG.is_movable():
+            if self.spike.is_bound(40, 100) and not GracePeriod.is_grace_period() and CONFIG.is_movable():
                 if hp_count == 24:
                     CONFIG.game_dead = True
 

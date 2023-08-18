@@ -47,6 +47,8 @@ class Player(Character):
         chr.height = sprites.size[1]
 
         if is_playable:
+            CONFIG.player_x = chr.x
+            CONFIG.player_y = chr.y
             CONFIG.player_width = chr.width
             CONFIG.player_height = chr.height
 
