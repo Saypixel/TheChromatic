@@ -112,7 +112,7 @@ def update_settings():
     background = pygame.image.load("assets/images/status3.png")
     background = pygame.transform.scale_by(background, 0.25)
     background = pygame.transform.scale(background, (background.get_width(), 300))
-    background_rect = background.get_rect(center=(320, 180))
+    background_rect = background.get_rect(center=(320 + CONFIG.camera_x, 180 + CONFIG.camera_y))
 
     surface_resolution_2 = Font(Fonts.TITLE2, 18).render("화면", (255, 255, 255))
 
@@ -210,14 +210,14 @@ def update_settings():
 
         CONFIG.surface.blit(background, background_rect)
         CONFIG.surface.blit(
-            surface_resolution, surface_resolution.get_rect(center=(315, 90))
+            surface_resolution, surface_resolution.get_rect(center=(315 + CONFIG.camera_x, 90 + CONFIG.camera_y))
         )
         CONFIG.surface.blit(
-            surface_resolution_2, surface_resolution_2.get_rect(center=(245, 50))
+            surface_resolution_2, surface_resolution_2.get_rect(center=(245 + CONFIG.camera_x, 50 + CONFIG.camera_y))
         )
-        CONFIG.surface.blit(surface_audio, surface_audio.get_rect(center=(244, 185)))
+        CONFIG.surface.blit(surface_audio, surface_audio.get_rect(center=(244 + CONFIG.camera_x, 185 + CONFIG.camera_y)))
         CONFIG.surface.blit(
-            surface_audio_text, surface_audio_text.get_rect(center=(315, 220))
+            surface_audio_text, surface_audio_text.get_rect(center=(315 + CONFIG.camera_x, 220 + CONFIG.camera_y))
         )
 
         for button in [

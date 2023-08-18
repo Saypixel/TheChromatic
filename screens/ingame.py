@@ -70,15 +70,15 @@ class Ingame:
         scale=0.6)
 
         # 장애물
-        self.spike = Texture("assets/images/object_spike.png", (300, 315), 0.2)
+        self.spike = Texture("assets/images/object_spike.png", (800, 315), 0.2)
         self.obstacles = [self.spike]
 
         # 적
-        self.enemy = Enemy("assets/images/chr_raon.png", (500, 250), 0.4)
+        self.enemy = Enemy("assets/images/chr_raon.png", (600, 250), 0.4)
         self.enemies = [self.enemy]
 
         for enemy in self.enemies:
-            enemy.grace_period = GracePeriod(1000)
+            enemy.grace_period = GracePeriod(1500)
             enemy.hp = 2
 
         # NPC
@@ -176,8 +176,15 @@ class Ingame:
             count += 1
             self.mouse_pos = CONFIG.get_mouse_pos()
 
-            CONFIG.surface.blit(self.background.image.convert(), (0, 0))
-            CONFIG.surface.blit(self.ground.image, (0, 0))
+            # region 카메라
+            self.hp.sprite.set_pos((CONFIG.camera_x, self.hp.sprite.position[1]))
+
+            self.background.set_pos(CONFIG.camera_x, self.background.y)
+            self.ground.set_pos(CONFIG.camera_x, self.ground.y)
+            # endregion
+
+            CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
+            CONFIG.surface.blit(self.ground.image, self.ground.get_pos())
 
             # region 플레이어 움직임
             sprite_player = self.player.sprites.get_sprite_handler().sprite
@@ -209,7 +216,7 @@ class Ingame:
                         self.enemies.pop(index)
                 
                 enemy.follow_player(self.obstacles)
-                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0)
+                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())
 
             World.process_gravity(self.enemies + [self.player], 333)  # 중력 구현
             # endregion
@@ -345,9 +352,9 @@ class Ingame:
                         hovering_color="White",
                     )
 
-                CONFIG.surface.blit(self.dead_background, (180, 120))
+                CONFIG.surface.blit(self.dead_background, (180 + CONFIG.camera_x, 120 + CONFIG.camera_y))
                 CONFIG.surface.blit(
-                    self.dead_text, self.dead_text.get_rect(center=(320, 160))
+                    self.dead_text, self.dead_text.get_rect(center=(320 + CONFIG.camera_x, 160 + CONFIG.camera_y))
                 )
 
                 for button in [self.button_retry, self.button_menu]:
@@ -379,6 +386,10 @@ class Ingame:
         self.player.set_pos(200, 225)
 
         CONFIG.game_dead = False
+        CONFIG.camera_x = 0
+        CONFIG.camera_y = 0
+
+        CONFIG.surface.fill(CONST.COL_WHITE)
 
         if self.reload:
             Ingame.default = Ingame()

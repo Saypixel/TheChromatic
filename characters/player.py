@@ -17,8 +17,8 @@ class Player(Character):
         if round(velocity, 3) != 0.0:
             if (
                 (velocity > 0 and self.x <= 0)
-                or (velocity < 0 and self.x + self.width >= CONST.SCREEN_SIZE[0])
-                or (0 <= self.x <= CONST.SCREEN_SIZE[0])
+                or (velocity < 0 and self.x + self.width >= CONST.SURFACE_SIZE[0])
+                or (0 <= self.x <= CONST.SURFACE_SIZE[0])
             ):
                 multiplied = 1 if not self.is_air else 0.7  # 공중에 떠 있으면 패널티 부여
 

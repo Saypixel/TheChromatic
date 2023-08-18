@@ -1,5 +1,5 @@
 import pygame
-
+from components.config import CONFIG
 
 class Button:
     image: pygame.Surface
@@ -22,8 +22,8 @@ class Button:
         font: pygame.font.Font = None,
     ):
         self.image = image
-        self.x_pos = pos[0]
-        self.y_pos = pos[1]
+        self.x_pos = pos[0] + CONFIG.camera_x
+        self.y_pos = pos[1] + CONFIG.camera_y
         self.font = font
         self.base_color, self.hovering_color = base_color, hovering_color
         self.text_input = text_input

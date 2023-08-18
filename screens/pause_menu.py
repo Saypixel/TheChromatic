@@ -77,7 +77,7 @@ def update_pause_menu():
     background = pygame.image.load("assets/images/status3.png")
     background = pygame.transform.scale_by(background, 0.2)
     background = pygame.transform.rotate(background, 90)
-    background_rect = background.get_rect(center=(320, 180))
+    background_rect = background.get_rect(center=(320 + CONFIG.camera_x, 180 + CONFIG.camera_y))
 
     button_play_image = pygame.image.load("assets/images/button_play.png")
     button_play_image = pygame.transform.scale_by(button_play_image, 0.2)

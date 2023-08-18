@@ -6,6 +6,10 @@ import pygame.constants
 
 class CONST:
     SCREEN_SIZE = [640, 360]
+    """화면 (카메라) 크기 (640x360)"""
+
+    SURFACE_SIZE = [1280, 720]
+    """세계 크기 (1280x720)"""
 
     COL_WHITE = (255, 255, 255)
     COL_BLACK = (0, 0, 0)
@@ -41,8 +45,8 @@ class CONFIG:
     window_size = [1280, 720]  # CONST.WINDOW_SIZE * 2
     window_scale = 2
 
-    surface = pygame.Surface(CONST.SCREEN_SIZE)
-    """크기가 [640, 360]으로 고정된 화면
+    surface = pygame.Surface(CONST.SURFACE_SIZE)
+    """크기가 [1280, 720]으로 고정된 화면
     surface에 렌더링하고 업스케일링 후 screen으로 화면 표시"""
 
     screen = pygame.display.set_mode(window_size)
@@ -69,11 +73,15 @@ class CONFIG:
     game_fps = False
     """FPS를 표시하는가? (디버깅용)"""
 
-    player_x = 0
-    player_y = 0
+    player_x = 200
+    player_y = 225
     player_width = 0
     player_height = 0
     """플레이어 값 (동기화됨)"""
+
+    camera_x = 0
+    camera_y = 0
+    """카메라 좌표 (동기화됨)"""
 
     random: Random = Random(100)
     """랜덤"""
@@ -82,12 +90,19 @@ class CONFIG:
         """
         화면 업스케일링이 적용된 디스플레이 업데이트 기능
         """
+        cropped_screen = pygame.Surface(CONST.SCREEN_SIZE)
+        cropped_screen.blit(CONFIG.surface, (0, 0), ((CONFIG.camera_x, CONFIG.camera_y), CONST.SCREEN_SIZE))
+
         transformed_screen = pygame.transform.scale(
-            CONFIG.surface, CONFIG.window_size
+            cropped_screen, CONFIG.window_size
         )  # 업스케일링
         CONFIG.screen.blit(transformed_screen, (0, 0))  # 화면 표시
 
         pygame.display.update()  # 디스플레이 업데이트
+
+        # 카메라 좌표 업데이트
+        CONFIG.camera_x = max(0, CONFIG.player_x - (CONST.SCREEN_SIZE[0] / 2))
+        CONFIG.camera_y = 0 #min(0, CONFIG.player_y - (CONST.SCREEN_SIZE[1] / 2)) # 음수 좌표는 구현하기 어려워짐
 
     def get_mouse_pos() -> tuple[int, int]:
         """
@@ -101,9 +116,16 @@ class CONFIG:
 
         transformed_mouse_pos = (
             mouse_pos[0] // CONFIG.window_scale,
-            mouse_pos[1] // CONFIG.window_scale,
+            mouse_pos[1] // CONFIG.window_scale
         )
-        return transformed_mouse_pos
+
+        # 월드 좌표 구현에 따른 오프셋 적용
+        transformed_mouse_pos_2 = (
+            transformed_mouse_pos[0] + CONFIG.camera_x,
+            transformed_mouse_pos[1] + CONFIG.camera_y
+        )
+
+        return transformed_mouse_pos_2
 
     def is_interactive() -> bool:
         """플레이어와 상호작용 가능한가?"""
