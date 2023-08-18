@@ -78,7 +78,7 @@ class Ingame:
                                         pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
                                 else:
                                     if not self.player.is_air:  # 다중 점프 금지
-                                        self.player.move_y(10)  # 점프
+                                        self.player.move_y(13)  # 점프
 
                 case pygame.KEYUP:
                     pass
@@ -168,12 +168,12 @@ class Ingame:
             process(process_ingame)
             process_ingame_movement()
 
+            World.process_gravity(self.player, 333)  # 중력 구현
+
             self.spike.render()
 
             self.emilia.render()
             self.player.render()
-
-            World.process_gravity(self.player, 333)  # 중력 구현
 
             #region 사망 이벤트
             if CONFIG.game_dead:

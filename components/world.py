@@ -2,7 +2,7 @@ from .config import CONFIG, debug
 from characters.player import Player
 
 class World:
-    GRAVITY = -28
+    GRAVITY = -40
 
     def __init__():
         pass
@@ -15,7 +15,7 @@ class World:
         GRAVITY_PER_FRAME = World.GRAVITY / fps
         velocity_y = obj.velocity_y + GRAVITY_PER_FRAME
 
-        if obj.get_pos()[1] + obj.height >= floor_y:
+        if obj.get_pos()[1] + obj.height - velocity_y >= floor_y:
             obj.y = floor_y - obj.height
             obj.velocity_y = 0
 
