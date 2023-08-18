@@ -1,19 +1,28 @@
 from .sprite_handler import SpriteHandler
 
+
 class SpriteCollection:
     """다중 스프라이트 지원"""
+
     sprites: dict[str, SpriteHandler]
 
     status: str
-    '''현재 상태 (sprites key)'''
+    """현재 상태 (sprites key)"""
 
     position: tuple
-    '''위치'''
+    """위치"""
 
     size: tuple
-    '''크기'''
+    """크기"""
 
-    def __init__(self, sprites: dict[str, SpriteHandler], status: str, position: tuple, size: tuple = (0, 0), scale: float = 1.0):
+    def __init__(
+        self,
+        sprites: dict[str, SpriteHandler],
+        status: str,
+        position: tuple,
+        size: tuple = (0, 0),
+        scale: float = 1.0,
+    ):
         self.sprites = sprites
         self.status = status
         self.position = position
@@ -41,7 +50,7 @@ class SpriteCollection:
 
     def get_sprite_handler(self) -> SpriteHandler:
         return self.sprites[self.status]
-    
+
     def set_alpha(self, value: int):
         """
         전체 스프라이트의 알파값 수정

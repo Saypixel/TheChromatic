@@ -24,8 +24,9 @@ from components.sprites.sprite import Sprite
 
 from screens.pause_menu import update_pause_menu
 
+
 class Ingame:
-    default: 'Ingame'
+    default: "Ingame"
 
     def __init__(self):
         self.need_to_exit = False
@@ -37,19 +38,33 @@ class Ingame:
         self.button_menu = None
         self.mouse_pos = CONFIG.get_mouse_pos()
 
-        self.player = Player.get_from_sprite(SpriteCollection({
-        'stay': SpriteHandler(Sprite('assets/images/chr_player_stay.png', 4, 1, size=(160, 270)))
-        }, 'stay', position=(200, 225), scale=0.4), True)  # 주인공
+        self.player = Player.get_from_sprite(
+            SpriteCollection(
+                {
+                    "stay": SpriteHandler(
+                        Sprite(
+                            "assets/images/chr_player_stay.png", 4, 1, size=(160, 270)
+                        )
+                    )
+                },
+                "stay",
+                position=(200, 225),
+                scale=0.4,
+            ),
+            True,
+        )  # 주인공
 
-        self.emilia = Player('assets/images/chr_emilia.png', (400, 220), 0.4)  # 에밀리아
+        self.emilia = Player("assets/images/chr_emilia.png", (400, 220), 0.4)  # 에밀리아
 
-        self.sign = Texture('assets/images/sign_big.png', (300, 100), 0.3)
-        self.hp = SpriteHandler(Sprite('assets/images/hp_bar.png', 31, 1, size=(500, 165), scale=0.4))
+        self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.3)
+        self.hp = SpriteHandler(
+            Sprite("assets/images/hp_bar.png", 31, 1, size=(500, 165), scale=0.4)
+        )
 
-        self.spike = Texture('assets/images/object_spike.png', (300, 315), 0.2)
+        self.spike = Texture("assets/images/object_spike.png", (300, 315), 0.2)
 
-        self.background = Texture('assets/images/background.png', (0, 0), 1, True)
-        self.ground = Texture('assets/images/ground.png', (0, 0), 1, True, False)
+        self.background = Texture("assets/images/background.png", (0, 0), 1, True)
+        self.ground = Texture("assets/images/ground.png", (0, 0), 1, True, False)
 
     def update_ingame(self):
         def process_ingame_movement():
@@ -75,9 +90,11 @@ class Ingame:
 
                                     if not TextEvent.dialog_delayed:
                                         self.sign.refresh()
-                                    
+
                                     if not TextEvent.dialog_closed:
-                                        pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
+                                        pygame.time.set_timer(
+                                            CONST.PYGAME_EVENT_DIALOG, 1, 1
+                                        )
                                 else:
                                     if not self.player.is_air:  # 다중 점프 금지
                                         self.player.move_y(13)  # 점프
@@ -102,14 +119,19 @@ class Ingame:
                             self.reload = True
                             self.need_to_exit = True
 
-                        if self.button_menu.check_for_input(self.mouse_pos):  # 메뉴화면으로 나가기
+                        if self.button_menu.check_for_input(
+                            self.mouse_pos
+                        ):  # 메뉴화면으로 나가기
                             self.need_to_exit = True
 
-        TextEvent.dialog = TextCollection([Text('*안녕!*'), Text('나는 에밀리아야.'), Text('*절대 *#하는게 #/아니라구../ 알겠지?')], self.sign.width)
+        TextEvent.dialog = TextCollection(
+            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*절대 *#하는게 #/아니라구../ 알겠지?")],
+            self.sign.width,
+        )
 
         count = 0
 
-        hp_count = 0 # 애니메이션
+        hp_count = 0  # 애니메이션
         last_grace_period = False
 
         while CONFIG.is_running and not self.need_to_exit:
@@ -121,23 +143,29 @@ class Ingame:
             CONFIG.surface.blit(self.background.image.convert(), (0, 0))
             CONFIG.surface.blit(self.ground.image, (0, 0))
 
-            #region 플레이어 움직임
+            # region 플레이어 움직임
             sprite_player = self.player.sprites.get_sprite_handler().sprite
 
-            if (self.player.velocity_x > 0 and sprite_player.flipped) or (self.player.velocity_x < 0 and not sprite_player.flipped):  # 방향이 반대인 경우
-                    sprite_player.flip()
-            #endregion
-            #region 체력
+            if (self.player.velocity_x > 0 and sprite_player.flipped) or (
+                self.player.velocity_x < 0 and not sprite_player.flipped
+            ):  # 방향이 반대인 경우
+                sprite_player.flip()
+            # endregion
+            # region 체력
             self.hp.group.draw(CONFIG.surface)
 
-            if self.spike.is_bound(40, 100) and not GracePeriod.is_grace_period() and CONFIG.is_movable():
+            if (
+                self.spike.is_bound(40, 100)
+                and not GracePeriod.is_grace_period()
+                and CONFIG.is_movable()
+            ):
                 if hp_count == 24:
                     CONFIG.game_dead = True
 
                 hp_count += 6
                 self.player.hp -= 1
                 self.player.move_y(5)
-                
+
                 GracePeriod.update()
                 SFX.ATTACKED.play()
 
@@ -154,17 +182,17 @@ class Ingame:
             if count % 5 == 0:
                 if self.hp.sprite.index < hp_count:  # hp 애니메이션 동기화
                     self.hp.group.update()
-            #endregion
-            #region 대화
-            if not TextEvent.dialog_closed: 
+            # endregion
+            # region 대화
+            if not TextEvent.dialog_closed:
                 self.emilia.speech(self.sign)
             else:
                 self.emilia.unspeech()
-            #endregion
+            # endregion
 
             if count == 10:
                 count = 0
-                
+
                 sprite_player.update()
 
             process(process_ingame)
@@ -177,48 +205,81 @@ class Ingame:
             self.emilia.render()
             self.player.render()
 
-            #region 사망 이벤트
+            # region 사망 이벤트
             if CONFIG.game_dead:  # 최적화
                 if self.dead_background is None:
-                    self.dead_background = pygame.image.load('assets/images/status3.png')
-                    self.dead_background = pygame.transform.rotate(self.dead_background, 90)
-                    self.dead_background = pygame.transform.scale_by(self.dead_background, 0.25)
-                    self.dead_background = pygame.transform.scale(self.dead_background, (self.dead_background.get_width() + 20, self.dead_background.get_height() - 20))
+                    self.dead_background = pygame.image.load(
+                        "assets/images/status3.png"
+                    )
+                    self.dead_background = pygame.transform.rotate(
+                        self.dead_background, 90
+                    )
+                    self.dead_background = pygame.transform.scale_by(
+                        self.dead_background, 0.25
+                    )
+                    self.dead_background = pygame.transform.scale(
+                        self.dead_background,
+                        (
+                            self.dead_background.get_width() + 20,
+                            self.dead_background.get_height() - 20,
+                        ),
+                    )
 
                 if self.dead_text is None:
-                    self.dead_text = Font(Fonts.TITLE2, 40).render('죽었다이', (255, 255, 255))
+                    self.dead_text = Font(Fonts.TITLE2, 40).render(
+                        "죽었다이", (255, 255, 255)
+                    )
 
                 if self.button_retry is None:
-                    button_retry_image = pygame.image.load('assets/images/menu_play_rect.png')
-                    button_retry_image = pygame.transform.scale(button_retry_image, (150, 50))
+                    button_retry_image = pygame.image.load(
+                        "assets/images/menu_play_rect.png"
+                    )
+                    button_retry_image = pygame.transform.scale(
+                        button_retry_image, (150, 50)
+                    )
 
-                    self.button_retry = Button(image=button_retry_image, pos=(320, 220),
-                                            text_input='재도전', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
-                                            hovering_color='White')
+                    self.button_retry = Button(
+                        image=button_retry_image,
+                        pos=(320, 220),
+                        text_input="재도전",
+                        font=Font(Fonts.TITLE2, 30).to_pygame(),
+                        base_color="#ffffff",
+                        hovering_color="White",
+                    )
 
                 if self.button_menu is None:
-                    button_menu_image = pygame.image.load('assets/images/menu_play_rect.png')
-                    button_menu_image = pygame.transform.scale(button_retry_image, (210, 50))
+                    button_menu_image = pygame.image.load(
+                        "assets/images/menu_play_rect.png"
+                    )
+                    button_menu_image = pygame.transform.scale(
+                        button_retry_image, (210, 50)
+                    )
 
-                    
-                    self.button_menu = Button(image=button_menu_image, pos=(320, 280),
-                                            text_input='메뉴 화면으로', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
-                                            hovering_color='White')
+                    self.button_menu = Button(
+                        image=button_menu_image,
+                        pos=(320, 280),
+                        text_input="메뉴 화면으로",
+                        font=Font(Fonts.TITLE2, 30).to_pygame(),
+                        base_color="#ffffff",
+                        hovering_color="White",
+                    )
 
                 CONFIG.surface.blit(self.dead_background, (180, 120))
-                CONFIG.surface.blit(self.dead_text, self.dead_text.get_rect(center=(320, 160)))
+                CONFIG.surface.blit(
+                    self.dead_text, self.dead_text.get_rect(center=(320, 160))
+                )
 
                 for button in [self.button_retry, self.button_menu]:
                     button.change_color(self.mouse_pos)
                     button.update(CONFIG.surface)
-            #endregion
-            #region FPS 표시
+            # endregion
+            # region FPS 표시
             if CONFIG.game_fps:
                 fps = round(CONFIG.clock.get_fps(), 1)
                 fps_text = Font(Fonts.TITLE3, 20).render(str(fps), (255, 255, 255))
 
                 CONFIG.surface.blit(fps_text, (585, 10))
-            #endregion
+            # endregion
 
             CONFIG.update_screen()
 
