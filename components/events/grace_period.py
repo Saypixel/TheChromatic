@@ -1,26 +1,36 @@
 from datetime import datetime
+import pygame
 
-from components.config import debug
-
+from components.config import CONFIG, debug
+from components.sprites.sprite import Sprite
 
 class GracePeriod:
     """무적 시간"""
-
-    period = 3000  # 무적시간: 3000ms
+    period: int # 무적시간 (ms)
 
     last_graced: datetime = datetime(2023, 1, 1, 12, 0, 0)
 
-    @classmethod
-    def is_grace_period(cls) -> bool:
+    lasted = False
+    '''전 프레임에서는 무적시간이였는가?'''
+
+    def __init__(self, period = 3000):
+        self.period = period
+
+    def is_grace_period(self) -> bool:
         """
         무적 시간인가?
         """
-        delta = datetime.now() - cls.last_graced
-        return delta.total_seconds() * 1000.0 < cls.period
+        delta = datetime.now() - self.last_graced
+        return delta.total_seconds() * 1000.0 < self.period
 
-    @classmethod
-    def update(cls):
+    def update(self):
         """
         무적 시간을 현재 시간으로 업데이트
         """
-        cls.last_graced = datetime.now()
+        self.last_graced = datetime.now()
+
+    def make_it_ui(self, image: Sprite | pygame.Surface):
+        """무적 시간인 것을 UI로 보여줍니다. (Alpha값 임의 설정)"""
+        
+        alpha = CONFIG.random.randint(50, 200)
+        image.set_alpha(alpha)

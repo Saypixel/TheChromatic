@@ -3,6 +3,7 @@ from random import Random
 import pygame
 
 from characters.player import Player
+from characters.enemy import Enemy
 from characters.texture import Texture
 
 from components.button import Button
@@ -38,6 +39,7 @@ class Ingame:
         self.button_menu = None
         self.mouse_pos = CONFIG.get_mouse_pos()
 
+        # 주인공
         self.player = Player.get_from_sprite(
             SpriteCollection(
                 {
@@ -52,19 +54,34 @@ class Ingame:
                 scale=0.4,
             ),
             True,
-        )  # 주인공
+        )
+        self.player.grace_period = GracePeriod()
 
+        # 장애물
+        self.spike = Texture("assets/images/object_spike.png", (300, 315), 0.2)
+        self.obstacles = [self.spike]
+
+        # 적
+        self.enemy = Enemy("assets/images/chr_raon.png", (500, 250), 0.4)
+        self.enemies = [self.enemy]
+
+        for enemy in self.enemies:
+            enemy.grace_period = GracePeriod(1000)
+            enemy.hp = 2
+
+        # NPC
         self.emilia = Player("assets/images/chr_emilia.png", (400, 220), 0.4)  # 에밀리아
+        self.NPCs = [self.emilia]
 
+        # 기타 아이템
         self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.3)
         self.hp = SpriteHandler(
             Sprite("assets/images/hp_bar.png", 31, 1, size=(500, 165), scale=0.4)
         )
 
-        self.spike = Texture("assets/images/object_spike.png", (300, 315), 0.2)
-
-        self.background = Texture("assets/images/background.png", (0, 0), 1, True)
-        self.ground = Texture("assets/images/ground.png", (0, 0), 1, True, False)
+        # 배경
+        self.background = Texture("assets/images/background.png", (0, 0), 1, fit=True)
+        self.ground = Texture("assets/images/ground.png", (0, 0), 1, fit=True)
 
     def update_ingame(self):
         def process_ingame_movement():
@@ -99,6 +116,15 @@ class Ingame:
                                     if not self.player.is_air:  # 다중 점프 금지
                                         self.player.move_y(13)  # 점프
 
+                            case pygame.K_j:  # 기본 공격
+                                #SFX.ATTACK.play()
+
+                                for enemy in self.enemies:
+                                    if enemy.is_bound(80, 100) and not enemy.grace_period.is_grace_period():
+                                        enemy.hp -= 1
+                                        enemy.grace_period.update()
+                                        SFX.ENEMY_ATTACKED.play()
+
                 case pygame.KEYUP:
                     pass
                     if CONFIG.is_interactive():
@@ -125,14 +151,13 @@ class Ingame:
                             self.need_to_exit = True
 
         TextEvent.dialog = TextCollection(
-            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*절대 *#하는게 #/아니라구../ 알겠지?")],
+            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*J키*는 #기본공격#이야!"), Text("그럼 즐거운 여행되길 바래/../!")],
             self.sign.width,
         )
 
         count = 0
 
         hp_count = 0  # 애니메이션
-        last_grace_period = False
 
         while CONFIG.is_running and not self.need_to_exit:
             CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
@@ -145,20 +170,35 @@ class Ingame:
 
             # region 플레이어 움직임
             sprite_player = self.player.sprites.get_sprite_handler().sprite
-
-            if (self.player.velocity_x > 0 and sprite_player.flipped) or (
-                self.player.velocity_x < 0 and not sprite_player.flipped
-            ):  # 방향이 반대인 경우
-                sprite_player.flip()
+            self.player.apply_movement_flipped(sprite_player)
             # endregion
-            # region 체력
+            # region 장애물, 적, 중력 관련 이벤트
+            self.player.check_if_attacked(self.spike.is_bound(40, 100))
+ 
+            for enemy in self.enemies:
+                enemy.apply_movement_flipped(enemy.image)
+
+                if enemy.hp == 0:
+                    enemy_surface = self.enemy.get_surface_or_sprite()
+                    enemy_alpha = enemy_surface.get_alpha()
+                    reduced = 20
+                    enemy_next_alpha = max(0, enemy_alpha - reduced)
+
+                    enemy_surface.set_alpha(enemy_next_alpha)
+
+                    if enemy_next_alpha == 0:  # 적 사망
+                        index = self.enemies.index(enemy)
+                        self.enemies.pop(index)
+                
+                enemy.follow_player(self.obstacles)
+                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0)
+
+            World.process_gravity(self.enemies + [self.player], 333)  # 중력 구현
+            # endregion
+            # region 체력 + 공격
             self.hp.group.draw(CONFIG.surface)
 
-            if (
-                self.spike.is_bound(40, 100)
-                and not GracePeriod.is_grace_period()
-                and CONFIG.is_movable()
-            ):
+            if self.player.attacked:
                 if hp_count == 24:
                     CONFIG.game_dead = True
 
@@ -166,18 +206,23 @@ class Ingame:
                 self.player.hp -= 1
                 self.player.move_y(5)
 
-                GracePeriod.update()
+                self.player.grace_period.update()
                 SFX.ATTACKED.play()
 
-            if GracePeriod.is_grace_period():  # 무적시간인 경우
-                alpha = CONFIG.random.randint(50, 200)
-                sprite_player.set_alpha(alpha)
+                self.player.attacked = False
 
-                last_grace_period = True
-            elif last_grace_period:
-                sprite_player.set_alpha(255)
+            # 무적 시간
+            for player in self.enemies + [self.player]:
+                if player.grace_period is not None:
+                    image = player.get_surface_or_sprite()
 
-                last_grace_period = False
+                    if player.grace_period.is_grace_period():  # 무적시간인 경우
+                        player.grace_period.make_it_ui(image)
+                        player.grace_period.lasted = True
+
+                    elif player.grace_period.lasted:
+                        image.set_alpha(255)  # 무적 시간이 아니므로 복귀
+                        player.grace_period.lasted = False
 
             if count % 5 == 0:
                 if self.hp.sprite.index < hp_count:  # hp 애니메이션 동기화
@@ -198,11 +243,17 @@ class Ingame:
             process(process_ingame)
             process_ingame_movement()
 
-            World.process_gravity(self.player, 333)  # 중력 구현
-
+            # 장애물
             self.spike.render()
 
+            # NPC
             self.emilia.render()
+
+            # 적
+            for enemy in self.enemies:
+                enemy.render()
+
+            # 플레이어
             self.player.render()
 
             # region 사망 이벤트
@@ -272,6 +323,13 @@ class Ingame:
                 for button in [self.button_retry, self.button_menu]:
                     button.change_color(self.mouse_pos)
                     button.update(CONFIG.surface)
+
+                # 흐려지며 사라지다 (Fade Out)
+                sprite = self.player.sprites.get_sprite_handler().sprite
+                reduced = 10
+                alpha_next = max(0, sprite.alpha - reduced)
+
+                sprite.set_alpha(alpha_next)
             # endregion
             # region FPS 표시
             if CONFIG.game_fps:

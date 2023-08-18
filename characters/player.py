@@ -36,6 +36,31 @@ class Player(Character):
         if self.is_playable:
             CONFIG.player_y = self.y
 
+    def apply_movement_flipped(self, image: SpriteCollection | SpriteHandler | Sprite | pygame.Surface):
+        """객체 움직임 적용 (다중 스프라이트, 단일 스프라이트, 단일 이미지 지원)"""
+        sprite: Sprite = None
+        surface: pygame.Surface = None
+
+        if isinstance(image, SpriteCollection):
+            sprite = image.get_sprite_handler().sprite
+        elif isinstance(image, SpriteHandler):
+            sprite = image.sprite
+        elif isinstance(image, Sprite):
+            sprite = image
+        elif isinstance(image, pygame.Surface):
+            surface = image
+
+        if sprite is not None:
+            if (self.velocity_x > 0 and sprite.flipped) or (
+                self.velocity_x < 0 and not sprite.flipped
+            ):  # 방향이 반대인 경우
+                sprite.flip()
+        elif surface is not None:
+            if (self.velocity_x > 0 and self.image_flipped) or (
+                self.velocity_x < 0 and not self.image_flipped
+            ):  # 방향이 반대인 경우
+                self.flip_image()
+
     @classmethod
     def get_from_sprite(cls, sprites: SpriteCollection, is_playable=False) -> "Player":
         """

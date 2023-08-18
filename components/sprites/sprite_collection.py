@@ -15,6 +15,9 @@ class SpriteCollection:
     size: tuple
     """크기"""
 
+    alpha = 255
+    """투명도"""
+
     def __init__(
         self,
         sprites: dict[str, SpriteHandler],
@@ -50,12 +53,16 @@ class SpriteCollection:
 
     def get_sprite_handler(self) -> SpriteHandler:
         return self.sprites[self.status]
+    
+    def get_alpha(self) -> int:
+        return self.alpha
 
     def set_alpha(self, value: int):
         """
         전체 스프라이트의 알파값 수정
         :param value: 0~255
         """
+        self.alpha = value
 
         for key in self.sprites:
             self.sprites[key].sprite.set_alpha(value)

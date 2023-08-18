@@ -9,6 +9,7 @@ class Sprite(pygame.sprite.Sprite):
     size: tuple
 
     flipped = False
+    alpha = 255
 
     def __init__(
         self,
@@ -68,6 +69,8 @@ class Sprite(pygame.sprite.Sprite):
         self.rect = (position, self.size)
 
     def set_alpha(self, alpha: int):
+        self.alpha = alpha
+        
         for image in self.images:
             image.set_alpha(alpha)
 
