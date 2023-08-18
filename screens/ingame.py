@@ -57,6 +57,18 @@ class Ingame:
         )
         self.player.grace_period = GracePeriod()
 
+        # FX
+        self.fx = SpriteCollection({
+            "attack": SpriteHandler(
+                Sprite(
+                    "assets/images/fx_attack.png", 9, 1, size=(150, 150)
+                )
+            )
+        },
+        "attack",
+        position=(200, 225),
+        scale=0.6)
+
         # 장애물
         self.spike = Texture("assets/images/object_spike.png", (300, 315), 0.2)
         self.obstacles = [self.spike]
@@ -117,7 +129,8 @@ class Ingame:
                                         self.player.move_y(13)  # 점프
 
                             case pygame.K_j:  # 기본 공격
-                                #SFX.ATTACK.play()
+                                self.player.attack = True
+                                SFX.ATTACK.play()
 
                                 for enemy in self.enemies:
                                     if enemy.is_bound(80, 100) and not enemy.grace_period.is_grace_period():
@@ -145,13 +158,11 @@ class Ingame:
                             self.reload = True
                             self.need_to_exit = True
 
-                        if self.button_menu.check_for_input(
-                            self.mouse_pos
-                        ):  # 메뉴화면으로 나가기
+                        if self.button_menu.check_for_input(self.mouse_pos):  # 메뉴화면으로 나가기
                             self.need_to_exit = True
 
         TextEvent.dialog = TextCollection(
-            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*J키*는 #기본공격#이야!"), Text("그럼 즐거운 여행되길 바래/../!")],
+            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*J키*는 #기본공격#이야!"), Text("그럼 즐거운 여행되길 바래!")],
             self.sign.width,
         )
 
@@ -172,13 +183,20 @@ class Ingame:
             sprite_player = self.player.sprites.get_sprite_handler().sprite
             self.player.apply_movement_flipped(sprite_player)
             # endregion
-            # region 장애물, 적, 중력 관련 이벤트
+            # region FX
+            fx_sprite = self.fx.get_sprite_handler().sprite
+            fx_x = self.player.x + (10 if not fx_sprite.flipped else -40)
+            
+            self.fx.set_pos((fx_x, self.player.y))
+            self.player.apply_movement_flipped(fx_sprite)  # 플레이어 움직임에 따라서 FX 움직임 동기화
+            # endregion
+            # region 장애물, 적, 중력
             self.player.check_if_attacked(self.spike.is_bound(40, 100))
  
             for enemy in self.enemies:
                 enemy.apply_movement_flipped(enemy.image)
 
-                if enemy.hp == 0:
+                if enemy.hp <= 0:
                     enemy_surface = self.enemy.get_surface_or_sprite()
                     enemy_alpha = enemy_surface.get_alpha()
                     reduced = 20
@@ -195,10 +213,10 @@ class Ingame:
 
             World.process_gravity(self.enemies + [self.player], 333)  # 중력 구현
             # endregion
-            # region 체력 + 공격
+            # region 체력 + 피공격
             self.hp.group.draw(CONFIG.surface)
 
-            if self.player.attacked:
+            if self.player.attacked:  # 공격을 받은 경우
                 if hp_count == 24:
                     CONFIG.game_dead = True
 
@@ -256,6 +274,18 @@ class Ingame:
             # 플레이어
             self.player.render()
 
+            # region 공격
+            if self.player.attack:  # 공격을 한 경우
+                if self.fx.status != "attack":
+                    self.fx.status = "attack"
+                handler = self.fx.get_sprite_handler()
+
+                if handler.sprite.index != handler.sprite.length - 1:
+                    handler.group.draw(CONFIG.surface)
+                else:
+                    self.player.attack = False
+                handler.sprite.update()
+            # endregion
             # region 사망 이벤트
             if CONFIG.game_dead:  # 최적화
                 if self.dead_background is None:

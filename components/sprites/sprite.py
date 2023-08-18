@@ -4,6 +4,7 @@ from components.config import debug
 
 class Sprite(pygame.sprite.Sprite):
     images: list[pygame.Surface]
+    length: int
     rect: pygame.Rect
     position: tuple
     size: tuple
@@ -33,6 +34,7 @@ class Sprite(pygame.sprite.Sprite):
         self.position = position
         self.size = (scale_x, scale_y)
         self.images = [pygame.transform.scale(image, self.size) for image in images]
+        self.length = len(self.images)
         self.rect = (position, self.size)
 
         # 캐릭터의 첫번째 이미지
@@ -55,6 +57,7 @@ class Sprite(pygame.sprite.Sprite):
         image = pygame.transform.scale(image, self.size)
 
         self.images.append(image)
+        self.length = len(self.images)
 
     def flip(self):
         self.images = [
@@ -85,12 +88,11 @@ class Sprite(pygame.sprite.Sprite):
         self.images = [
             pygame.transform.scale(image, self.size) for image in self.images
         ]
+        self.length = len(self.images)
         self.rect = (self.position, self.size)
 
         # 캐릭터의 현재 이미지 (동기화)
-        self.image = self.images[
-            self.index
-        ]  # 'image' is the current image of the animation.
+        self.image = self.images[self.index]  # 'image' is the current image of the animation.
 
     def strip_from_sheet(
         self,

@@ -29,6 +29,9 @@ class Character(ABC):
     hp = 5
     """플레이어의 체력"""
 
+    attack = False
+    """플레이어가 공격을 했는가?"""
+
     attacked = False
     """플레이어가 공격을 받았는가?"""
 
