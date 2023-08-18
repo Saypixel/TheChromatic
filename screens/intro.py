@@ -36,6 +36,7 @@ def update():
         if now - last >= cooldown:
             if colon_count == 4:
                 update_menu()
+                reload()
                 return
         
             last = now
@@ -43,19 +44,12 @@ def update():
         
             colon_count += 1
         # endregion
-        # region 인트로 : 정적
+        
         menu_title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)
         rect_menu = menu_title.get_rect(center=(320, 180))
 
         CONFIG.surface.blit(menu_title, rect_menu)
         CONFIG.update_screen()
-
-        if now - last >= cooldown:
-            update_menu()
-            reload()
-            return
-
-        # endregion
 
         process()
 
