@@ -13,6 +13,7 @@ class Font:
     def get_dialog(self) -> pygame.font.Font:
         return pygame.font.Font(self.font.DIALOG.value, self.size)
 
-    def render(self, text: str,
-               color: tuple[int, int, int]) -> pygame.Surface | pygame.SurfaceType:
+    def render(
+        self, text: str, color: tuple[int, int, int]
+    ) -> pygame.Surface | pygame.SurfaceType:
         return pygame.font.Font(self.font.value, self.size).render(text, False, color)

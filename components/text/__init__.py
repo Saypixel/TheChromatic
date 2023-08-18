@@ -5,31 +5,32 @@ from .mutual_text import MutualText
 from ..font import Font
 from ..config import debug
 
-__all__ = ['Text', 'MutualText', 'TextCollection']
+__all__ = ["Text", "MutualText", "TextCollection"]
+
 
 class Text:
-    raw: str = ''
-    '''날 것의 텍스트. 접두어 포함'''
+    raw: str = ""
+    """날 것의 텍스트. 접두어 포함"""
 
-    pure: str = ''
-    '''순수 텍스트. 접두어 미포함'''
+    pure: str = ""
+    """순수 텍스트. 접두어 미포함"""
 
     has_prefix: bool = False
-    '''접두어가 포함되어있는가?'''
+    """접두어가 포함되어있는가?"""
 
     texts: List[MutualText]
-    '''텍스트 리스트 (상호작용 배열)'''
+    """텍스트 리스트 (상호작용 배열)"""
 
     index: int = 0
-    '''텍스트 리스트 index (상호작용 배열)'''
+    """텍스트 리스트 index (상호작용 배열)"""
 
     delay: int = 30
-    '''기본 지연 시간 (ms)'''
+    """기본 지연 시간 (ms)"""
 
     position: tuple[int, int] = (0, 0)
-    '''텍스트 절대좌표값 (TextCollection에서 상속)'''
+    """텍스트 절대좌표값 (TextCollection에서 상속)"""
 
-    '''
+    """
     https://gist.github.com/ihoneymon/652be052a0727ad59601 : 일부 문법은 깃허브 마크다운 문법을 참조하였습니다.
 
     * : 굵게
@@ -37,7 +38,7 @@ class Text:
     / : 작게
     ^ : 흔들리게 (미지원)
     < : New Line
-    '''
+    """
 
     def __init__(self, text: str, delay: Optional[int] = 30):
         """
@@ -50,35 +51,42 @@ class Text:
         self.pure = text  # 일단 저장. 어차피 replace() 함수를 통해 접두어를 제거하기 때문.
         self.delay = delay
 
-        for prefix in ['*', '#', '/', '^']:
+        for prefix in ["*", "#", "/", "^"]:
             if prefix in self.pure:
                 self.has_prefix = True
-                self.pure = self.pure.replace(prefix, '')
+                self.pure = self.pure.replace(prefix, "")
 
         is_started = False
-        mutual_text_ = ''
-        prefix = ''
+        mutual_text_ = ""
+        prefix = ""
 
         for ch in self.raw:
             match ch:
-                case '*' | '#' | '/' | '^':
+                case "*" | "#" | "/" | "^":
                     is_started = not is_started
 
                     if mutual_text_:  # mutual text가 비어있지 않은 경우
                         mutual = MutualText(mutual_text_, prefix, delay)
-                        mutual_text_ = ''
+                        mutual_text_ = ""
                         self.texts.append(mutual)
 
-                    prefix = ch if is_started else ''
+                    prefix = ch if is_started else ""
 
                 case _:
                     mutual_text_ += ch
 
         if mutual_text_:  # mutual text가 비어있지 않은 경우
-            mutual = MutualText(mutual_text_, '', delay)
+            mutual = MutualText(mutual_text_, "", delay)
             self.texts.append(mutual)
 
-    def write(self, mutual: MutualText, index: int, text_position: tuple[int, int], char_position: tuple[int, int], surface: pygame.Surface) -> tuple[int, int]:
+    def write(
+        self,
+        mutual: MutualText,
+        index: int,
+        text_position: tuple[int, int],
+        char_position: tuple[int, int],
+        surface: pygame.Surface,
+    ) -> tuple[int, int]:
         """
         특정 문자를 렌더링 (출력)합니다.
         :param mutual: 상호작용 테스트
@@ -96,19 +104,19 @@ class Text:
         px = 0
 
         match mutual.prefix:
-            case '*':
+            case "*":
                 font = Fonts.TITLE3
-            case '#':
+            case "#":
                 font = Fonts.TITLE2
                 pt += 2
-            case '/':
+            case "/":
                 font = Fonts.TITLE2
                 pt -= 3
 
         px = pt / 3.0 * 4.0
         chs = mutual.text[index]
 
-        if chs == '<':
+        if chs == "<":
             ch_x = text_position[0]
             ch_y += px
         else:
@@ -119,7 +127,9 @@ class Text:
 
         return (ch_x, ch_y)
 
-    def write_until_next(self, position: tuple[int, int], surface: pygame.Surface) -> int:
+    def write_until_next(
+        self, position: tuple[int, int], surface: pygame.Surface
+    ) -> int:
         """
         진행 중인 텍스트를 렌더링 (출력)합니다.
         :param position: 화면 위치
@@ -128,7 +138,7 @@ class Text:
         """
         ch_x = position[0]
         ch_y = position[1]
-        mutual = MutualText('', '', 0)
+        mutual = MutualText("", "", 0)
 
         for i in range(0, self.index + 1):
             mutual = self.texts[i]
@@ -141,7 +151,10 @@ class Text:
         last_mutual = self.texts[len(self.texts) - 1]
 
         # 애니메이션이 완료된 텍스트가 렌더링이 다 된 경우
-        if self.index == len(self.texts) - 1 and last_mutual.index == len(last_mutual.text) - 1:
+        if (
+            self.index == len(self.texts) - 1
+            and last_mutual.index == len(last_mutual.text) - 1
+        ):
             return -1
 
         return mutual.delay
@@ -179,5 +192,5 @@ class Text:
             mutual.index = len(mutual.text) - 1
 
     def print_index(self):
-        '''(디버깅용) index 출력'''
+        """(디버깅용) index 출력"""
         debug("(" + str(self.index) + ", " + str(self.texts[self.index].index) + ")")

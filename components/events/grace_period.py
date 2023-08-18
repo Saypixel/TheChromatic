@@ -2,8 +2,10 @@ from datetime import datetime
 
 from components.config import debug
 
+
 class GracePeriod:
     """무적 시간"""
+
     period = 3000  # 무적시간: 3000ms
 
     last_graced: datetime = datetime(2023, 1, 1, 12, 0, 0)
@@ -15,7 +17,7 @@ class GracePeriod:
         """
         delta = datetime.now() - cls.last_graced
         return delta.total_seconds() * 1000.0 < cls.period
-    
+
     @classmethod
     def update(cls):
         """

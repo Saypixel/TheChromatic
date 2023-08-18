@@ -3,6 +3,7 @@ import pygame
 
 from ..config import CONFIG, CONST, debug
 
+
 def update_screen_resolution():
     """
     화면 해상도 업데이트
@@ -11,6 +12,7 @@ def update_screen_resolution():
         CONFIG.screen = pygame.display.set_mode(CONFIG.window_size, pygame.FULLSCREEN)
     else:
         CONFIG.screen = pygame.display.set_mode(CONFIG.window_size)
+
 
 def process(f=None):
     """
@@ -23,7 +25,7 @@ def process(f=None):
             case pygame.QUIT:  # 게임 종료 이벤트 발생 시
                 CONFIG.is_running = False
 
-            case pygame.KEYDOWN: # 키를 눌렸을 때
+            case pygame.KEYDOWN:  # 키를 눌렸을 때
                 match event.key:
                     case pygame.KMOD_ALT | pygame.K_F4:  # ALT + F4
                         CONFIG.is_running = False

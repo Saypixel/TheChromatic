@@ -1,6 +1,6 @@
 class MutualText:
-    text = ''
-    prefix = ''
+    text = ""
+    prefix = ""
     delay = 1
 
     index = 0

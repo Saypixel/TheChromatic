@@ -6,11 +6,12 @@ from components.font import Font
 from components.sfx_collection import SFX
 from screens.menu import update_menu
 
+
 def update():
     cooldown = 1000  # ms
     last = pygame.time.get_ticks()
 
-    text = 'Saypixel'
+    text = "Saypixel"
     colon_count = 1
 
     SFX.INTRO.play()
@@ -38,10 +39,10 @@ def update():
                 update_menu()
                 reload()
                 return
-        
+
             last = now
-            text = 'Saypixel' + '.' * colon_count
-        
+            text = "Saypixel" + "." * colon_count
+
             colon_count += 1
         # endregion
         
@@ -53,12 +54,13 @@ def update():
 
         process()
 
+
 def reload():
     import screens.menu
 
     if screens.menu.reload:
         screens.menu.reload = False
-        
+
         pygame.mixer.music.stop()
 
         pygame.mixer.pause()

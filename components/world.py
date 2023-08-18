@@ -1,6 +1,7 @@
 from .config import CONFIG, debug
 from characters.player import Player
 
+
 class World:
     GRAVITY = -40
 

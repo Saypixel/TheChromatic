@@ -6,20 +6,21 @@ from components.text import Text
 from components.text.text_collection import TextCollection
 from components.text.mutual_text import MutualText
 
+
 class TextEvent(object):
-# 인게임 내에서 처리될 공통 텍스트 이벤트
+    # 인게임 내에서 처리될 공통 텍스트 이벤트
 
     dialog_delayed = False
-    '''대화창의 텍스트 출력이 지연되었는가? (REFRESH 이슈 대응)'''
+    """대화창의 텍스트 출력이 지연되었는가? (REFRESH 이슈 대응)"""
 
     dialog_paused = True
-    '''대화창의 텍스트 출력이 완성되었는가?'''
+    """대화창의 텍스트 출력이 완성되었는가?"""
 
     dialog_closed = True
-    '''대화창 텍스트가 닫혀있는가?'''
+    """대화창 텍스트가 닫혀있는가?"""
 
     dialog: TextCollection
-    '''대화창 (Text 배열)'''
+    """대화창 (Text 배열)"""
 
     @classmethod
     def process_next_event(cls):
@@ -40,7 +41,6 @@ class TextEvent(object):
                     cls.dialog.reset_text_index()
                     cls.dialog_paused = True
                 cls.dialog_delayed = False
-            
 
         else:
             cls.dialog.current.jump_to_last_index()
@@ -52,7 +52,7 @@ class TextEvent(object):
     #     # 애니메이션 이벤트 구현
     #     if surface is None:
     #          surface = CONFIG.surface
-        
+
     #     if cls.dialog_delayed or cls.dialog_paused:  # 대화창이 지연되었거나 완성된 경우
     #         cls.dialog.current.write_until_next(cls.dialog.position, surface)  # 완성된 텍스트를 화면에 출력
     #     else:
@@ -81,7 +81,9 @@ class TextEvent(object):
                 return
 
             mutual = cls.dialog.current.texts[i]
-            new_ch_pos = cls.dialog.current.write(mutual, j, cls.dialog.position, (ch_x, ch_y), surface)
+            new_ch_pos = cls.dialog.current.write(
+                mutual, j, cls.dialog.position, (ch_x, ch_y), surface
+            )
             ch_x = new_ch_pos[0]
             ch_y = new_ch_pos[1]
 
@@ -107,4 +109,4 @@ class TextEvent(object):
     def process_animation_next_event(cls):
         # 애니메이션 다음 글자 이벤트 구현
         if cls.dialog.current.jump_to_next_index(False):  # 다음 텍스트 진행
-                    cls.dialog_delayed = False
+            cls.dialog_delayed = False
