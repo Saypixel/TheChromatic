@@ -31,6 +31,8 @@ class Ingame:
         self.need_to_exit = False
         self.reload = False
 
+        self.dead_background = None
+        self.dead_text = None
         self.button_retry = None
         self.button_menu = None
         self.mouse_pos = CONFIG.get_mouse_pos()
@@ -176,29 +178,35 @@ class Ingame:
             self.player.render()
 
             #region 사망 이벤트
-            if CONFIG.game_dead:
-                dead_background = pygame.image.load('assets/images/status3.png')
-                dead_background = pygame.transform.rotate(dead_background, 90)
-                dead_background = pygame.transform.scale_by(dead_background, 0.25)
-                dead_background = pygame.transform.scale(dead_background, (dead_background.get_width() + 20, dead_background.get_height() - 20))
+            if CONFIG.game_dead:  # 최적화
+                if self.dead_background is None:
+                    self.dead_background = pygame.image.load('assets/images/status3.png')
+                    self.dead_background = pygame.transform.rotate(self.dead_background, 90)
+                    self.dead_background = pygame.transform.scale_by(self.dead_background, 0.25)
+                    self.dead_background = pygame.transform.scale(self.dead_background, (self.dead_background.get_width() + 20, self.dead_background.get_height() - 20))
 
-                dead = Font(Fonts.TITLE2, 40).render('죽었다이', (255, 255, 255))
+                if self.dead_text is None:
+                    self.dead_text = Font(Fonts.TITLE2, 40).render('죽었다이', (255, 255, 255))
 
-                button_retry_image = pygame.image.load('assets/images/menu_play_rect.png')
-                button_retry_image = pygame.transform.scale(button_retry_image, (150, 50))
+                if self.button_retry is None:
+                    button_retry_image = pygame.image.load('assets/images/menu_play_rect.png')
+                    button_retry_image = pygame.transform.scale(button_retry_image, (150, 50))
 
-                button_menu_image = pygame.image.load('assets/images/menu_play_rect.png')
-                button_menu_image = pygame.transform.scale(button_retry_image, (210, 50))
+                    self.button_retry = Button(image=button_retry_image, pos=(320, 220),
+                                            text_input='재도전', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
+                                            hovering_color='White')
 
-                self.button_retry = Button(image=button_retry_image, pos=(320, 220),
-                                           text_input='재도전', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
-                                           hovering_color='White')
-                self.button_menu = Button(image=button_menu_image, pos=(320, 280),
-                                           text_input='메뉴 화면으로', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
-                                           hovering_color='White')
+                if self.button_menu is None:
+                    button_menu_image = pygame.image.load('assets/images/menu_play_rect.png')
+                    button_menu_image = pygame.transform.scale(button_retry_image, (210, 50))
 
-                CONFIG.surface.blit(dead_background, (180, 120))
-                CONFIG.surface.blit(dead, dead.get_rect(center=(320, 160)))
+                    
+                    self.button_menu = Button(image=button_menu_image, pos=(320, 280),
+                                            text_input='메뉴 화면으로', font=Font(Fonts.TITLE2, 30).to_pygame(), base_color='#ffffff',
+                                            hovering_color='White')
+
+                CONFIG.surface.blit(self.dead_background, (180, 120))
+                CONFIG.surface.blit(self.dead_text, self.dead_text.get_rect(center=(320, 160)))
 
                 for button in [self.button_retry, self.button_menu]:
                     button.change_color(self.mouse_pos)
