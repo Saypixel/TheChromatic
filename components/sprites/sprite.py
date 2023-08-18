@@ -43,9 +43,9 @@ class Sprite(pygame.sprite.Sprite):
             self.index
         ]  # 'image' is the current image of the animation.
 
-    def update(self, start=0):
+    def update(self, start=0, added_index = 1):
         # update를 통해 캐릭터의 이미지가 계속 반복해서 나타나도록 한다.
-        self.index += 1
+        self.index += added_index
 
         if self.index >= len(self.images):
             self.index = start

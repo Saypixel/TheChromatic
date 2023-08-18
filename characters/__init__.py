@@ -35,6 +35,9 @@ class Character(ABC):
     attacked = False
     """플레이어가 공격을 받았는가?"""
 
+    healed = False
+    """플레이어가 체력 회복을 했는가?"""
+
     velocity_x = 0.0
     """플레이어의 속도 (X)"""
 

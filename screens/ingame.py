@@ -87,10 +87,21 @@ class Ingame:
 
         # 기타 아이템
         self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.3)
-        self.hp = SpriteHandler(
-            Sprite("assets/images/hp_bar.png", 31, 1, size=(500, 165), scale=0.4)
-        )
-
+        self.hp = SpriteCollection({
+            "attacked": SpriteHandler(
+                Sprite(
+                    "assets/images/hp_bar.png", 31, 1, size=(500, 165)
+                    )),
+            "healed": SpriteHandler(
+                Sprite(
+                    "assets/images/hp_bar_heal.png", 8, 1, size=(500, 165)
+                       ))
+            },
+            "attacked",
+            position=(0, 0),
+            scale=0.4
+            )
+        
         # 배경
         self.background = Texture("assets/images/background.png", (0, 0), 1, fit=True)
         self.ground = Texture("assets/images/ground.png", (0, 0), 1, fit=True)
@@ -138,6 +149,9 @@ class Ingame:
                                         enemy.grace_period.update()
                                         SFX.ENEMY_ATTACKED.play()
 
+                            case pygame.K_e:  # 체력 회복 or 상호작용
+                                self.player.healed = True
+
                 case pygame.KEYUP:
                     pass
                     if CONFIG.is_interactive():
@@ -168,7 +182,8 @@ class Ingame:
 
         count = 0
 
-        hp_count = 0  # 애니메이션
+        hp_attacked_count = 0  # 애니메이션 (피공격)
+        hp_healed_count = 7  # 애니메이션 (회복)
 
         while CONFIG.is_running and not self.need_to_exit:
             CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
@@ -177,7 +192,8 @@ class Ingame:
             self.mouse_pos = CONFIG.get_mouse_pos()
 
             # region 카메라
-            self.hp.sprite.set_pos((CONFIG.camera_x, self.hp.sprite.position[1]))
+            hp_sprite = self.hp.get_sprite_handler().sprite
+            hp_sprite.set_pos((CONFIG.camera_x, hp_sprite.position[1]))
 
             self.background.set_pos(CONFIG.camera_x, self.background.y)
             self.ground.set_pos(CONFIG.camera_x, self.ground.y)
@@ -221,20 +237,36 @@ class Ingame:
             World.process_gravity(self.enemies + [self.player], 333)  # 중력 구현
             # endregion
             # region 체력 + 피공격
-            self.hp.group.draw(CONFIG.surface)
+            self.hp.get_sprite_handler().group.draw(CONFIG.surface)
 
             if self.player.attacked:  # 공격을 받은 경우
-                if hp_count == 24:
+                if hp_attacked_count == 24:
                     CONFIG.game_dead = True
 
-                hp_count += 6
+                hp_attacked_count += 6
+                hp_healed_count -= 2
+
                 self.player.hp -= 1
                 self.player.move_y(5)
 
                 self.player.grace_period.update()
                 SFX.ATTACKED.play()
 
+                self.hp.status = 'attacked'
                 self.player.attacked = False
+
+            if self.player.healed:  # 체력을 회복한 경우
+                if self.player.hp < 5:
+                    hp_attacked_count -= 6
+                    hp_healed_count += 2
+
+                    self.player.hp += 1
+
+                    SFX.ENEMY_ATTACKED.play()
+
+                    self.hp.status = 'healed'
+                    
+                self.player.healed = False
 
             # 무적 시간
             for player in self.enemies + [self.player]:
@@ -250,8 +282,19 @@ class Ingame:
                         player.grace_period.lasted = False
 
             if count % 5 == 0:
-                if self.hp.sprite.index < hp_count:  # hp 애니메이션 동기화
-                    self.hp.group.update()
+                sprite_attacked = self.hp.sprites['attacked']
+                sprite_healed = self.hp.sprites['healed']
+
+                # hp 애니메이션 동기화
+                if sprite_attacked.sprite.index < hp_attacked_count:
+                    sprite_attacked.sprite.update()
+                elif sprite_attacked.sprite.index > hp_attacked_count:
+                    sprite_attacked.sprite.update(added_index=-1)
+
+                if sprite_healed.sprite.index > hp_healed_count:
+                    sprite_healed.sprite.update(added_index=-1)
+                elif sprite_healed.sprite.index < hp_healed_count:
+                    sprite_healed.sprite.update()
             # endregion
             # region 대화
             if not TextEvent.dialog_closed:

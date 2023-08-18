@@ -46,7 +46,8 @@ class CONFIG:
     window_scale = 2
 
     surface = pygame.Surface(CONST.SURFACE_SIZE)
-    """크기가 [1280, 720]으로 고정된 화면
+    """크기가 [640, 360]으로 고정된 화면
+    월드 좌표는 [1280, 720]에 한정됨
     surface에 렌더링하고 업스케일링 후 screen으로 화면 표시"""
 
     screen = pygame.display.set_mode(window_size)
