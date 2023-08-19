@@ -26,53 +26,45 @@ def main():
 
 
 if __name__ == "__main__":
-    help = False
-    
-    try:
-        import argparse
-        import sys
+    import argparse
+    import sys
 
-        parser = argparse.ArgumentParser(description="The Chromatic: A hero's long journey", add_help=False)
-        parser.add_argument('-h', '--help', help='도움 메시지가 출력됩니다.', action="store_true")
-        parser.add_argument("-d", "--debug", help="디버깅 메시지가 출력됩니다.", action="store_true")
-        parser.add_argument("-f", "--fps", help="FPS를 표시합니다.", action="store_true")
-        parser.add_argument("-fs", "--fullscreen", help="전체화면으로 시작됩니다.", action="store_true")
-        parser.add_argument("-fhd", "--fullhd", help="FHD (1920x1080) 해상도로 시작됩니다.", action="store_true")
-        parser.add_argument("-qhd", "--quadhd", help="QHD (2560x1440) 해상도로 시작됩니다.", action="store_true")
-        args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="The Chromatic: A hero's long journey", add_help=False)
+    parser.add_argument('-h', '--help', help='도움 메시지가 출력됩니다.', action="store_true")
+    parser.add_argument("-d", "--debug", help="디버깅 메시지가 출력됩니다.", action="store_true")
+    parser.add_argument("-f", "--fps", help="FPS를 표시합니다.", action="store_true")
+    parser.add_argument("-fs", "--fullscreen", help="전체화면으로 시작됩니다.", action="store_true")
+    parser.add_argument("-fhd", "--fullhd", help="FHD (1920x1080) 해상도로 시작됩니다.", action="store_true")
+    parser.add_argument("-qhd", "--quadhd", help="QHD (2560x1440) 해상도로 시작됩니다.", action="store_true")
+    args = parser.parse_args()
 
-        if args.debug:
-            CONFIG.is_debug = True
-            from icecream import ic
-            from datetime import datetime
+    if args.debug:
+        CONFIG.is_debug = True
+        from icecream import ic
+        from datetime import datetime
 
-            ic.configureOutput(prefix=f"{datetime.now()}|>")  # 디버깅용 debug("테스트하면 됨")
+        ic.configureOutput(prefix=f"{datetime.now()}|>")  # 디버깅용 debug("테스트하면 됨")
 
-        if args.fps:
-            CONFIG.game_fps = True
+    if args.fps:
+        CONFIG.game_fps = True
 
-        if args.fullscreen:
-            CONFIG.is_fullscreen = True
+    if args.fullscreen:
+        CONFIG.is_fullscreen = True
 
-        if args.fullhd:
-            CONFIG.window_size = (1920, 1080)
-            CONFIG.window_scale = 3
+    if args.fullhd:
+        CONFIG.window_size = (1920, 1080)
+        CONFIG.window_scale = 3
 
-            update_screen_resolution()
+        update_screen_resolution()
             
-        elif args.quadhd:
-            CONFIG.window_size = (2560, 1440)
-            CONFIG.window_scale = 4
+    elif args.quadhd:
+        CONFIG.window_size = (2560, 1440)
+        CONFIG.window_scale = 4
 
-            update_screen_resolution()
+        update_screen_resolution()
 
-        if hasattr(args, 'help') and args.help:
-            help = True
-            parser.print_help(sys.stderr)
-
-    except SystemExit:
-        pass
-
-    if not help:
+    if hasattr(args, 'help') and args.help:
+        parser.print_help(sys.stderr)
+    else:
         main()
         pygame.quit()
