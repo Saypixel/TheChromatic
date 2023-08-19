@@ -156,7 +156,7 @@ class Ingame:
                     if CONFIG.is_interactive():
                         match event.key:
                             case pygame.K_SPACE | pygame.K_w | pygame.K_UP:
-                                if self.emilia.is_bound(100, 100):
+                                if self.emilia.is_bound(80, 80):
                                     TextEvent.process_next_event()
 
                                     if not TextEvent.dialog_delayed:
