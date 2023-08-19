@@ -3,8 +3,6 @@ import pygame
 from characters import Character
 
 from components.config import CONST, CONFIG, debug
-from components.text.text_collection import TextCollection
-from components.events.text import TextEvent
 
 from components.sprites.sprite_collection import SpriteCollection
 from components.sprites.sprite_handler import SpriteHandler
@@ -18,7 +16,7 @@ class Player(Character):
             if (
                 (velocity > 0 and self.x <= 0)
                 or (velocity < 0 and self.x + self.width >= CONST.SURFACE_SIZE[0])
-                or (0 <= self.x <= CONST.SURFACE_SIZE[0])
+                or (self.x >= 0 and self.x + self.width <= CONST.SURFACE_SIZE[0])
             ):
                 multiplied = 1 if not self.is_air else 0.7  # 공중에 떠 있으면 패널티 부여
 

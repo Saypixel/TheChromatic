@@ -16,6 +16,42 @@ def update():
 
     SFX.INTRO.play()
 
+    from characters.player import Player
+    from components.sprites.sprite import Sprite
+    from components.sprites.sprite_collection import SpriteCollection
+    from components.sprites.sprite_handler import SpriteHandler
+
+    player = Player.get_from_sprite(
+            SpriteCollection(
+                {
+                    "walk": SpriteHandler(
+                        Sprite(
+                            "assets/images/chr_player_walk.png", 6, 1, size=(315, 270)
+                        ))
+                },
+                "walk",
+                position=(-250, 255),
+                scale=0.4,
+            )
+        )
+    player_icon = Player.get_from_sprite(
+        SpriteCollection(
+                {
+                    "walk": SpriteHandler(
+                        Sprite(
+                            "assets/images/icon_walk.png", 2, 1, size=(80, 80)
+                        ))
+                },
+                "walk",
+                position=(-250, 320),
+                scale=0.4,
+            )
+    )
+    is_player = False
+    is_player_icon = not is_player
+    
+    count = 0
+
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)
         CONFIG.surface.fill(CONST.COL_MAIN_BACKGROUND)
@@ -45,11 +81,38 @@ def update():
 
             colon_count += 1
         # endregion
-        
-        menu_title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)
-        rect_menu = menu_title.get_rect(center=(320, 180))
 
-        CONFIG.surface.blit(menu_title, rect_menu)
+        count += 1
+
+        if count == 3:
+            count = 0
+            if is_player:
+                player.sprites.get_sprite_handler().sprite.update()
+
+            if is_player_icon:
+                player_icon.sprites.get_sprite_handler().sprite.update()
+
+        if player.x <= CONST.SCREEN_SIZE[0]:
+            if is_player:
+                player.move_x(0.8)
+                player.render()
+                
+            if is_player_icon:
+                player_icon.move_x(0.8)
+                player_icon.render()
+
+        title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)
+        title_rect = title.get_rect(center=(320, 180))
+
+        # region 아이콘
+        # icon = pygame.image.load("assets/images/icon.png")
+        # icon = pygame.transform.scale_by(icon, 0.4)
+
+        # CONFIG.surface.blit(icon, (title_rect[0] - 3, title_rect[1] - 30))
+        # endregion
+
+        CONFIG.surface.blit(title, title_rect)
+
         CONFIG.update_screen()
 
         process()

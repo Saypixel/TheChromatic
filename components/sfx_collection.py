@@ -18,13 +18,13 @@ class SFX(object):
 
         cls.ATTACK = mixer.Sound("assets/audio/sfx_attack.ogg")
         cls.ATTACKED = mixer.Sound("assets/audio/sfx_attacked.ogg")
+        cls.DEAD = mixer.Sound("assets/audio/sfx_dead.ogg")
 
         cls.ENEMY_ATTACKED = mixer.Sound("assets/audio/sfx_enemy_attacked.ogg")
 
         cls.sounds = [cls.INTRO, cls.UNMUTED,
-                      cls.ATTACK, cls.ATTACKED,
-                      cls.ENEMY_ATTACKED
-                      ]
+                      cls.ATTACK, cls.ATTACKED, cls.DEAD,
+                      cls.ENEMY_ATTACKED]
 
     @classmethod
     def control_mute(cls):

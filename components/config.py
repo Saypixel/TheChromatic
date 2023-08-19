@@ -102,7 +102,7 @@ class CONFIG:
         pygame.display.update()  # 디스플레이 업데이트
 
         # 카메라 좌표 업데이트
-        CONFIG.camera_x = max(0, CONFIG.player_x - (CONST.SCREEN_SIZE[0] / 2))
+        CONFIG.camera_x = min(max(0, CONFIG.player_x - (CONST.SCREEN_SIZE[0] / 2)), CONST.SURFACE_SIZE[0] - CONST.SCREEN_SIZE[0]) # 나중에 ㅅㄱ
         CONFIG.camera_y = 0 #min(0, CONFIG.player_y - (CONST.SCREEN_SIZE[1] / 2)) # 음수 좌표는 구현하기 어려워짐
 
     def get_mouse_pos() -> tuple[int, int]:
@@ -111,21 +111,16 @@ class CONFIG:
         :return: tuple[int, int]
         """
         mouse_pos = pygame.mouse.get_pos()
-
-        if CONFIG.window_scale == 1:
-            return mouse_pos
-
         transformed_mouse_pos = (
             mouse_pos[0] // CONFIG.window_scale,
             mouse_pos[1] // CONFIG.window_scale
         )
-
+        
         # 월드 좌표 구현에 따른 오프셋 적용
         transformed_mouse_pos_2 = (
             transformed_mouse_pos[0] + CONFIG.camera_x,
             transformed_mouse_pos[1] + CONFIG.camera_y
         )
-
         return transformed_mouse_pos_2
 
     def is_interactive() -> bool:

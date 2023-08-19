@@ -1,9 +1,8 @@
 import pygame
 
 from components.button import Button
-from components.config import CONFIG, CONST, Fonts, debug
+from components.config import CONFIG, debug
 from components.events import process, update_screen_resolution
-from components.font import Font
 from components.sfx_collection import SFX
 
 from screens.settings import update_settings

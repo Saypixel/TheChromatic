@@ -3,7 +3,7 @@ from characters.player import Player
 
 
 class World:
-    GRAVITY = -40
+    GRAVITY = -32
 
     def __init__():
         pass

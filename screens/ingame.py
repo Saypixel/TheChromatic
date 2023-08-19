@@ -1,5 +1,3 @@
-from random import Random
-
 import pygame
 
 from characters.player import Player
@@ -46,11 +44,14 @@ class Ingame:
                     "stay": SpriteHandler(
                         Sprite(
                             "assets/images/chr_player_stay.png", 4, 1, size=(160, 270)
-                        )
-                    )
+                        )),
+                    "walk": SpriteHandler(
+                        Sprite(
+                            "assets/images/chr_player_walk.png", 6, 1, size=(315, 270)
+                        ))
                 },
                 "stay",
-                position=(200, 225),
+                position=(200, 197),
                 scale=0.4,
             ),
             True,
@@ -70,11 +71,32 @@ class Ingame:
         scale=0.6)
 
         # 장애물
-        self.spike = Texture("assets/images/object_spike.png", (800, 315), 0.2)
-        self.obstacles = [self.spike]
+        self.spike = Player.get_from_sprite(SpriteCollection({
+            "default": SpriteHandler(
+                Sprite(
+                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
+                )
+            )
+        },
+        "default",
+        position=(800, 270),
+        scale=0.4))
+
+        self.spike2 = Player.get_from_sprite(SpriteCollection({
+            "default": SpriteHandler(
+                Sprite(
+                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
+                )
+            )
+        },
+        "default",
+        position=(850, 270),
+        scale=0.4))
+
+        self.obstacles = [self.spike, self.spike2]
 
         # 적
-        self.enemy = Enemy("assets/images/chr_raon.png", (600, 250), 0.4)
+        self.enemy = Enemy("assets/images/chr_raon.png", (1000, 222), 0.4)
         self.enemies = [self.enemy]
 
         for enemy in self.enemies:
@@ -82,7 +104,7 @@ class Ingame:
             enemy.hp = 2
 
         # NPC
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 220), 0.4)  # 에밀리아
+        self.emilia = Player("assets/images/chr_emilia.png", (400, 195), 0.4)  # 에밀리아
         self.NPCs = [self.emilia]
 
         # 기타 아이템
@@ -103,8 +125,8 @@ class Ingame:
             )
         
         # 배경
-        self.background = Texture("assets/images/background.png", (0, 0), 1, fit=True)
-        self.ground = Texture("assets/images/ground.png", (0, 0), 1, fit=True)
+        self.background = Texture("assets/images/background_sky.png", (0, 0), 1, fit=True)
+        self.ground = Texture("assets/images/grass.png", (0, 287), 0.4, repeat_x=2)
 
     def update_ingame(self):
         def process_ingame_movement():
@@ -112,10 +134,19 @@ class Ingame:
             keys = pygame.key.get_pressed()  # 키 동시 입력 처리
 
             if CONFIG.is_movable():  # 플레이어가 움직일 수 있을 때 (상호작용 포함)
+                is_moved = False
+
                 if keys[pygame.K_a] or keys[pygame.K_LEFT]:  # 왼쪽으로 이동
                     self.player.move_x(-1)
+                    is_moved = True
                 if keys[pygame.K_d] or keys[pygame.K_RIGHT]:  # 오른쪽으로 이동
                     self.player.move_x(1)
+                    is_moved = True
+
+                if is_moved:
+                    self.player.sprites.status = "walk"
+                else:
+                    self.player.sprites.status = "stay"
 
         def process_ingame(event: pygame.event.Event):
             """인게임 이벤트 처리용 (process() child 함수)"""
@@ -135,6 +166,10 @@ class Ingame:
                                         pygame.time.set_timer(
                                             CONST.PYGAME_EVENT_DIALOG, 1, 1
                                         )
+
+                                    # 주인공 애니메이션 기본으로 설정
+                                    self.player.sprites.status = "stay"
+
                                 else:
                                     if not self.player.is_air:  # 다중 점프 금지
                                         self.player.move_y(13)  # 점프
@@ -196,7 +231,7 @@ class Ingame:
             hp_sprite.set_pos((CONFIG.camera_x, hp_sprite.position[1]))
 
             self.background.set_pos(CONFIG.camera_x, self.background.y)
-            self.ground.set_pos(CONFIG.camera_x, self.ground.y)
+            #self.ground.set_pos(CONFIG.camera_x, self.ground.y)
             # endregion
 
             CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
@@ -214,15 +249,16 @@ class Ingame:
             self.player.apply_movement_flipped(fx_sprite)  # 플레이어 움직임에 따라서 FX 움직임 동기화
             # endregion
             # region 장애물, 적, 중력
-            self.player.check_if_attacked(self.spike.is_bound(40, 100))
- 
+            for obstacle in self.obstacles:
+                self.player.check_if_attacked(obstacle.is_bound(-5, 24))
+
             for enemy in self.enemies:
                 enemy.apply_movement_flipped(enemy.image)
 
                 if enemy.hp <= 0:
                     enemy_surface = self.enemy.get_surface_or_sprite()
                     enemy_alpha = enemy_surface.get_alpha()
-                    reduced = 20
+                    reduced = 30
                     enemy_next_alpha = max(0, enemy_alpha - reduced)
 
                     enemy_surface.set_alpha(enemy_next_alpha)
@@ -231,20 +267,27 @@ class Ingame:
                         index = self.enemies.index(enemy)
                         self.enemies.pop(index)
                 
-                enemy.follow_player(self.obstacles)
-                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())
+                if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
+                    enemy.follow_player(self.obstacles)
+                    self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())
 
-            World.process_gravity(self.enemies + [self.player], 333)  # 중력 구현
+            World.process_gravity(self.enemies + [self.player], 305)  # 중력 구현
             # endregion
             # region 체력 + 피공격
             self.hp.get_sprite_handler().group.draw(CONFIG.surface)
 
+            hp_attacked_sprite = self.hp.sprites['attacked']
+            hp_healed_sprite = self.hp.sprites['healed']
+
             if self.player.attacked:  # 공격을 받은 경우
                 if hp_attacked_count == 24:
                     CONFIG.game_dead = True
+                    SFX.DEAD.play()
 
                 hp_attacked_count += 6
                 hp_healed_count -= 2
+
+                hp_healed_sprite.sprite.update(added_index=-2)  # hp 애니메이션 동기화
 
                 self.player.hp -= 1
                 self.player.move_y(5)
@@ -259,6 +302,8 @@ class Ingame:
                 if self.player.hp < 5:
                     hp_attacked_count -= 6
                     hp_healed_count += 2
+
+                    hp_attacked_sprite.sprite.update(added_index=-6)  # hp 애니메이션 동기화
 
                     self.player.hp += 1
 
@@ -282,19 +327,16 @@ class Ingame:
                         player.grace_period.lasted = False
 
             if count % 5 == 0:
-                sprite_attacked = self.hp.sprites['attacked']
-                sprite_healed = self.hp.sprites['healed']
+                # hp 애니메이션 업데이트
+                if hp_attacked_count > hp_attacked_sprite.sprite.index:
+                    hp_attacked_sprite.sprite.update()
+                if hp_healed_count > hp_healed_sprite.sprite.index:
+                    hp_healed_sprite.sprite.update()
 
-                # hp 애니메이션 동기화
-                if sprite_attacked.sprite.index < hp_attacked_count:
-                    sprite_attacked.sprite.update()
-                elif sprite_attacked.sprite.index > hp_attacked_count:
-                    sprite_attacked.sprite.update(added_index=-1)
-
-                if sprite_healed.sprite.index > hp_healed_count:
-                    sprite_healed.sprite.update(added_index=-1)
-                elif sprite_healed.sprite.index < hp_healed_count:
-                    sprite_healed.sprite.update()
+                # 장애물 애니메이션
+                for obstacle in self.obstacles:
+                    if obstacle.is_sprite():
+                        obstacle.sprites.get_sprite_handler().sprite.update()
             # endregion
             # region 대화
             if not TextEvent.dialog_closed:
@@ -302,17 +344,24 @@ class Ingame:
             else:
                 self.emilia.unspeech()
             # endregion
+            status_player = self.player.sprites.status
+
+            if count % 3 == 0:
+                if status_player == "walk":
+                    sprite_player.update()
 
             if count == 10:
                 count = 0
 
-                sprite_player.update()
+                if status_player == "stay":
+                    sprite_player.update()
 
             process(process_ingame)
             process_ingame_movement()
 
             # 장애물
-            self.spike.render()
+            for obstacle in self.obstacles:
+                obstacle.render()
 
             # NPC
             self.emilia.render()
@@ -323,6 +372,7 @@ class Ingame:
 
             # 플레이어
             self.player.render()
+            #self.player.generate_hitbox()
 
             # region 공격
             if self.player.attack:  # 공격을 한 경우
@@ -404,6 +454,9 @@ class Ingame:
                     button.change_color(self.mouse_pos)
                     button.update(CONFIG.surface)
 
+                # 플레이어 행동을 stay로 설정
+                self.player.sprites.status = "stay"
+
                 # 흐려지며 사라지다 (Fade Out)
                 sprite = self.player.sprites.get_sprite_handler().sprite
                 reduced = 10
@@ -416,7 +469,7 @@ class Ingame:
                 fps = round(CONFIG.clock.get_fps(), 1)
                 fps_text = Font(Fonts.TITLE3, 20).render(str(fps), (255, 255, 255))
 
-                CONFIG.surface.blit(fps_text, (585, 10))
+                CONFIG.surface.blit(fps_text, (585 + CONFIG.camera_x, 10 + CONFIG.camera_y))
             # endregion
 
             CONFIG.update_screen()
