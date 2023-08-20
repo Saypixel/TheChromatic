@@ -1,8 +1,8 @@
 from enum import Enum
 from random import Random
 
+import pygame
 import pygame.constants
-
 
 class CONST:
     SCREEN_SIZE = [640, 360]
@@ -38,9 +38,6 @@ class Fonts(Enum):
 
 class CONFIG:
     FPS = 30
-
-    # window_size = [1920, 1080]  # CONST.WINDOW_SIZE * 3
-    # window_scale = 3
 
     window_size = [1280, 720]  # CONST.WINDOW_SIZE * 2
     window_scale = 2
@@ -102,8 +99,13 @@ class CONFIG:
         pygame.display.update()  # 디스플레이 업데이트
 
         # 카메라 좌표 업데이트
-        CONFIG.camera_x = min(max(0, CONFIG.player_x - (CONST.SCREEN_SIZE[0] / 2)), CONST.SURFACE_SIZE[0] - CONST.SCREEN_SIZE[0]) # 나중에 ㅅㄱ
-        CONFIG.camera_y = 0 #min(0, CONFIG.player_y - (CONST.SCREEN_SIZE[1] / 2)) # 음수 좌표는 구현하기 어려워짐
+        x_to_start = max(0, CONFIG.player_x - (CONST.SCREEN_SIZE[0] // 2))  # 카메라가 움직일 시작 범위 (X좌표)
+        x_to_end = CONST.SURFACE_SIZE[0] - CONST.SCREEN_SIZE[0]  # 카메라가 최대 좌표로 이동하여 가만히 있게 될 시작 범위 (X좌표)
+
+        CONFIG.camera_x = min(x_to_start, x_to_end)  # 카메라가 움직일 범위를 벗어나면 x_to_end에서 멈춤
+        CONFIG.camera_y = 0  # Y 좌표는 고정
+
+        #  CONFIG.camera_y = min(0, CONFIG.player_y - (CONST.SCREEN_SIZE[1] / 2)) # 음수 좌표는 구현하기 어려워짐
 
     def get_mouse_pos() -> tuple[int, int]:
         """
