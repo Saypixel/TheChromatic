@@ -125,7 +125,7 @@ class Ingame:
             )
         
         # 배경
-        self.background = Texture("assets/images/background_sky.png", (0, 0), 1, fit=True)
+        self.background = Texture("assets/images/background_sky.png", (0, 0), 1, repeat_x=2, fit=True)
         self.ground = Texture("assets/images/grass.png", (0, 287), 0.4, repeat_x=2)
 
     def update_ingame(self):
@@ -230,7 +230,7 @@ class Ingame:
             hp_sprite = self.hp.get_sprite_handler().sprite
             hp_sprite.set_pos((CONFIG.camera_x, hp_sprite.position[1]))
 
-            self.background.set_pos(CONFIG.camera_x, self.background.y)
+            self.background.set_pos(CONFIG.camera_x // 1.1, self.background.y)  # 조금씩 움직이게 하고 싶어요
             #self.ground.set_pos(CONFIG.camera_x, self.ground.y)
             # endregion
 
