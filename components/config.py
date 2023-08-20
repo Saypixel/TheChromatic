@@ -109,21 +109,23 @@ class CONFIG:
 
     def get_mouse_pos() -> tuple[int, int]:
         """
-        화면 업스케일링이 적용된 마우스 위치 가져오기
-        :return: tuple[int, int]
+        업스케일링과 월드 좌표가 적용된 마우스 좌표 가져오기
+        :return: 업스케일링과 월드 좌표가 적용된 마우스 좌표
         """
         mouse_pos = pygame.mouse.get_pos()
-        transformed_mouse_pos = (
+
+        # 업스케일링
+        upscaled = (
             mouse_pos[0] // CONFIG.window_scale,
             mouse_pos[1] // CONFIG.window_scale
         )
         
         # 월드 좌표 구현에 따른 오프셋 적용
-        transformed_mouse_pos_2 = (
-            transformed_mouse_pos[0] + CONFIG.camera_x,
-            transformed_mouse_pos[1] + CONFIG.camera_y
+        cameraed = (
+            upscaled[0] + CONFIG.camera_x,
+            upscaled[1] + CONFIG.camera_y
         )
-        return transformed_mouse_pos_2
+        return cameraed
 
     def is_interactive() -> bool:
         """플레이어와 상호작용 가능한가?"""
