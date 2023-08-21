@@ -73,17 +73,25 @@ class TextCollection:
             self.next = self.textList[1]  # 다음 텍스트 지정
 
     def jump_to_next(self) -> bool:
-        if len(self.textList) <= self.index + 1:
-            self.index = 0
+        """
+        다음 대화로 이동 (텍스트를 넘김)
+        """
 
+        if len(self.textList) <= self.index + 1:  # 모든 텍스트를 다 본 경우
+            self.index = 0  # index 초기화
+
+            # 현재 출력할 텍스트와 다음 출력할 텍스트 지정
             if len(self.textList) >= 1:
                 self.current = self.textList[0]
             if len(self.textList) >= 2:
                 self.next = self.textList[1]
 
-            return False
+            return False  # 다음 대화로 이동할 수 없으므로 False 반환
 
         self.index += 1
+
+        # 다음 출력할 텍스트를 현재 출력할 텍스트로 지정
+        # 다음 출력할 텍스트 지정
         self.current = self.next
         self.next = (
             self.textList[self.index + 1]
@@ -91,15 +99,8 @@ class TextCollection:
             else None
         )
 
-        return True
-
-    def reset_text_index(self):
-        """각 텍스트의 인덱스 (애니메이션)을 초기화합니다."""
-        for text in self.textList:
-            text.jump_to_first_index()
+        return True  # 다음 대화로 이동할 수 있으므로 True 반환
 
     def set_position(self, pos: tuple):
+        """텍스트가 표시될 좌표 설정"""
         self.position = pos
-
-        for text in self.textList:
-            text.position = pos

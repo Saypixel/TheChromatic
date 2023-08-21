@@ -20,10 +20,7 @@ class Text:
 
     texts: List[MutualText]
     """텍스트 리스트 (상호작용 배열)"""
-
-    index: int = 0
-    """텍스트 리스트 index (상호작용 배열)"""
-
+    
     delay: int = 30
     """기본 지연 시간 (ms)"""
     
@@ -126,71 +123,3 @@ class Text:
             ch_x += px  # x 좌표를 일정 이동
 
         return (ch_x, ch_y)  # 갱신해야할 문자 위치를 반환
-
-    def write_until_next(
-        self, position: tuple[int, int], surface: pygame.Surface
-    ) -> int:
-        """
-        진행 중인 텍스트를 렌더링 (출력)합니다.
-        :param position: 화면 위치
-        :param surface: 화면
-        :return: 텍스트 애니메이션 지연 시간
-        """
-        ch_x = position[0]
-        ch_y = position[1]
-        mutual = MutualText("", "", 0)
-
-        for i in range(0, self.index + 1):
-            mutual = self.texts[i]
-
-            for j in range(0, mutual.index + 1):
-                new_ch_pos = self.write(mutual, j, position, (ch_x, ch_y), surface)
-                ch_x = new_ch_pos[0]
-                ch_y = new_ch_pos[1]
-
-        last_mutual = self.texts[len(self.texts) - 1]
-
-        # 애니메이션이 완료된 텍스트가 렌더링이 다 된 경우
-        if (
-            self.index == len(self.texts) - 1
-            and last_mutual.index == len(last_mutual.text) - 1
-        ):
-            return -1
-
-        return mutual.delay
-
-    def jump_to_next_index(self, reset=True) -> bool:
-        mutual = self.texts[self.index]
-
-        mutual.index += 1
-
-        if mutual.index == len(mutual.text):
-            mutual.index = 0
-            self.index += 1
-
-        if self.index == len(self.texts):
-            if reset:
-                self.index = 0
-            else:
-                self.index = len(self.texts) - 1
-                mutual.index = len(mutual.text) - 1
-
-            return False
-
-        return True
-
-    def jump_to_first_index(self):
-        self.index = 0
-
-        for mutual in self.texts:
-            mutual.index = 0
-
-    def jump_to_last_index(self):
-        self.index = len(self.texts) - 1
-
-        for mutual in self.texts:
-            mutual.index = len(mutual.text) - 1
-
-    def print_index(self):
-        """(디버깅용) index 출력"""
-        debug("(" + str(self.index) + ", " + str(self.texts[self.index].index) + ")")

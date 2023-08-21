@@ -25,4 +25,4 @@
 관리 및 유지 보수가 매우 편함.
 
 ## 참조
-- [config.py](../components/config.py)
+- [`config.py`](../components/config.py)

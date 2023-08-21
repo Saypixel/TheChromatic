@@ -43,11 +43,11 @@ class Ingame:
                 {
                     "stay": SpriteHandler(
                         Sprite(
-                            "assets/images/chr_player_stay.png", 4, 1, size=(160, 270)
+                            "assets/images/chr_player_stay.png", 4, 1, size=(170, 270)
                         )),
                     "walk": SpriteHandler(
                         Sprite(
-                            "assets/images/chr_player_walk.png", 6, 1, size=(315, 270)
+                            "assets/images/chr_player_walk.png", 6, 1, size=(345, 270)
                         ))
                 },
                 "stay",
@@ -159,13 +159,11 @@ class Ingame:
                                 if self.emilia.is_bound(80, 80):
                                     TextEvent.process_next_event()
 
-                                    if not TextEvent.dialog_delayed:
+                                    if TextEvent.dialog_delayed:
                                         self.sign.refresh()
 
                                     if not TextEvent.dialog_closed:
-                                        pygame.time.set_timer(
-                                            CONST.PYGAME_EVENT_DIALOG, 1, 1
-                                        )
+                                        pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
 
                                     # 주인공 애니메이션 기본으로 설정
                                     self.player.sprites.status = "stay"
@@ -198,9 +196,6 @@ class Ingame:
                     if CONFIG.is_interactive():
                         TextEvent.process_animation_event(self.sign.image)
 
-                case CONST.PYGAME_EVENT_DIALOG_NEXT_INDEX:
-                    TextEvent.process_animation_next_event()
-
                 case pygame.MOUSEBUTTONDOWN:
                     if CONFIG.game_dead:  # 사망 시
                         if self.button_retry.check_for_input(self.mouse_pos):  # 재도전
@@ -211,8 +206,13 @@ class Ingame:
                             self.need_to_exit = True
 
         TextEvent.dialog = TextCollection(
-            [Text("*안녕!*"), Text("나는 에밀리아야."), Text("*J키*는 #기본공격#이야!"), Text("그럼 즐거운 여행되길 바래!")],
-            self.sign.width,
+            [
+                Text("*안녕!*"),
+                Text("나는 에밀리아야."),
+                Text("*J키*는 #기본공격#이야!"),
+                Text("그럼 즐거운 여행되길 바래!")
+            ],
+            self.sign.width
         )
 
         count = 0
@@ -476,7 +476,7 @@ class Ingame:
 
         # 초기화
         TextEvent.dialog_closed = True
-        TextEvent.dialog_delayed = False
+        TextEvent.dialog_delayed = True
         TextEvent.dialog_paused = True
 
         self.player.set_pos(200, 225)

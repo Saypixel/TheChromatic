@@ -22,4 +22,4 @@
 2. 업스케일링한 화면을 `screen` 변수에 저장하여 최종적으로 `screen` 변수로 화면 출력
 
 ## 참조
-- [config.py](../components/config.py)
+- [`config.py`](../components/config.py)

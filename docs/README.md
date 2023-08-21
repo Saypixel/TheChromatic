@@ -16,6 +16,7 @@
 |[ESC 화면](./pause_menu.md)|.|
 |[설정](./settings.md)|.|
 |[SFX](./sfx.md)|.|
+|[CLI](./cli.md)|.|
 
 ## TODO
 - [x] 월드 좌표 + 업스케일링 + 마우스 좌표
@@ -32,3 +33,4 @@
 - [ ] ESC 화면
 - [ ] 설정
 - [ ] SFX
+- [ ] CLI

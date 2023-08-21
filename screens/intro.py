@@ -1,5 +1,4 @@
 import pygame
-from pygame import mixer
 from components.config import CONFIG, CONST, Fonts, debug
 from components.events import process
 from components.font import Font
@@ -26,7 +25,7 @@ def update():
                 {
                     "walk": SpriteHandler(
                         Sprite(
-                            "assets/images/chr_player_walk.png", 6, 1, size=(315, 270)
+                            "assets/images/chr_player_walk.png", 6, 1, size=(345, 270)
                         ))
                 },
                 "walk",

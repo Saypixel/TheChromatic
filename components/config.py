@@ -18,7 +18,6 @@ class CONST:
     COL_MAIN_BACKGROUND_BLUE = (96, 189, 214)
 
     PYGAME_EVENT_DIALOG = pygame.USEREVENT + 1
-    PYGAME_EVENT_DIALOG_NEXT_INDEX = pygame.USEREVENT + 2
 
 
 class Fonts(Enum):
