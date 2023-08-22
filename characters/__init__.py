@@ -158,9 +158,7 @@ class Character(ABC):
         )
 
         if hitbox:
-            #self.generate_hitbox()
             pygame.draw.rect(CONFIG.surface, (0, 200, 0), (self.x - error_x, self.y - error_y, self.width + error_x * 2, self.height + error_x * 2), 3)
-            #pygame.draw.rect(CONFIG.surface, (0, 200, 0), (self.x - error_x, self.y - error_y, error_x * 2, error_y * 2), 3)
 
         return is_x and is_y
     
@@ -168,17 +166,45 @@ class Character(ABC):
         """히트박스를 생성합니다. (디버깅)"""
         pygame.draw.rect(CONFIG.surface, (0, 200, 0), (self.x + self.width / 2, self.y + self.height / 2, 3, 3), 3)
 
-    def render(self, other_surface: pygame.Surface = None):
+    def is_camera_bound(self) -> bool:
+        """
+        해당 오브젝트가 카메라 안에 들어와있는지 확인합니다.
+        :return: 오브젝트가 카메라 안에 들어왔는지 여부
+        """
+
+        camera = CONFIG.get_camera_bound()  # 카메라 범위 가져오기
+        camera_x = camera[0]
+        camera_y = camera[1]
+        camera_width = camera[2]
+        camera_height = camera[3]
+
+        # 양쪽 범위를 끝까지 벗어나지 않았을 때도 렌더링 해야하므로 보정값 추가
+        is_x = camera_x <= self.x + self.width <= camera_x + camera_width + self.width
+        is_y = camera_y <= self.y + self.height <= camera_y + camera_height + self.height
+
+        return is_x and is_y
+
+    def render(self, other_surface: pygame.Surface = None, optimization = True):
+        """
+        오브젝트를 렌더링합니다.
+        :param other_surface: 사용자 지정 렌더링할 화면 (기본: CONFIG.surface)
+        :param optimization: 렌더링 최적화 여부
+        """
+
+        if optimization and not self.is_camera_bound():  # 최적화 중 카메라 범위에 벗어나있는 경우
+            return  # 렌더링할 필요 없으므로 종료
+
         if other_surface is None:
             other_surface = CONFIG.surface
 
-        if self.image_path != "":  # 정적 이미지인 경우
+        if not self.is_sprite():  # 정적 이미지인 경우
             other_surface.blit(self.image, self.get_pos())
+
         else:  # 스프라이트인 경우
             self.sprites.set_pos(self.get_pos())
             self.sprites.get_sprite_handler().group.draw(other_surface)
 
-        if self.sign is not None:
+        if self.sign is not None:  # 말풍선을 렌더링 해야하는 경우
             other_surface.blit(self.sign.image, self.sign.get_pos())
 
     def speech(self, sign):

@@ -4,8 +4,8 @@
 |[동적 카메라](./dynamic_camera.md)|.|
 |[업스케일링](./upscailing.md)|.|
 |[마우스 좌표](./mouse_position.md)|.|
-|[동적 텍스트 애니메이션](./dynamic_text_animation.md)|.|
-|[중력 & 점프](./gravity_and_jump.md)|.|
+|[동적 텍스트 애니메이션](./dynamic_text_animation.md)|. (인게임 제외 완성)|
+|[중력 & 점프](./gravity_and_jump.md)|. (인게임 제외 완성)|
 |[스프라이트](./sprite.md)|.|
 |[적 AI](./enemy_ai.md)|.|
 |[무적 시간](./grace_period.md)|.|

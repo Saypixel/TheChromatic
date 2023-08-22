@@ -11,27 +11,36 @@ from components.sprites.sprite import Sprite
 
 class Player(Character):
     def move_x(self, velocity: float):
-        # 윈도우 내부에 위치해 있는 경우
-        if round(velocity, 3) != 0.0:
+        """
+        플레이어의 X 좌표를 이동시킵니다.
+        :param velocity: 속도
+        """
+        
+        if round(velocity, 3) != 0.0:  # 부동소수점 계산 문제를 해결하기 위해 소수점 반올림
             if (
                 (velocity > 0 and self.x <= 0)
                 or (velocity < 0 and self.x + self.width >= CONST.SURFACE_SIZE[0])
                 or (self.x >= 0 and self.x + self.width <= CONST.SURFACE_SIZE[0])
-            ):
+            ):  # 윈도우 내부에 위치해 있는 경우 / 범위를 벗어났을 때 다시 범위 안으로 들어가려고 할 경우
                 multiplied = 1 if not self.is_air else 0.7  # 공중에 떠 있으면 패널티 부여
 
-                self.velocity_x = velocity
-                self.x += 10 * velocity * multiplied
+                self.velocity_x = velocity  # 현재 속도 저장
+                self.x += 10 * velocity * multiplied  # 속도와 일정 보정값만큼 위치 변화
 
-        if self.is_playable:
+        if self.is_playable:  # 만약 플레이어 (주인공)이라면 플레이어 좌표 따로 저장
             CONFIG.player_x = self.x
 
     def move_y(self, velocity: float):
-        if round(velocity, 3) != 0.0:
-            self.velocity_y = velocity
-            self.y -= velocity
+        """
+        플레이어의 Y 좌표를 이동시킵니다.
+        :param velocity: 속도
+        """
 
-        if self.is_playable:
+        if round(velocity, 3) != 0.0:  # 부동소수점 계산 문제를 해결하기 위해 소수점 반올림
+            self.velocity_y = velocity  # 현재 속도 저장
+            self.y -= velocity  # 속도만큼 위치 변화
+
+        if self.is_playable:  # 만약 플레이어 (주인공)이라면 플레이어 좌표 따로 저장
             CONFIG.player_y = self.y
 
     def apply_movement_flipped(self, image: SpriteCollection | SpriteHandler | Sprite | pygame.Surface):

@@ -88,7 +88,7 @@ class CONFIG:
         화면 업스케일링이 적용된 디스플레이 업데이트 기능
         """
         cropped_screen = pygame.Surface(CONST.SCREEN_SIZE)
-        cropped_screen.blit(CONFIG.surface, (0, 0), ((CONFIG.camera_x, CONFIG.camera_y), CONST.SCREEN_SIZE))
+        cropped_screen.blit(CONFIG.surface, (0, 0), CONFIG.get_camera_bound())
 
         transformed_screen = pygame.transform.scale(
             cropped_screen, CONFIG.window_size
@@ -125,6 +125,13 @@ class CONFIG:
             upscaled[1] + CONFIG.camera_y
         )
         return cameraed
+    
+    def get_camera_bound() -> tuple[int, int, int, int]:
+        """
+        현재 카메라가 위치해있는 좌표와 크기 (Rect)를 가져옵니다.
+        :return: 좌표와 크기 (Rect)
+        """
+        return (CONFIG.camera_x, CONFIG.camera_y, CONST.SCREEN_SIZE[0], CONST.SCREEN_SIZE[1])
 
     def is_interactive() -> bool:
         """플레이어와 상호작용 가능한가?"""

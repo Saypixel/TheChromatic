@@ -12,6 +12,7 @@
 ## 3
 ![3](./images/dynamic_camera3.png)
 ![4](./images/dynamic_camera4.png)
+![5](./images/dynamic_camera5.png)
 
 1. 매 프레임 업데이트마다 플레이어가 어느만큼 움직였는지 X좌표를 계산
 2. 카메라 좌표가 플레이어 중심으로 움직이게 설정
