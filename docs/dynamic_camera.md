@@ -1,11 +1,11 @@
 # 동적 카메라
 ## 1
-![1](./images/dynamic_camera1.png)
+![1](./images/dynamic_camera_1.png)
 
 화면 (카메라) 크기를 정해준 뒤, 주인공이 돌아다닐 세계 크기도 정함
 
 ## 2
-![2](./images/dynamic_camera2.png)
+![2](./images/dynamic_camera_2.png)
 
 카메라가 어디까지 움직였는지 저장할 좌표 변수 선언
 
