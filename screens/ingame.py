@@ -280,38 +280,38 @@ class Ingame:
             hp_healed_sprite = self.hp.sprites['healed']
 
             if self.player.attacked:  # 공격을 받은 경우
-                if hp_attacked_count == 24:
+                if hp_attacked_count == 24:  # 사망
                     CONFIG.game_dead = True
-                    SFX.DEAD.play()
+                    SFX.DEAD.play()  # 사망 효과음 재생
 
-                hp_attacked_count += 6
-                hp_healed_count -= 2
+                hp_attacked_count += 6  # hp 공격받은 index 업데이트
+                hp_healed_count -= 2  # hp 회복하는 index 업데이트
 
-                hp_healed_sprite.sprite.update(added_index=-2)  # hp 애니메이션 동기화
+                hp_healed_sprite.sprite.update(added_index=-2)  # hp 회복하는 애니메이션 동기화
 
-                self.player.hp -= 1
-                self.player.move_y(5)
+                self.player.hp -= 1  # 체력 1 감소
+                self.player.move_y(5)  # 무조건 반사로 약간 점프
 
-                self.player.grace_period.update()
-                SFX.ATTACKED.play()
+                self.player.grace_period.update()  # 무적 시간 활성화
+                SFX.ATTACKED.play()  # 공격 받았을 때 효과음 재생
 
-                self.hp.status = 'attacked'
-                self.player.attacked = False
+                self.hp.status = 'attacked'  # hp 공격받은 애니메이션으로 변경
+                self.player.attacked = False  # 공격 여부 변수 초기화
 
             if self.player.healed:  # 체력을 회복한 경우
-                if self.player.hp < 5:
-                    hp_attacked_count -= 6
-                    hp_healed_count += 2
+                if self.player.hp < 5:  # 체력이 꽉 차있지 않은 경우
+                    hp_attacked_count -= 6  # hp 공격받은 index 업데이트
+                    hp_healed_count += 2  # hp 회복하는 index 업데이트
 
-                    hp_attacked_sprite.sprite.update(added_index=-6)  # hp 애니메이션 동기화
+                    hp_attacked_sprite.sprite.update(added_index=-6)  # hp 공격받은 애니메이션 동기화
 
-                    self.player.hp += 1
+                    self.player.hp += 1  # 체력 1 증가
 
-                    SFX.ENEMY_ATTACKED.play()
+                    SFX.ENEMY_ATTACKED.play()  # 체력을 회복하는 효과음 재생
 
-                    self.hp.status = 'healed'
+                    self.hp.status = 'healed'  #  hp 회복하는 애니메이션으로 변경
                     
-                self.player.healed = False
+                self.player.healed = False  # 회복 여부 변수 초기화
 
             # 무적 시간
             for player in self.enemies + [self.player]:
@@ -372,7 +372,6 @@ class Ingame:
 
             # 플레이어
             self.player.render()
-            #self.player.generate_hitbox()
 
             # region 공격
             if self.player.attack:  # 공격을 한 경우
@@ -474,7 +473,7 @@ class Ingame:
 
             CONFIG.update_screen()
 
-        # 초기화
+        # 변수 초기화
         TextEvent.dialog_closed = True
         TextEvent.dialog_delayed = True
         TextEvent.dialog_paused = True
