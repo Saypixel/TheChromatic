@@ -8,7 +8,7 @@ from components.text.mutual_text import MutualText
 
 
 class TextEvent(object):
-    # 인게임 내에서 처리될 공통 텍스트 이벤트
+    """인게임 내에서 처리될 공통 텍스트 이벤트"""
 
     dialog_delayed = True
     """대화창의 텍스트 출력이 지연되어야 하는가? (REFRESH 이슈 & 텍스트 미리 출력 대응)"""
