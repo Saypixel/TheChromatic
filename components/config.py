@@ -85,7 +85,7 @@ class CONFIG:
 
     def update_screen():
         """
-        화면 업스케일링이 적용된 디스플레이 업데이트 기능
+        화면 업스케일링이 적용되고 카메라가 움직이는 디스플레이 업데이트 기능
         """
         cropped_screen = pygame.Surface(CONST.SCREEN_SIZE)
         cropped_screen.blit(CONFIG.surface, (0, 0), CONFIG.get_camera_bound())

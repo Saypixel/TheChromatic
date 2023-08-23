@@ -13,7 +13,7 @@
 |[체력](./hp_bar.md)|.|
 |[버튼](./button.md)|. (완성)|
 |[사망 이벤트](./dead_event.md)|.|
-|[ESC 화면](./pause_menu.md)|.|
+|[ESC 화면](./pause_menu.md)|. (완성)|
 |[설정](./settings.md)|. (완성)|
 |[인트로](./intro.md)|. (완성)|
 |[메인 메뉴](./menu.md)|.|

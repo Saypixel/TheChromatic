@@ -293,6 +293,21 @@ class Character(ABC):
 
             self.attacked = attacked  # 공격받았다고 설정
 
+    def fade_out(self, delta: int = 30) -> bool:
+        """
+        캐릭터를 점차 흐리게 만들어 투명도를 0으로 만듭니다.
+        :param delta: 한 프레임당 투명도 감소량 (기본: 30)
+        :return: 더 이상 흐리게 만들 수 있는지의 여부
+        """
+
+        surface = self.get_surface_or_sprite()  # 단일 이미지 / 다중 스프라이트 가져오기
+        alpha = surface.get_alpha()  # 투명도값 가져오기
+        alpha_next = max(0, alpha - delta)  # delta 값만큼 감소된 투명도값 가져오기
+
+        surface.set_alpha(alpha_next)  # delta 값만큼 감소된 투명도 값 설정
+
+        return alpha_next > 0  # 더 이상 흐리게 만들 수 있는가?
+
     def get_surface_or_sprite(self) -> SpriteCollection | pygame.Surface: 
         """단일 이미지인 경우 pygame.Surface를 반환하고, 다중 스프라이트인 경우 SpriteCollection을 반환합니다."""
         image: Sprite | pygame.Surface

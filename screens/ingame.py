@@ -221,8 +221,8 @@ class Ingame:
         error_x = 0
         error_y = 0
 
-        hp_attacked_count = 0  # 애니메이션 (피공격)
-        hp_healed_count = 7  # 애니메이션 (회복)
+        hp_attacked_index = 0  # 애니메이션 (피공격)
+        hp_healed_index = 7  # 애니메이션 (회복)
 
         while CONFIG.is_running and not self.need_to_exit:
             CONFIG.clock.tick(CONFIG.FPS)  # 프레임 조절
@@ -267,16 +267,9 @@ class Ingame:
                 enemy.apply_movement_flipped(enemy.image)
 
                 if enemy.hp <= 0:
-                    enemy_surface = self.enemy.get_surface_or_sprite()
-                    enemy_alpha = enemy_surface.get_alpha()
-                    reduced = 30
-                    enemy_next_alpha = max(0, enemy_alpha - reduced)
-
-                    enemy_surface.set_alpha(enemy_next_alpha)
-
-                    if enemy_next_alpha == 0:  # 적 사망
+                    if not enemy.fade_out():  # 적 사망 후 완전 투명해졌을 때
                         index = self.enemies.index(enemy)
-                        self.enemies.pop(index)
+                        self.enemies.pop(index)  # 적 제거
                 
                 if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
                     enemy.follow_player(self.obstacles)
@@ -284,71 +277,13 @@ class Ingame:
 
             World.process_gravity(self.enemies + [self.player], 305)  # 중력 구현
             # endregion
-            # region 체력 + 피공격
-            self.hp.get_sprite_handler().group.draw(CONFIG.surface)
 
-            hp_attacked_sprite = self.hp.sprites['attacked']
-            hp_healed_sprite = self.hp.sprites['healed']
-
-            if self.player.attacked:  # 공격을 받은 경우
-                if hp_attacked_count == 24:  # 사망
-                    CONFIG.game_dead = True
-                    SFX.DEAD.play()  # 사망 효과음 재생
-
-                hp_attacked_count += 6  # hp 공격받은 index 업데이트
-                hp_healed_count -= 2  # hp 회복하는 index 업데이트
-
-                hp_healed_sprite.sprite.update(added_index=-2)  # hp 회복하는 애니메이션 동기화
-
-                self.player.hp -= 1  # 체력 1 감소
-                self.player.move_y(5)  # 무조건 반사로 약간 점프
-
-                self.player.grace_period.update()  # 무적 시간 활성화
-                SFX.ATTACKED.play()  # 공격 받았을 때 효과음 재생
-
-                self.hp.status = 'attacked'  # hp 공격받은 애니메이션으로 변경
-                self.player.attacked = False  # 공격 여부 변수 초기화
-
-            if self.player.healed:  # 체력을 회복한 경우
-                if self.player.hp < 5:  # 체력이 꽉 차있지 않은 경우
-                    hp_attacked_count -= 6  # hp 공격받은 index 업데이트
-                    hp_healed_count += 2  # hp 회복하는 index 업데이트
-
-                    hp_attacked_sprite.sprite.update(added_index=-6)  # hp 공격받은 애니메이션 동기화
-
-                    self.player.hp += 1  # 체력 1 증가
-
-                    SFX.ENEMY_ATTACKED.play()  # 체력을 회복하는 효과음 재생
-
-                    self.hp.status = 'healed'  #  hp 회복하는 애니메이션으로 변경
-                    
-                self.player.healed = False  # 회복 여부 변수 초기화
+            self.process_hp_event(hp_attacked_index, hp_healed_index)
 
             # 무적 시간
             for player in self.enemies + [self.player]:
-                if player.grace_period is not None:
-                    image = player.get_surface_or_sprite()
+                self.process_grace_period_animation(player)
 
-                    if player.grace_period.is_grace_period():  # 무적시간인 경우
-                        player.grace_period.make_it_ui(image)
-                        player.grace_period.lasted = True
-
-                    elif player.grace_period.lasted:
-                        image.set_alpha(255)  # 무적 시간이 아니므로 복귀
-                        player.grace_period.lasted = False
-
-            if count % 5 == 0:
-                # hp 애니메이션 업데이트
-                if hp_attacked_count > hp_attacked_sprite.sprite.index:
-                    hp_attacked_sprite.sprite.update()
-                if hp_healed_count > hp_healed_sprite.sprite.index:
-                    hp_healed_sprite.sprite.update()
-
-                # 장애물 애니메이션
-                for obstacle in self.obstacles:
-                    if obstacle.is_sprite():
-                        obstacle.sprites.get_sprite_handler().sprite.update()
-            # endregion
             # region 대화
             if not TextEvent.dialog_closed:
                 self.emilia.speech(self.sign)
@@ -360,6 +295,14 @@ class Ingame:
             if count % 3 == 0:
                 if status_player == "walk":
                     sprite_player.update()
+
+            if count % 5 == 0:
+                self.process_hp_animation(hp_attacked_index, hp_healed_index) # hp 애니메이션 업데이트
+
+                # 장애물 애니메이션
+                for obstacle in self.obstacles:
+                    if obstacle.is_sprite():
+                        obstacle.sprites.get_sprite_handler().sprite.update()
 
             if count == 10:
                 count = 0
@@ -418,7 +361,7 @@ class Ingame:
 
                 if self.dead_text is None:
                     self.dead_text = Font(Fonts.TITLE2, 40).render(
-                        "죽었다이", (255, 255, 255)
+                        "죽었다이", CONST.COL_WHITE
                     )
 
                 if self.button_retry is None:
@@ -467,12 +410,8 @@ class Ingame:
                 # 플레이어 행동을 stay로 설정
                 self.player.sprites.status = "stay"
 
-                # 흐려지며 사라지다 (Fade Out)
-                sprite = self.player.sprites.get_sprite_handler().sprite
-                reduced = 10
-                alpha_next = max(0, sprite.alpha - reduced)
-
-                sprite.set_alpha(alpha_next)
+                # 흐려지며 사라지다
+                self.player.fade_out()
             # endregion
             # region FPS 표시
             if CONFIG.game_fps:
@@ -505,3 +444,81 @@ class Ingame:
 
         pygame.mixer.pause()
         pygame.mixer.unpause()
+
+    # region 체력
+    def process_hp_event(self, hp_attacked_index: int, hp_healed_index: int):
+        """
+        체력 관련 이벤트를 처리합니다.
+        :param hp_attacked_index: hp 공격받은 애니메이션 현재 index
+        :param hp_healed_index: hp 회복하는 애니메이션 현재 index
+        """
+        self.hp.get_sprite_handler().group.draw(CONFIG.surface)
+
+        hp_attacked_sprite = self.hp.sprites['attacked']
+        hp_healed_sprite = self.hp.sprites['healed']
+
+        if self.player.attacked:  # 공격을 받은 경우
+            if hp_attacked_index == 24:  # 사망
+                CONFIG.game_dead = True
+                SFX.DEAD.play()  # 사망 효과음 재생
+
+            hp_attacked_index += 6  # hp 공격받은 index 업데이트
+            hp_healed_index -= 2  # hp 회복하는 index 업데이트
+
+            hp_healed_sprite.sprite.update(added_index=-2)  # hp 회복하는 애니메이션 동기화
+
+            self.player.hp -= 1  # 체력 1 감소
+            self.player.move_y(5)  # 무조건 반사로 약간 점프
+
+            self.player.grace_period.update()  # 무적 시간 활성화
+            SFX.ATTACKED.play()  # 공격 받았을 때 효과음 재생
+
+            self.hp.status = 'attacked'  # hp 공격받은 애니메이션으로 변경
+            self.player.attacked = False  # 공격 여부 변수 초기화
+
+        if self.player.healed:  # 체력을 회복한 경우
+            if self.player.hp < 5:  # 체력이 꽉 차있지 않은 경우
+                hp_attacked_index -= 6  # hp 공격받은 index 업데이트
+                hp_healed_index += 2  # hp 회복하는 index 업데이트
+
+                hp_attacked_sprite.sprite.update(added_index=-6)  # hp 공격받은 애니메이션 동기화
+
+                self.player.hp += 1  # 체력 1 증가
+
+                SFX.ENEMY_ATTACKED.play()  # 체력을 회복하는 효과음 재생
+
+                self.hp.status = 'healed'  #  hp 회복하는 애니메이션으로 변경
+                
+            self.player.healed = False  # 회복 여부 변수 초기화
+
+    def process_hp_animation(self, hp_attacked_index: int, hp_healed_index: int):
+        """
+        체력 관련 애니메이션을 처리합니다.
+        :param hp_attacked_index: hp 공격받은 애니메이션 현재 index
+        :param hp_healed_index: hp 회복하는 애니메이션 현재 index
+        """
+        hp_attacked_sprite = self.hp.sprites['attacked']
+        hp_healed_sprite = self.hp.sprites['healed']
+
+        if hp_attacked_index > hp_attacked_sprite.sprite.index:
+            hp_attacked_sprite.sprite.update()
+        if hp_healed_index > hp_healed_sprite.sprite.index:
+            hp_healed_sprite.sprite.update()
+    # endregion
+    # region 무적 시간
+    def process_grace_period_animation(self, player: Player):
+        """
+        무적 시간 애니메이션을 처리합니다.
+        :param player: 무적 시간에 해당하는 캐릭터
+        """
+        if player.grace_period is not None:
+            image = player.get_surface_or_sprite()
+
+            if player.grace_period.is_grace_period():  # 무적시간인 경우
+                player.grace_period.make_it_ui(image)
+                player.grace_period.lasted = True
+
+            elif player.grace_period.lasted:
+                image.set_alpha(255)  # 무적 시간이 아니므로 복귀
+                player.grace_period.lasted = False
+    # endregion
