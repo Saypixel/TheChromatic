@@ -7,4 +7,4 @@
 
 
 ## 참조
-- [`config.py`](../components/config.py)
+- [`config.py`](../../components/config.py)

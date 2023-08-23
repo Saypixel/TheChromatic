@@ -1,5 +1,5 @@
 # 충돌 감지
-![1](./images/bound_1.png)
+![1](../images/bound_1.png)
 
 1. `obj_x` / `obj_y`가 `-1`인 경우, 비교할 좌표를 플레이어 좌표로 설정
 2. 그렇지 않은 경우, 비교할 좌표를 사용자 지정 좌표로 설정
@@ -12,5 +12,5 @@
 - 추가 필요
 
 ## 참조
-- [`characters/__init__.py`](../characters/__init__.py)
-- [`ingame.py`](../screens/ingame.py)
+- [`characters/__init__.py`](../../characters/__init__.py)
+- [`ingame.py`](../../screens/ingame.py)

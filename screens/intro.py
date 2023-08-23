@@ -7,32 +7,21 @@ from screens.menu import update_menu
 
 
 def update():
-    cooldown = 1000  # ms
-    last = pygame.time.get_ticks()
+    """인트로 화면으로 이동합니다."""
+    cooldown = 1000  # 인트로 업데이트 간격 (단위: ms)
+    last = pygame.time.get_ticks()  # 현재 시간 가져오기
 
-    text = "Saypixel"
-    colon_count = 1
+    text = "Saypixel"  # 로고
+    colon_count = 1  # 로고 애니메이션
 
-    SFX.INTRO.play()
+    SFX.INTRO.play()  # 인트로 효과음 재생
 
     from characters.player import Player
     from components.sprites.sprite import Sprite
     from components.sprites.sprite_collection import SpriteCollection
     from components.sprites.sprite_handler import SpriteHandler
 
-    player = Player.get_from_sprite(
-            SpriteCollection(
-                {
-                    "walk": SpriteHandler(
-                        Sprite(
-                            "assets/images/chr_player_walk.png", 6, 1, size=(345, 270)
-                        ))
-                },
-                "walk",
-                position=(-250, 255),
-                scale=0.4,
-            )
-        )
+    # SpriteCollection, SpriteHandler, Sprite를 이용하여 다중 스프라이트를 사용하는 플레이어 가져오기
     player_icon = Player.get_from_sprite(
         SpriteCollection(
                 {
@@ -46,87 +35,70 @@ def update():
                 scale=0.4,
             )
     )
-    is_player = False
-    is_player_icon = not is_player
-    
-    count = 0
+    count = 0  # 매 프레임마다 업데이트 되는걸 방지, 그러면 애니메이션이 너무 빨라질 수 있음
 
     while CONFIG.is_running:
         CONFIG.clock.tick(CONFIG.FPS)
-        CONFIG.surface.fill(CONST.COL_MAIN_BACKGROUND)
+        CONFIG.surface.fill(CONST.COL_MAIN_BACKGROUND)  # 정해놓은 백그라운드 색상으로 칠
 
         for event in pygame.event.get():
             match event.type:
                 case pygame.KEYDOWN:
                     match event.key:
-                        case pygame.K_BACKQUOTE:
+                        case pygame.K_BACKQUOTE:  # ` 키를 누를 시 인트로 스킵
                             update_menu()
                             reload()
 
-                        case pygame.K_ESCAPE:
+                        case pygame.K_ESCAPE:  # ESC 키를 누를 시 게임 종료
                             CONFIG.is_running = False
 
-        now = pygame.time.get_ticks()
+        now = pygame.time.get_ticks()  # 현재 시간 가져오기
 
         # region 인트로 : 동적 Saypixel ....
-        if now - last >= cooldown:
-            if colon_count == 4:
+        if now - last >= cooldown:  # 인트로 업데이트 간격보다 시간이 지난 경우
+            if colon_count == 4:  # 애니메이션이 끝난 경우 메인 메뉴로 이동함
                 update_menu()
                 reload()
                 return
 
-            last = now
-            text = "Saypixel" + "." * colon_count
+            last = now  # 업데이트한 시간 갱신
 
+            # 로고 애니메이션
+            text = "Saypixel" + "." * colon_count
             colon_count += 1
         # endregion
 
         count += 1
 
-        if count == 3:
+        if count == 3:  # 매 3프레임 마다 호출
             count = 0
-            if is_player:
-                player.sprites.get_sprite_handler().sprite.update()
+            player_icon.sprites.get_sprite_handler().sprite.update()  # 스프라이트 애니메이션 업데이트
 
-            if is_player_icon:
-                player_icon.sprites.get_sprite_handler().sprite.update()
+        player_icon.move_x(0.8)  # 0.8의 속도만큼 X 좌표로 움직임
+        player_icon.render()  # 렌더링
 
-        if player.x <= CONST.SCREEN_SIZE[0]:
-            if is_player:
-                player.move_x(0.8)
-                player.render()
-                
-            if is_player_icon:
-                player_icon.move_x(0.8)
-                player_icon.render()
+        title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)  # 로고 폰트 렌더링
+        title_rect = title.get_rect(center=(320, 180))  # 로고의 좌표 & 크기 (Rect) 가져오기
 
-        title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)
-        title_rect = title.get_rect(center=(320, 180))
+        CONFIG.surface.blit(title, title_rect)  # 로고를 화면에 렌더링
+        CONFIG.update_screen()  # 업스케일링
 
-        # region 아이콘
-        # icon = pygame.image.load("assets/images/icon.png")
-        # icon = pygame.transform.scale_by(icon, 0.4)
-
-        # CONFIG.surface.blit(icon, (title_rect[0] - 3, title_rect[1] - 30))
-        # endregion
-
-        CONFIG.surface.blit(title, title_rect)
-
-        CONFIG.update_screen()
-
-        process()
+        process()  # 공통 이벤트 처리
 
 
 def reload():
+    """Ctrl + R을 누르면 게임을 새로고침합니다. 이 때 게임이 재시작됩니다."""
     import screens.menu
 
-    if screens.menu.reload:
-        screens.menu.reload = False
+    if screens.menu.reload:  # Ctrl + R이 눌려서 게임을 새로고침 해야하는 경우
+        screens.menu.reload = False  # 새로고침 변수 업데이트
 
+        # 음악 및 효과음 중지
         pygame.mixer.music.stop()
 
         pygame.mixer.pause()
         pygame.mixer.unpause()
 
-        update()
-        reload()
+        update()  # 인트로 화면으로 이동
+        reload()  # 새로고침 시 update_menu()는 종료되기 때문에 update() 함수도 같이 종료됨.
+                  # 이 때 관련 변수를 이용하여 새로고침을 해야하는지 알 수 있음.

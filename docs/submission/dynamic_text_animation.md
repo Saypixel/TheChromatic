@@ -1,6 +1,6 @@
 # 동적 텍스트 애니메이션
 ## Mutual Text
-![1](./images/dynamic_text_animation_1.png)
+![1](../images/dynamic_text_animation_1.png)
 
 **Mutual Text**는 상호작용할 텍스트를 구분하기 위해 만들어진 클래스로,
 접두어를 기준으로 나눔
@@ -8,14 +8,14 @@
 즉, 텍스트에 접두어가 다양할수록 Mutual Text 배열은 많아짐.
 
 ## Text
-![2](./images/dynamic_text_animation_2.png)
+![2](../images/dynamic_text_animation_2.png)
 
 **Text**는 Mutual Text의 배열로, 렌더링할 텍스트 (문자열) 한 단위를 말함.
 
 아래 주석은 각 접두어가 무슨 역할을 하는지 적어놓음.
 
 ### 초기화
-![3](./images/dynamic_text_animation_3.png)
+![3](../images/dynamic_text_animation_3.png)
 
 - `raw`: 접두어가 포함된 텍스트
 - `pure`: 접두어가 포함되지 않은 순수 텍스트
@@ -24,7 +24,7 @@
 텍스트 안에 접두어가 있는 경우 `has_prefix`를 `True`로 설정 후,
 접두어만 삭제한 순수 텍스트 저장
 
-![4](./images/dynamic_text_animation_4.png)
+![4](../images/dynamic_text_animation_4.png)
 
 - `is_started`: 접두어가 있는지 확인
 - `mutual_text_`: 각 접두어별 텍스트
@@ -43,13 +43,13 @@
 즉, 상호작용할 텍스트인 `MutualText`의 배열임.
 
 ### 문자 렌더링
-![5](./images/dynamic_text_animation_5.png)
-![6](./images/dynamic_text_animation_6.png)
+![5](../images/dynamic_text_animation_5.png)
+![6](../images/dynamic_text_animation_6.png)
 
 1. 접두어별 맞는 폰트 지정
 2. pt를 픽셀로 변환
 
-![7](./images/dynamic_text_animation_7.png)
+![7](../images/dynamic_text_animation_7.png)
 
 1. 줄바꿈 접두어면 좌표를 지정, Carrige Return과 Line Feed 기능과 비슷함
 2. 검정색인 문자 생성 후 화면에 렌더링
@@ -57,11 +57,11 @@
 4. 새롭게 갱신된 문자 좌표 (위치) 반환
 
 ## TextCollection
-![8](./images/dynamic_text_animation_8.png)
+![8](../images/dynamic_text_animation_8.png)
 
 `TextCollection`: `Text` 클래스 배열, 여러 말을 해야할 때 쓰이는 클래스
 
-![9](./images/dynamic_text_animation_9.png)
+![9](../images/dynamic_text_animation_9.png)
 
 1. `Text` 속 `MutualText` 열거
 2. 접두어를 확인하여 각 접두어별 맞는 폰트 크기 지정
@@ -73,24 +73,24 @@
 8. 현재 출력할 `Text` 클래스와 다음 출력할 `Text` 클래스 지정
 
 ### 대화 (텍스트) 이동
-![10](./images/dynamic_text_animation_10.png)
+![10](../images/dynamic_text_animation_10.png)
 
 1. 모든 대화 (텍스트)를 다 본 경우 `index` 변수 초기화 후 텍스트 새롭게 지정 (리셋)하고 `False` 반환
 2. 아닌 경우 `index`를 더한 후 텍스트 지정하고 `True` 반환
 
 ## TextEvent
-![11](./images/dynamic_text_animation_11.png)
+![11](../images/dynamic_text_animation_11.png)
 
 대화 이벤트 처리
 
 ### 다음 대화창 이벤트
-![12](./images/dynamic_text_animation_12.png)
+![12](../images/dynamic_text_animation_12.png)
 
 각 변수에 따라 대화창 출력을 지연시키지 않고 완성시켜야 할지,
 다음 대화창으로 넘겨야할지 이벤트를 처리함
                                       
 ### 대화 애니메이션 이벤트
-![13](./images/dynamic_text_animation_13.png)
+![13](../images/dynamic_text_animation_13.png)
 
 - `mutual_index`: 현재 `Text` 클래스 속 `MutualText` 배열 index 저장
 - `mutual_text_index`: 현재 `MutualText` 클래스의 텍스트 (문자열) index 저장
@@ -113,15 +113,15 @@
 - 추가 필요
 
 ## 결과
-![14](./images/dynamic_text_animation_14.gif)
+![14](../images/dynamic_text_animation_14.gif)
 
 `MutualText`, `Text`, `TextCollection`, `TextEvent` 클래스의 조화로 이루어진 종합적인 결과
 
 - 코드가 많고 복잡한 데도 불구하고 30FPS 유지, 디자인과 성능을 모두 고려한 예술 작품
 
 ## 참조
-- [`text/mutual_text.py`](../components/text/mutual_text.py)
-- [`text/__init__.py`](../components/text/__init__.py)
-- [`text/text_collection.py`](../components/text/text_collection.py)
-- [`events/text.py`](../components/text.py)
-- [`ingame.py`](../screens/ingame.py)
+- [`text/mutual_text.py`](../../components/text/mutual_text.py)
+- [`text/__init__.py`](../../components/text/__init__.py)
+- [`text/text_collection.py`](../../components/text/text_collection.py)
+- [`events/text.py`](../../components/text.py)
+- [`ingame.py`](../../screens/ingame.py)

@@ -21,7 +21,8 @@ python main.py
 또는 `main.py` 파일을 실행하시면 됩니다.
 
 ## 게임 구조
-- [게임 구조를 알고 싶으시다면?](./docs/README.md)
+- [발표용](./docs/presentation/README.md): 구조에 관해 되게 간단하고 짧은 설명
+- [제출용](./docs/submission/README.md): 구조에 관해 엄청 길고 자세한 설명
 
 ## 크레딧
 - [2023 전국 청소년 오픈SW GAME 코딩대회](https://histarter0829.wixsite.com/2nd-hygamejam)에 참가한 작품입니다.

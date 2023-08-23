@@ -1,6 +1,6 @@
 # 캐릭터
 ## 상속
-![1](./images/characters_1.png)
+![1](../images/characters_1.png)
 
 `Character`: 플레이어, 적 및 텍스쳐 등 오브젝트의 기본 요소를 포함한 클래스
 
@@ -8,8 +8,8 @@
 그 중에 하나를 선택할 수 있음.
 
 ## 초기화
-![2](./images/characters_2.png)
-![3](./images/characters_3.png)
+![2](../images/characters_2.png)
+![3](../images/characters_3.png)
 
 1. 다중 스프라이트로 초기화하는 경우 빈 클래스로 반환 => `Player.get_from_sprite()`에서 이어짐
 2. 단일 이미지 생성 및 관련 변수 설정
@@ -20,20 +20,20 @@
 7. 좌표 및 크기 변수 초기화 후 `is_playable` 변수를 통하여 플레이어인 경우 관련 변수 업데이트
 
 ## 카메라 (화면) 안 범위 확인
-![4](./images/characters_4.png)
+![4](../images/characters_4.png)
 
 1. 카메라 범위를 가져온 후 관련 변수 설정
 2. 범위 확인 후 보정값 추가, 오차를 보정해야하는 경우 오차 보정값 추가
 
 ## 단일 이미지 / 다중 스프라이트 구분
-![6](./images/characters_6.png)
+![6](../images/characters_6.png)
 
 `__init__()` (생성자 함수)에서 다중 스프라이트로 선택했으면 `image_path` 변수가 기본값으로 설정되었으므로,
 
 `image_path`가 비어있으면 다중 스프라이트인 것을 알 수 있음.
 
 ## 렌더링
-![5](./images/characters_5.png)
+![5](../images/characters_5.png)
 
 1. 최적화가 설정되어있고 카메라 범위에 벗어나있으면 렌더링할 필요 없으므로 종료 (`is_camera_bound()` 함수 이용)
 2. 사용자 지정 렌더링할 화면이 없는 경우 렌더링할 화면을 기본값인 `CONFIG.surface` 화면으로 지정
@@ -43,7 +43,7 @@
 
 ## 플레이어
 ### 움직임
-![7](./images/characters_7.png)
+![7](../images/characters_7.png)
 
 X 좌표, Y 좌표 각각 속도 매개변수를 이용하여 이동시킴
 
@@ -53,20 +53,20 @@ X 좌표, Y 좌표 각각 속도 매개변수를 이용하여 이동시킴
 `move_x()`에서 따로 조건문이 있는 것은 세계 좌표 범위 밖을 벗어나지 않기 위함.
 
 ### 움직이는 방향으로 이미지 좌우반전
-![8](./images/characters_8.png)
+![8](../images/characters_8.png)
 
 1. 단일 이미지 / 단일 스프라이트 / 다중 스프라이트인지 확인 후 각자 맞는 형식 지정
 2. 속도 방향과 현재 이미지 방향이 같지 않은 경우, 좌우 반전시킴
 
 ### 다중 스프라이트를 사용하는 Player 클래스 생성
-![9](./images/characters_9.png)
+![9](../images/characters_9.png)
 
 1. 기본 생성자 (`__init__()`)에서는 단일 이미지만 지원하므로 빈 클래스로 초기화 후 다중 스프라이트 추가
 2. 관련 변수 초기화
 3. 플레이어면 플레이어 관련 변수 업데이트
 
 ## 적
-![10](./images/characters_10.png)
+![10](../images/characters_10.png)
 
 1. 적의 체력이 0 이하인 경우 사망한 것이므로 종료
 2. `is_camera_bound()` 함수를 이용하여 플레이어 화면 범위 안에 있는 경우 (이 때, 플레이어 배려를 위하여 약간의 보정값 추가) 속도 추가
@@ -77,7 +77,7 @@ X 좌표, Y 좌표 각각 속도 매개변수를 이용하여 이동시킴
 - 추가 필요
 
 ## 참조
-- [`characters/__init__.py`](../characters/__init__.py)
-- [`characters/player.py`](../characters/player.py)
-- [`characters/enemy.py`](../characters/enemy.py)
-- [`ingame.py`](../screens/ingame.py)
+- [`characters/__init__.py`](../../characters/__init__.py)
+- [`characters/player.py`](../../characters/player.py)
+- [`characters/enemy.py`](../../characters/enemy.py)
+- [`ingame.py`](../../screens/ingame.py)
