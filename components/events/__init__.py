@@ -8,10 +8,10 @@ def update_screen_resolution():
     """
     화면 해상도 업데이트
     """
-    if CONFIG.is_fullscreen:
+    if CONFIG.is_fullscreen:  # 전체화면으로 설정해야하는 경우
         CONFIG.screen = pygame.display.set_mode(CONFIG.window_size, pygame.FULLSCREEN)
     else:
-        CONFIG.screen = pygame.display.set_mode(CONFIG.window_size)
+        CONFIG.screen = pygame.display.set_mode(CONFIG.window_size)  # 창모드로 설정
 
 
 def process(f=None):

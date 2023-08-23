@@ -146,6 +146,7 @@ class CONFIG:
         )
 
     def resolution_to_str(size: tuple) -> str:
+        """해상도 크기를 문자열로 변환합니다. ex) (1920, 1080) => '1920x1080'"""
         return str(size[0]) + "x" + str(size[1])
 
 
