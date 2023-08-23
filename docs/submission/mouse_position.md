@@ -1,5 +1,5 @@
 # 마우스 좌표
-![0](./images/mouse_position.png)
+![0](../images/mouse_position.png)
 
 1. `pygame.mouse.get_pos()` 함수로 창 기준 마우스 좌표를 가져옴
 2. 사용자 지정 해상도에서 고정된 640x360 해상도 기준 마우스 좌표로 변환

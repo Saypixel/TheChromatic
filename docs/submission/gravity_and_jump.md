@@ -1,5 +1,5 @@
 # 중력
-![1](./images/gravity_and_jump_1.png)
+![1](../images/gravity_and_jump_1.png)
 
 - `GRAVITY`: 중력 상수이며, 값에 따라 중력 크기가 변함
 
@@ -14,7 +14,7 @@
 물리학 I에서 배운 뉴턴의 운동 법칙을 사용함.
 
 # 점프
-![2](./images/gravity_and_jump_2.png)
+![2](../images/gravity_and_jump_2.png)
 
 중력을 구현하면, 이를 이용하기 위한 점프도 구현함.
 
@@ -26,6 +26,6 @@
 - 추가 필요
 
 ## 참조
-- [`world.py`](../components/world.py)
-- [`player.py`](../characters/player.py)
-- [`ingame.py`](../screens/ingame.py)
+- [`world.py`](../../components/world.py)
+- [`player.py`](../../characters/player.py)
+- [`ingame.py`](../../screens/ingame.py)

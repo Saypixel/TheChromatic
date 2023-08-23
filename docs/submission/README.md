@@ -15,8 +15,8 @@
 |[사망 이벤트](./dead_event.md)|.|
 |[ESC 화면](./pause_menu.md)|.|
 |[설정](./settings.md)|.|
-|[인트로](./intro.md)|
-|[메인 메뉴](./menu.md)|
+|[인트로](./intro.md)|. (완성)|
+|[메인 메뉴](./menu.md)|.|
 |[SFX](./sfx.md)|.|
 |[CLI](./cli.md)|.|
 

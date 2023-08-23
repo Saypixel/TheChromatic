@@ -123,5 +123,5 @@
 - [`text/mutual_text.py`](../../components/text/mutual_text.py)
 - [`text/__init__.py`](../../components/text/__init__.py)
 - [`text/text_collection.py`](../../components/text/text_collection.py)
-- [`events/text.py`](../../components/text.py)
+- [`events/text.py`](../../events/text.py)
 - [`ingame.py`](../../screens/ingame.py)
