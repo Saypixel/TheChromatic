@@ -217,6 +217,10 @@ class Ingame:
 
         count = 0
 
+        # 가시 오차 범위 (동적 히트박스)
+        error_x = 0
+        error_y = 0
+
         hp_attacked_count = 0  # 애니메이션 (피공격)
         hp_healed_count = 7  # 애니메이션 (회복)
 
@@ -250,7 +254,14 @@ class Ingame:
             # endregion
             # region 장애물, 적, 중력
             for obstacle in self.obstacles:
-                self.player.check_if_attacked(obstacle.is_bound(-5, 24))
+                if self.player.is_air:  # 플레이어가 점프 한 경우 가시에 잘 안닿도록 오차 범위 설정
+                    error_x = max(error_x - 1, -5)
+                    error_y = max(error_y - 1, 15)
+                else:  # 걷고 있는 경우 가시에 잘 닿도록 오차 범위 설정
+                    error_x = min(error_x + 1, 10)
+                    error_y = min(error_y + 1, 24)
+
+                self.player.check_if_attacked(obstacle.is_bound(error_x, error_y))
 
             for enemy in self.enemies:
                 enemy.apply_movement_flipped(enemy.image)
