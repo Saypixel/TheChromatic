@@ -1,42 +1,54 @@
-# 게임 구조 (발표용)
-|이름|설명|
-|:---:|:---:|
-|[동적 카메라](./dynamic_camera.md)|.|
-|[업스케일링](./upscailing.md)|.|
-|[마우스 좌표](./mouse_position.md)|.|
-|[동적 텍스트 애니메이션](./dynamic_text_animation.md)|.|
-|[중력 & 점프](./gravity_and_jump.md)|.|
-|[무적 시간](./grace_period.md)|.|
-|[충돌 감지](./bound.md)|.|
-|[스프라이트](./sprite.md)|.|
-|[캐릭터](./characters.md)|.|
-|[체력](./hp_bar.md)|.|
-|[버튼](./button.md)|.|
-|[사망 이벤트](./dead_event.md)|.|
-|[ESC 화면](./pause_menu.md)|.|
-|[설정](./settings.md)|.|
-|[인트로](./intro.md)|
-|[메인 메뉴](./menu.md)|
-|[SFX](./sfx.md)|.|
-|[CLI](./cli.md)|.|
+## 1 페이지
 
-- 설명 흐름 기준
+### 자기소개
+![logo](https://i.imgur.com/gmtxAGp.png)
+안녕하세요! 저희 팀은 세이픽셀 팀입니다.\
+게임 이름은 The Chromatic 입니다.
 
-## TODO (우선순위 기준)
-- [ ] 월드 좌표 + 업스케일링 + 마우스 좌표
-- [ ] 동적 텍스트 애니메이션 (+ 자동 newline)
-- [ ] 시간 관리 (예정)
-- [ ] 중력 + 점프
-- [ ] 스프라이트
-- [ ] 캐릭터
-- [ ] 무적 시간
-- [ ] 체력 (+ 체력 회복 (예정))
-- [ ] 충돌 감지
-- [ ] 버튼
-- [ ] 사망 이벤트
-- [ ] ESC 화면
-- [ ] 설정
-- [ ] 인트로
-- [ ] 메인 메뉴
-- [ ] SFX
-- [ ] CLI
+## 2 페이지
+
+### 필요한 패키지 설치
+![install](./shell_1.png)\
+이 명령어를 쉘에 입력하면 The Chromatic의 필요한 패키지를 설치됩니다.
+
+## 3 페이지
+
+### The Chromatic 게임 실행
+![run](./shell_2.png)\
+이 명령어를 쉘에 입력하면 게임이 실행 됩니다.
+
+## 4 페이지
+
+### The Chromatic 게임의 구조
+![architecture](./architecture.png)\
+The Chromatic 게임의 구조는 이 사진과 같습니다.\
+처음에는 main.py 파일에서 인수를 받아 `debug`, `fps`, `fullscreen`, `fullhd`, `quadhd`, `help` 명령어와 맞는 지 확인합니다.\
+그리고 게임이 실행됩니다.
+
+## 5 페이지
+
+### 코드 설명
+
+> [!INFO]
+> TODO: 아직 협의된 부분이 없으므로 비워둡니다.
+
+
+## 6 페이지
+
+### 플레이 영상
+
+> [!INFO]
+> TODO: 아직 게임이 완성되지 않아 플레이 영상이 존재하지 않습니다.
+
+## 7 페이지
+
+## 크레딧
+![credit](./credit.png)\
+저희는 최대한 할 수 있는 만큼 **OST**, **Coding**, **Design**, **효과음**까지 순수 창작으로 이루어져 있습니다.\
+게임 라이브러리인 **pygame**과 디버그 라이브러리인 **icecream**의 도움을 받았고 마지막으로 **Python 3.11** 버전을 기반으로 작성되어 있습니다.
+
+## 8 페이지
+
+### 끝
+![end](./end.png)\
+저희의 발표를 들어주셔서 감사합니다.
