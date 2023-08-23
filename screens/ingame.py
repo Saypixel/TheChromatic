@@ -256,7 +256,7 @@ class Ingame:
             for obstacle in self.obstacles:
                 if self.player.is_air:  # 플레이어가 점프 한 경우 가시에 잘 안닿도록 오차 범위 설정
                     error_x = max(error_x - 1, -5)
-                    error_y = max(error_y - 1, 15)
+                    error_y = max(error_y - 1, 18)
                 else:  # 걷고 있는 경우 가시에 잘 닿도록 오차 범위 설정
                     error_x = min(error_x + 1, 10)
                     error_y = min(error_y + 1, 24)
