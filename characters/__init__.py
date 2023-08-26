@@ -60,6 +60,9 @@ class Character(ABC):
     is_air = False
     """플레이어가 공중에 떠 있는가?"""
 
+    dialog: TextCollection = None
+    """현재 플레이어/NPC의 대화"""
+
     sign = None
     """말풍선"""
 

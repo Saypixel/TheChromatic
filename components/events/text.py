@@ -19,7 +19,7 @@ class TextEvent(object):
     dialog_closed = True
     """대화창 텍스트가 닫혀있는가?"""
 
-    dialog: TextCollection
+    dialog: TextCollection = None
     """대화창 (Text 배열)"""
 
     @classmethod
@@ -36,6 +36,7 @@ class TextEvent(object):
                     cls.dialog_paused = False  # 텍스트 출력 미완성
 
                 else:  # 대화창의 텍스트가 더이상 없을 때
+                    cls.dialog = None
                     cls.dialog_closed = True  # 대화창 닫힘
                     cls.dialog_paused = True  # 텍스트 출력 완성
                     

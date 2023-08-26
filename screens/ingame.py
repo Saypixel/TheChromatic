@@ -21,6 +21,9 @@ from components.sprites.sprite_collection import SpriteCollection
 from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite import Sprite
 
+from maps.map_main import MapMain
+from maps.map_manager import MapManager
+
 from screens.pause_menu import update_pause_menu
 
 
@@ -156,21 +159,29 @@ class Ingame:
                     if CONFIG.is_interactive():
                         match event.key:
                             case pygame.K_SPACE | pygame.K_w | pygame.K_UP:
-                                if self.emilia.is_bound(80, 80):
-                                    TextEvent.process_next_event()
+                                speeched = False
 
-                                    if TextEvent.dialog_delayed:
-                                        self.sign.refresh()
+                                for npc in MapManager.current.NPCs:
+                                    if npc.is_bound(80, 80):
+                                        if TextEvent.dialog is None and npc.dialog is not None:
+                                            TextEvent.dialog = npc.dialog
 
-                                    if not TextEvent.dialog_closed:
-                                        pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
+                                        if TextEvent.dialog is not None:
+                                            TextEvent.process_next_event()
 
-                                    # 주인공 애니메이션 기본으로 설정
-                                    self.player.sprites.status = "stay"
+                                            if TextEvent.dialog_delayed:
+                                                self.sign.refresh()
 
-                                else:
-                                    if not self.player.is_air:  # 다중 점프 금지
-                                        self.player.move_y(13)  # 점프
+                                            if not TextEvent.dialog_closed:
+                                                pygame.time.set_timer(CONST.PYGAME_EVENT_DIALOG, 1, 1)
+
+                                            # 주인공 애니메이션 기본으로 설정
+                                            MapManager.current.player.sprites.status = "stay"
+
+                                            speeched = True
+
+                                if TextEvent.dialog_closed and not MapManager.current.player.is_air and not speeched:  # 다중 점프 금지
+                                    MapManager.current.player.move_y(13)  # 점프
 
                             case pygame.K_j:  # 기본 공격
                                 self.player.attack = True
@@ -205,15 +216,10 @@ class Ingame:
                         if self.button_menu.check_for_input(self.mouse_pos):  # 메뉴화면으로 나가기
                             self.need_to_exit = True
 
-        TextEvent.dialog = TextCollection(
-            [
-                Text("*안녕!*"),
-                Text("나는 에밀리아야."),
-                Text("*J키*는 #기본공격#이야!"),
-                Text("그럼 즐거운 여행되길 바래!")
-            ],
-            self.sign.width
-        )
+        MapManager.maps = {
+            "main": MapMain(self.player, self.sign)
+        }
+        MapManager.apply("main")
 
         count = 0
 
@@ -278,7 +284,10 @@ class Ingame:
             World.process_gravity(self.enemies + [self.player], 305)  # 중력 구현
             # endregion
 
-            self.process_hp_event(hp_attacked_index, hp_healed_index)
+            # hp 이벤트 처리 후 hp 애니메이션 index 변수 갱신
+            hp_indicies = self.process_hp_event(hp_attacked_index, hp_healed_index)
+            hp_attacked_index = hp_indicies[0]
+            hp_healed_index = hp_indicies[1]
 
             # 무적 시간
             for player in self.enemies + [self.player]:
@@ -446,11 +455,12 @@ class Ingame:
         pygame.mixer.unpause()
 
     # region 체력
-    def process_hp_event(self, hp_attacked_index: int, hp_healed_index: int):
+    def process_hp_event(self, hp_attacked_index: int, hp_healed_index: int) -> tuple[int, int]:
         """
         체력 관련 이벤트를 처리합니다.
         :param hp_attacked_index: hp 공격받은 애니메이션 현재 index
         :param hp_healed_index: hp 회복하는 애니메이션 현재 index
+        :return: 갱신해야할 hp 애니메이션 index 변수 2개
         """
         self.hp.get_sprite_handler().group.draw(CONFIG.surface)
 
@@ -490,6 +500,8 @@ class Ingame:
                 self.hp.status = 'healed'  #  hp 회복하는 애니메이션으로 변경
                 
             self.player.healed = False  # 회복 여부 변수 초기화
+
+        return (hp_attacked_index, hp_healed_index)
 
     def process_hp_animation(self, hp_attacked_index: int, hp_healed_index: int):
         """
