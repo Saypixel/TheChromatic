@@ -22,6 +22,7 @@ from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite import Sprite
 
 from maps.map_main import MapMain
+from maps.map_training import MapTraining
 from maps.map_manager import MapManager
 
 from screens.pause_menu import update_pause_menu
@@ -73,43 +74,6 @@ class Ingame:
         position=(200, 225),
         scale=0.6)
 
-        # 장애물
-        self.spike = Player.get_from_sprite(SpriteCollection({
-            "default": SpriteHandler(
-                Sprite(
-                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
-                )
-            )
-        },
-        "default",
-        position=(800, 270),
-        scale=0.4))
-
-        self.spike2 = Player.get_from_sprite(SpriteCollection({
-            "default": SpriteHandler(
-                Sprite(
-                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
-                )
-            )
-        },
-        "default",
-        position=(850, 270),
-        scale=0.4))
-
-        self.obstacles = [self.spike, self.spike2]
-
-        # 적
-        self.enemy = Enemy("assets/images/chr_raon.png", (1000, 222), 0.4)
-        self.enemies = [self.enemy]
-
-        for enemy in self.enemies:
-            enemy.grace_period = GracePeriod(1500)
-            enemy.hp = 2
-
-        # NPC
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 195), 0.4)  # 에밀리아
-        self.NPCs = [self.emilia]
-
         # 기타 아이템
         self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.3)
         self.hp = SpriteCollection({
@@ -127,10 +91,6 @@ class Ingame:
             scale=0.4
             )
         
-        # 배경
-        self.background = Texture("assets/images/background_sky.png", (0, 0), 1, repeat_x=2, fit=True)
-        self.ground = Texture("assets/images/grass.png", (0, 287), 0.4, repeat_x=2)
-
     def update_ingame(self):
         def process_ingame_movement():
             """키 동시 입력 처리를 위한 움직임 이벤트 처리"""
@@ -200,6 +160,7 @@ class Ingame:
 
                             case pygame.K_e:  # 체력 회복 or 상호작용
                                 self.player.healed = True
+                                MapManager.apply("training")
 
                 case pygame.KEYUP:
                     pass
@@ -222,7 +183,8 @@ class Ingame:
                             self.need_to_exit = True
 
         MapManager.maps = {
-            "main": MapMain(self.player, self.sign)
+            "main": MapMain(self.player, self.sign),
+            "training": MapTraining(self.player, self.sign)
         }
         MapManager.apply("main")
 
@@ -385,6 +347,8 @@ class Ingame:
         TextEvent.dialog_closed = True
         TextEvent.dialog_delayed = True
         TextEvent.dialog_paused = True
+        TextEvent.NPC = None
+        TextEvent.dialog = None
 
         self.player.set_pos(200, 225)
 

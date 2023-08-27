@@ -68,7 +68,7 @@ class Map:
         CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
         CONFIG.surface.blit(self.floor.image, self.floor.get_pos())
 
-        World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현
+        #World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현
 
         self.process_obstacle_bound()  # 장애물
         self.process_enemy_event()  # 적
