@@ -7,15 +7,11 @@
 
 ## 2 페이지
 
-### 필요한 패키지 설치
-![install](./shell_1.png)\
-이 명령어를 쉘에 입력하면 The Chromatic의 필요한 패키지를 설치됩니다.
-
-## 3 페이지
-
-### The Chromatic 게임 실행
+### 필요한 패키지 설치 및 게임 실행
+![install](./shell_1.png)
 ![run](./shell_2.png)\
-이 명령어를 쉘에 입력하면 게임이 실행 됩니다.
+`pip install -r requirements.txt` 명령어를 쉘에 입력하면 The Chromatic의 필요한 패키지를 설치됩니다.\
+`python main.py` 명령어를 쉘에 입력하면 게임이 실행 됩니다.
 
 ## 4 페이지
 
