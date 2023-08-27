@@ -24,8 +24,8 @@ The Chromatic 게임의 구조는 이 사진과 동일합니다.\
 
 ### 코드 설명
 
-1. [`동적 카메라`](../submission/dynamic_camera.md)
-2. [`업스케일링`](../submission/upscailing.md)
+1. [`동적 카메라`](#동적-카메라)
+2. [`업스케일링`](#업스케일링)
 3. [`마우스 좌표`](../submission/mouse_position.md)
 4. [`동적 텍스트 애니메이션`](../submission/dynamic_text_animation.md)
 5. [`중력 & 점프`](../submission/gravity_and_jump.md)
@@ -34,6 +34,37 @@ The Chromatic 게임의 구조는 이 사진과 동일합니다.\
 
 ### 동적 카메라
 
+## 세계 크기 선언
+![1](../images/dynamic_camera_1.png)
+
+화면 및 카메라 크기를 정해준 뒤, 주인공이 돌아다니는 세계 크기도 정합니다.
+
+## 카메라 좌표 선언
+![2](../images/dynamic_camera_2.png)
+
+카메라가 어디까지 움직였는지 저장할 좌표 변수 선언
+
+## 동적 카메라 작동 원리
+![3](../images/dynamic_camera_3.png)
+![4](../images/dynamic_camera_4.png)
+![5](../images/dynamic_camera_5.png)
+
+1. 매 프레임 업데이트마다 플레이어가 어느만큼 움직였는지 X좌표를 계산
+2. 카메라 좌표가 플레이어 중심으로 움직이게 설정
+3. 세계 크기에서 오프셋을 카메라 좌표만큼 이동
+4. 화면 (카메라) 크기만큼 잘라서 세계 좌표를 카메라 좌표로 변환
+
+## 결과
+![6](../images/dynamic_camera_6.gif)
+
+세계 좌표는 움직이지 않고 고정이지만
+카메라 좌표만 움직임.
+
+모든 UI의 좌표를 변경하지 않아도 돼서
+관리 및 유지 보수가 매우 편함.
+
+## 참조
+- [`config.py`](../../components/config.py)
 
 ## 7 페이지
 
