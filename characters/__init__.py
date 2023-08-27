@@ -4,7 +4,6 @@ from abc import ABC
 from components.config import CONFIG, CONST, debug
 
 from components.text.text_collection import TextCollection
-from components.events.text import TextEvent
 from components.events.grace_period import GracePeriod
 
 from components.sprites.sprite_collection import SpriteCollection
@@ -248,6 +247,8 @@ class Character(ABC):
         캐릭터가 대화를 할 수 있도록 합니다.
         :param sign: 말풍선
         """
+        from components.events.text import TextEvent
+        
         if self.sign is None:  # 말풍선이 초기화되어 있는 경우 
             self.sign = sign  # 말풍선 설정
 

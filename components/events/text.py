@@ -2,10 +2,12 @@ import pygame
 from threading import Timer
 
 from components.config import CONFIG, CONST, debug
+
 from components.text import Text
 from components.text.text_collection import TextCollection
 from components.text.mutual_text import MutualText
 
+from characters.player import Player
 
 class TextEvent(object):
     """인게임 내에서 처리될 공통 텍스트 이벤트"""
@@ -22,6 +24,9 @@ class TextEvent(object):
     dialog: TextCollection = None
     """대화창 (Text 배열)"""
 
+    NPC: Player = None
+    """대화하는 NPC"""
+
     @classmethod
     def process_next_event(cls):
         # 다음 대화창 이벤트 구현
@@ -36,7 +41,7 @@ class TextEvent(object):
                     cls.dialog_paused = False  # 텍스트 출력 미완성
 
                 else:  # 대화창의 텍스트가 더이상 없을 때
-                    cls.dialog = None
+                    cls.dialog = None  # 대화창 초기화
                     cls.dialog_closed = True  # 대화창 닫힘
                     cls.dialog_paused = True  # 텍스트 출력 완성
                     

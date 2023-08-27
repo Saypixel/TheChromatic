@@ -23,7 +23,7 @@ class MapMain(Map):
         # NPC
         self.sign = sign
 
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 195), 0.4)  # 에밀리아
+        self.emilia = Player("assets/images/chr_emilia.png", (400, 193), 0.4)  # 에밀리아
         self.emilia.dialog = TextCollection(
             [
                 Text("*안녕!*"),
@@ -71,4 +71,4 @@ class MapMain(Map):
         
         # 배경
         self.background = Texture("assets/images/background_sky.png", (0, 0), 1, repeat_x=2, fit=True)
-        self.ground = Texture("assets/images/grass.png", (0, 287), 0.4, repeat_x=2)
+        self.floor = Texture("assets/images/grass.png", (0, 304), 0.4, repeat_x=2)

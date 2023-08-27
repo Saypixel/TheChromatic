@@ -165,6 +165,8 @@ class Ingame:
                                     if npc.is_bound(80, 80):
                                         if TextEvent.dialog is None and npc.dialog is not None:
                                             TextEvent.dialog = npc.dialog
+                                        if TextEvent.NPC is None:  # 주변에 NPC가 있는 경우 대화하는 NPC 변수 갱신
+                                            TextEvent.NPC = npc
 
                                         if TextEvent.dialog is not None:
                                             TextEvent.process_next_event()
@@ -183,11 +185,14 @@ class Ingame:
                                 if TextEvent.dialog_closed and not MapManager.current.player.is_air and not speeched:  # 다중 점프 금지
                                     MapManager.current.player.move_y(13)  # 점프
 
+                                if not speeched:  # 주변에 NPC가 없는 경우 대화하는 NPC 변수 갱신
+                                    TextEvent.NPC = None
+
                             case pygame.K_j:  # 기본 공격
                                 self.player.attack = True
                                 SFX.ATTACK.play()
 
-                                for enemy in self.enemies:
+                                for enemy in MapManager.current.enemies:
                                     if enemy.is_bound(80, 100) and not enemy.grace_period.is_grace_period():
                                         enemy.hp -= 1
                                         enemy.grace_period.update()
@@ -223,10 +228,6 @@ class Ingame:
 
         count = 0
 
-        # 가시 오차 범위 (동적 히트박스)
-        error_x = 0
-        error_y = 0
-
         hp_attacked_index = 0  # 애니메이션 (피공격)
         hp_healed_index = 7  # 애니메이션 (회복)
 
@@ -239,13 +240,9 @@ class Ingame:
             # region 카메라
             hp_sprite = self.hp.get_sprite_handler().sprite
             hp_sprite.set_pos((CONFIG.camera_x, hp_sprite.position[1]))
-
-            self.background.set_pos(CONFIG.camera_x // 1.1, self.background.y)  # 조금씩 움직이게 하고 싶어요
-            #self.ground.set_pos(CONFIG.camera_x, self.ground.y)
             # endregion
 
-            CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
-            CONFIG.surface.blit(self.ground.image, self.ground.get_pos())
+            MapManager.current.render(count)  # 현재 맵 렌더링
 
             # region 플레이어 움직임
             sprite_player = self.player.sprites.get_sprite_handler().sprite
@@ -258,46 +255,17 @@ class Ingame:
             self.fx.set_pos((fx_x, self.player.y))
             self.player.apply_movement_flipped(fx_sprite)  # 플레이어 움직임에 따라서 FX 움직임 동기화
             # endregion
-            # region 장애물, 적, 중력
-            for obstacle in self.obstacles:
-                if self.player.is_air:  # 플레이어가 점프 한 경우 가시에 잘 안닿도록 오차 범위 설정
-                    error_x = max(error_x - 1, -5)
-                    error_y = max(error_y - 1, 18)
-                else:  # 걷고 있는 경우 가시에 잘 닿도록 오차 범위 설정
-                    error_x = min(error_x + 1, 10)
-                    error_y = min(error_y + 1, 24)
-
-                self.player.check_if_attacked(obstacle.is_bound(error_x, error_y))
-
-            for enemy in self.enemies:
-                enemy.apply_movement_flipped(enemy.image)
-
-                if enemy.hp <= 0:
-                    if not enemy.fade_out():  # 적 사망 후 완전 투명해졌을 때
-                        index = self.enemies.index(enemy)
-                        self.enemies.pop(index)  # 적 제거
-                
-                if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
-                    enemy.follow_player(self.obstacles)
-                    self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())
-
-            World.process_gravity(self.enemies + [self.player], 305)  # 중력 구현
-            # endregion
 
             # hp 이벤트 처리 후 hp 애니메이션 index 변수 갱신
             hp_indicies = self.process_hp_event(hp_attacked_index, hp_healed_index)
             hp_attacked_index = hp_indicies[0]
             hp_healed_index = hp_indicies[1]
 
-            # 무적 시간
-            for player in self.enemies + [self.player]:
-                self.process_grace_period_animation(player)
-
             # region 대화
             if not TextEvent.dialog_closed:
-                self.emilia.speech(self.sign)
-            else:
-                self.emilia.unspeech()
+                TextEvent.NPC.speech(self.sign)
+            elif TextEvent.NPC is not None:
+                TextEvent.NPC.unspeech()
             # endregion
             status_player = self.player.sprites.status
 
@@ -308,11 +276,6 @@ class Ingame:
             if count % 5 == 0:
                 self.process_hp_animation(hp_attacked_index, hp_healed_index) # hp 애니메이션 업데이트
 
-                # 장애물 애니메이션
-                for obstacle in self.obstacles:
-                    if obstacle.is_sprite():
-                        obstacle.sprites.get_sprite_handler().sprite.update()
-
             if count == 10:
                 count = 0
 
@@ -321,20 +284,6 @@ class Ingame:
 
             process(process_ingame)
             process_ingame_movement()
-
-            # 장애물
-            for obstacle in self.obstacles:
-                obstacle.render()
-
-            # NPC
-            self.emilia.render()
-
-            # 적
-            for enemy in self.enemies:
-                enemy.render()
-
-            # 플레이어
-            self.player.render()
 
             # region 공격
             if self.player.attack:  # 공격을 한 경우
@@ -516,21 +465,4 @@ class Ingame:
             hp_attacked_sprite.sprite.update()
         if hp_healed_index > hp_healed_sprite.sprite.index:
             hp_healed_sprite.sprite.update()
-    # endregion
-    # region 무적 시간
-    def process_grace_period_animation(self, player: Player):
-        """
-        무적 시간 애니메이션을 처리합니다.
-        :param player: 무적 시간에 해당하는 캐릭터
-        """
-        if player.grace_period is not None:
-            image = player.get_surface_or_sprite()
-
-            if player.grace_period.is_grace_period():  # 무적시간인 경우
-                player.grace_period.make_it_ui(image)
-                player.grace_period.lasted = True
-
-            elif player.grace_period.lasted:
-                image.set_alpha(255)  # 무적 시간이 아니므로 복귀
-                player.grace_period.lasted = False
     # endregion
