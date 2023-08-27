@@ -63,12 +63,13 @@ class Map:
         맵을 렌더링합니다.
         :param frame_count: 1초 당 누적되는 프레임 렌더링하는 개수 (범위: 0~10)
         """
-        self.background.set_pos(CONFIG.camera_x // 1.1, self.background.y)  # 조금씩 움직이게 하고 싶어요
+        self.background.set_pos(CONFIG.camera_x, self.background.y) 
+        #self.background.set_pos(CONFIG.camera_x // 1.1, self.background.y)  # 조금씩 움직이게 하고 싶어요
 
         CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
         CONFIG.surface.blit(self.floor.image, self.floor.get_pos())
 
-        #World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현
+        World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현
 
         self.process_obstacle_bound()  # 장애물
         self.process_enemy_event()  # 적

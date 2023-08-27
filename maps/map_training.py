@@ -40,5 +40,5 @@ class MapTraining(Map):
         self.enemies = []
 
         # 배경
-        self.background = Texture("assets/images/background.png", (0, 0), 1, repeat_x=2, fit=True)
-        self.floor = Texture("assets/images/ground_temp.png", (0, 0), repeat_x=2, fit=True)
+        self.background = Texture("assets/images/background_training.png", (0, 0), 1, repeat_x=2, fit=True)
+        self.floor = Texture("assets/images/ground_temp.png", (0, 320), 0.4, repeat_x=2)
