@@ -34,17 +34,15 @@ class TextCollection:
         self.textList = []
         self.position = pos
 
-        pt = 15  # 폰트 단위
+        pt = Text.PT  # 폰트 단위
         text_width = 0.0  # 현재 텍스트 너비
         modified_text = ""  # 줄바꿈이 들어간 텍스트
 
         for text in texts:  # Text
             for mutual in text.texts:  # Mutual Text
-                match mutual.prefix:  # 접두어
-                    case "#":
-                        pt += 2
-                    case "/":
-                        pt -= 3
+                if mutual.prefix in Text.SYNTAX:  # 접두어별 맞는 폰트 지정
+                    syntax = Text.SYNTAX[mutual.prefix]
+                    pt = syntax[1]
 
                 px = pt / 3.0 * 4.0  # pt를 픽셀로 변환
 

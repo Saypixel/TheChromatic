@@ -79,32 +79,34 @@ def update_pause_menu():
 
     # ESC 화면 배경
     background = pygame.image.load("assets/images/status3.png")
-    background = pygame.transform.scale_by(background, 0.2)  # 이미지 스케일링
+    background = pygame.transform.scale_by(background, 0.35)  # 이미지 스케일링
     background = pygame.transform.rotate(background, 90)  # 이미지를 시계방향으로 90도만큼 회전
-    background_rect = background.get_rect(center=(320 + CONFIG.camera_x, 180 + CONFIG.camera_y))  # 카메라 좌표 보정
+    background_rect = background.get_rect(center=(480 + CONFIG.camera_x, 270 + CONFIG.camera_y))  # 카메라 좌표 보정
 
     # 버튼: 돌아가기
     button_play_image = pygame.image.load("assets/images/button_play.png")
-    button_play_image = pygame.transform.scale_by(button_play_image, 0.2)  # 이미지 스케일링
-    button_play = Button(image=button_play_image, pos=(290, 140))
+    button_play_image = pygame.transform.scale_by(button_play_image, 0.4)  # 이미지 스케일링
+    button_play = Button(image=button_play_image, pos=(425, 216))
 
     # 버튼: 설정
     button_settings_image = pygame.image.load("assets/images/button_settings.png")
-    button_settings_image = pygame.transform.scale_by(button_settings_image, 0.2)  # 이미지 스케일링
-    button_settings = Button(image=button_settings_image, pos=(350, 140))
+    button_settings_image = pygame.transform.scale_by(button_settings_image, 0.4)  # 이미지 스케일링
+    button_settings = Button(image=button_settings_image, pos=(531, 216))
 
     # 버튼: 전체화면 / 창모드
     button_fullscreen_image = pygame.image.load("assets/images/button_fullscreen.png")
-    button_fullscreen = Button(image=button_fullscreen_image, pos=(260, 200))
+    button_fullscreen_image = pygame.transform.scale_by(button_fullscreen_image, 2)
+    button_fullscreen = Button(image=button_fullscreen_image, pos=(373, 320))
 
     # 버튼: 음소거 / 음소거 해제
     button_unmute_image = pygame.image.load("assets/images/button_unmute.png")
-    button_unmute_image = pygame.transform.scale_by(button_unmute_image, 0.2)  # 이미지 스케일링
-    button_unmute = Button(image=button_unmute_image, pos=(320, 200))
+    button_unmute_image = pygame.transform.scale_by(button_unmute_image, 0.4)  # 이미지 스케일링
+    button_unmute = Button(image=button_unmute_image, pos=(478, 320))
 
     # 버튼: 메뉴화면으로 나가기
     button_exit_image = pygame.image.load("assets/images/button_exit.png")
-    button_exit = Button(image=button_exit_image, pos=(380, 200))
+    button_exit_image = pygame.transform.scale_by(button_exit_image, 2)
+    button_exit = Button(image=button_exit_image, pos=(585, 320))
 
     while CONFIG.is_running and not need_to_exit:
         CONFIG.clock.tick(CONFIG.FPS)
@@ -118,6 +120,7 @@ def update_pause_menu():
             else "assets/images/button_fullscreen.png"
         )
         image = pygame.image.load(path)
+        image = pygame.transform.scale_by(image, 2)  # 이미지 스케일링
 
         button_fullscreen.change_image(image)  # 맞는 값에 맞춰 이미지 변경
 
@@ -128,7 +131,7 @@ def update_pause_menu():
             else "assets/images/button_unmute.png"
         )
         image = pygame.image.load(path)
-        image = pygame.transform.scale_by(image, 0.2)  # 이미지 스케일링
+        image = pygame.transform.scale_by(image, 0.4)  # 이미지 스케일링
 
         button_unmute.change_image(image)  # 맞는 값에 맞춰 이미지 변경
 

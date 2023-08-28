@@ -23,6 +23,7 @@ from components.sprites.sprite import Sprite
 
 from maps.map_main import MapMain
 from maps.map_training import MapTraining
+from maps.map_test import MapTest
 from maps.map_manager import MapManager
 
 from screens.pause_menu import update_pause_menu
@@ -55,7 +56,7 @@ class Ingame:
                         ))
                 },
                 "stay",
-                position=(200, 197),
+                position=(200, 347),
                 scale=0.4,
             ),
             True,
@@ -75,7 +76,7 @@ class Ingame:
         scale=0.6)
 
         # 기타 아이템
-        self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.3)
+        self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.4)
         self.hp = SpriteCollection({
             "attacked": SpriteHandler(
                 Sprite(
@@ -88,7 +89,7 @@ class Ingame:
             },
             "attacked",
             position=(0, 0),
-            scale=0.4
+            scale=0.6
             )
         
     def update_ingame(self):
@@ -184,7 +185,8 @@ class Ingame:
 
         MapManager.maps = {
             "main": MapMain(self.player, self.sign),
-            "training": MapTraining(self.player, self.sign)
+            "training": MapTraining(self.player, self.sign),
+            "test": MapTest(self.player, self.sign)
         }
         MapManager.apply("main")
 
@@ -274,7 +276,7 @@ class Ingame:
                     self.dead_background = pygame.transform.scale(
                         self.dead_background,
                         (
-                            self.dead_background.get_width() + 20,
+                            self.dead_background.get_width() + 60,
                             self.dead_background.get_height() - 20,
                         ),
                     )
@@ -294,7 +296,7 @@ class Ingame:
 
                     self.button_retry = Button(
                         image=button_retry_image,
-                        pos=(320, 220),
+                        pos=(480, 225),
                         text_input="재도전",
                         font=Font(Fonts.TITLE2, 30).to_pygame(),
                         base_color="#ffffff",
@@ -311,16 +313,16 @@ class Ingame:
 
                     self.button_menu = Button(
                         image=button_menu_image,
-                        pos=(320, 280),
+                        pos=(480, 280),
                         text_input="메뉴 화면으로",
                         font=Font(Fonts.TITLE2, 30).to_pygame(),
                         base_color="#ffffff",
                         hovering_color="White",
                     )
 
-                CONFIG.surface.blit(self.dead_background, (180 + CONFIG.camera_x, 120 + CONFIG.camera_y))
+                CONFIG.surface.blit(self.dead_background, (320 + CONFIG.camera_x, 120 + CONFIG.camera_y))
                 CONFIG.surface.blit(
-                    self.dead_text, self.dead_text.get_rect(center=(320 + CONFIG.camera_x, 160 + CONFIG.camera_y))
+                    self.dead_text, self.dead_text.get_rect(center=(483 + CONFIG.camera_x, 160 + CONFIG.camera_y))
                 )
 
                 for button in [self.button_retry, self.button_menu]:
@@ -336,9 +338,9 @@ class Ingame:
             # region FPS 표시
             if CONFIG.game_fps:
                 fps = round(CONFIG.clock.get_fps(), 1)
-                fps_text = Font(Fonts.TITLE3, 20).render(str(fps), (255, 255, 255))
+                fps_text = Font(Fonts.TITLE3, 32).render(str(fps), CONST.COL_WHITE)
 
-                CONFIG.surface.blit(fps_text, (585 + CONFIG.camera_x, 10 + CONFIG.camera_y))
+                CONFIG.surface.blit(fps_text, (870 + CONFIG.camera_x, 15 + CONFIG.camera_y))
             # endregion
 
             CONFIG.update_screen()
@@ -350,7 +352,7 @@ class Ingame:
         TextEvent.NPC = None
         TextEvent.dialog = None
 
-        self.player.set_pos(200, 225)
+        self.player.set_pos(200, 375)
 
         CONFIG.game_dead = False
         CONFIG.camera_x = 0

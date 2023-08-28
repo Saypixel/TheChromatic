@@ -54,14 +54,14 @@ if __name__ == "__main__":
         CONFIG.is_fullscreen = True
 
     if args.fullhd:  # FHD (1920x1080)
-        CONFIG.window_size = (1920, 1080)
-        CONFIG.window_scale = 3
+        CONFIG.window_size = [1920, 1080]
+        CONFIG.window_scale = 2
 
         update_screen_resolution()  # 화면 해상도 업데이트
             
     elif args.quadhd:  # QHD (2560x1440)
-        CONFIG.window_size = (2560, 1440)
-        CONFIG.window_scale = 4
+        CONFIG.window_size = [2560, 1440]
+        CONFIG.window_scale = 2.6666
 
         update_screen_resolution()  # 화면 해상도 업데이트
 

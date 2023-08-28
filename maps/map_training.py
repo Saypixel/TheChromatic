@@ -23,7 +23,7 @@ class MapTraining(Map):
         # NPC
         self.sign = sign
 
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 193), 0.4)  # 에밀리아
+        self.emilia = Player("assets/images/chr_emilia.png", (400, 375), 0.4)  # 에밀리아
         self.emilia.dialog = TextCollection(
             [
                 Text("#이 쪽으로 잘 왔구나!#"),
@@ -41,4 +41,4 @@ class MapTraining(Map):
 
         # 배경
         self.background = Texture("assets/images/background_training.png", (0, 0), 1, repeat_x=2, fit=True)
-        self.floor = Texture("assets/images/ground_temp.png", (0, 320), 0.4, repeat_x=2)
+        self.floor = Texture("assets/images/ground_temp.png", (0, 482), 0.6, repeat_x=2)

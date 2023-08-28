@@ -5,11 +5,11 @@ import pygame
 import pygame.constants
 
 class CONST:
-    SCREEN_SIZE = [640, 360]
-    """화면 (카메라) 크기 (640x360)"""
+    SCREEN_SIZE = [960, 540]
+    """화면 (카메라) 크기 (960x540)"""
 
-    SURFACE_SIZE = [1280, 720]
-    """세계 크기 (1280x720)"""
+    SURFACE_SIZE = [1920, 1080]
+    """세계 크기 (1920x1080)"""
 
     COL_WHITE = (255, 255, 255)
     COL_BLACK = (0, 0, 0)
@@ -38,8 +38,18 @@ class Fonts(Enum):
 class CONFIG:
     FPS = 30
 
-    window_size = [1280, 720]  # CONST.WINDOW_SIZE * 2
-    window_scale = 2
+    window_size = [1440, 810]  # CONST.SCREEN_SIZE * 1.5
+    window_scale = 1.5
+
+    resolutions = [
+        [480, 270],
+        [960, 540],
+        [1440, 810],
+        [1920, 1080],
+        [2560, 1440],
+        [3840, 2160]
+    ]
+    """적용할 수 있는 해상도 배열"""
 
     surface = pygame.Surface(CONST.SURFACE_SIZE)
     """크기가 [640, 360]으로 고정된 화면
@@ -118,7 +128,7 @@ class CONFIG:
             mouse_pos[0] // CONFIG.window_scale,
             mouse_pos[1] // CONFIG.window_scale
         )
-        
+
         # 월드 좌표 구현에 따른 오프셋 적용
         cameraed = (
             upscaled[0] + CONFIG.camera_x,

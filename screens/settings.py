@@ -40,12 +40,12 @@ def update_settings():
                 if button_resolution_prev.check_for_input(mouse_pos):  # 화면/이전
                     if resolutions_index > 0:
                         resolutions_index -= 1
-                        resolution = resolutions[resolutions_index]
+                        resolution = CONFIG.resolutions[resolutions_index]
 
                 if button_resolution_next.check_for_input(mouse_pos):  # 화면/다음
-                    if resolutions_index < len(resolutions) - 1:
+                    if resolutions_index < len(CONFIG.resolutions) - 1:
                         resolutions_index += 1
-                        resolution = resolutions[resolutions_index]
+                        resolution = CONFIG.resolutions[resolutions_index]
 
                 if button_resolution_full.check_for_input(mouse_pos):  # 전체화면
                     is_fullscreen = not is_fullscreen
@@ -56,7 +56,7 @@ def update_settings():
                         else "assets/images/button_unchecked.png"
                     )
                     image = pygame.image.load(path)
-                    image = pygame.transform.scale_by(image, 0.2)  # 이미지 스케일링
+                    image = pygame.transform.scale_by(image, 0.4)  # 이미지 스케일링
 
                     button_resolution_full.change_image(image)  # 이미지 변경
 
@@ -69,7 +69,7 @@ def update_settings():
                         else "assets/images/button_unchecked.png"
                     )
                     image = pygame.image.load(path)
-                    image = pygame.transform.scale_by(image, 0.2)  # 이미지 스케일링
+                    image = pygame.transform.scale_by(image, 0.4)  # 이미지 스케일링
 
                     button_fps.change_image(image)  # 이미지 변경
 
@@ -102,43 +102,35 @@ def update_settings():
     global need_to_exit
     surface_recovered = CONFIG.surface.copy()  # 렌더링한 화면 복사 후 백업
 
-    resolution: tuple[int, int] = tuple(CONFIG.window_size)  # 현재 해상도
+    resolution = CONFIG.window_size  # 현재 해상도
     is_fullscreen = CONFIG.is_fullscreen  # 현재 전체화면 여부
     fps = CONFIG.game_fps  # 현재 FPS 표시 여부
 
     volume = SFX.volume  # 현재 음량
-
-    resolutions: list[tuple[int, int]] = [  # 해상도 크기 모음
-        (640, 360),
-        (1280, 720),
-        (1920, 1080),
-        (2560, 1440),
-        (3840, 2160),
-    ]
-    resolutions_index = resolutions.index(tuple(CONFIG.window_size))  # 현재 해상도를 resolutions 중에서 찾고 index 반환
+    resolutions_index = CONFIG.resolutions.index(CONFIG.window_size)  # 현재 해상도를 resolutions 중에서 찾고 index 반환
 
     # 설정창 배경
     background = pygame.image.load("assets/images/status3.png")
-    background = pygame.transform.scale_by(background, 0.25)
-    background = pygame.transform.scale(background, (background.get_width(), 300))  # 설정 UI에 맞게 스케일링
-    background_rect = background.get_rect(center=(320 + CONFIG.camera_x, 180 + CONFIG.camera_y))  # 카메라 좌표 보정
+    background = pygame.transform.scale_by(background, 0.45)
+    background = pygame.transform.scale(background, (background.get_width(), 500))  # 설정 UI에 맞게 스케일링
+    background_rect = background.get_rect(center=(480 + CONFIG.camera_x, 270 + CONFIG.camera_y))  # 카메라 좌표 보정
 
     # 텍스트: 화면
-    surface_resolution_2 = Font(Fonts.TITLE2, 18).render("화면", (255, 255, 255))
+    surface_resolution_2 = Font(Fonts.TITLE2, 36).render("화면", CONST.COL_WHITE)
 
     # 화면 / 해상도: 이전
     button_resolution_prev_image = pygame.image.load("assets/images/arrow_left.png")
     button_resolution_prev_image = pygame.transform.scale_by(
-        button_resolution_prev_image, 0.2
+        button_resolution_prev_image, 0.3
     )
-    button_resolution_prev = Button(image=button_resolution_prev_image, pos=(250, 90))
+    button_resolution_prev = Button(image=button_resolution_prev_image, pos=(340, 110))
 
     # 화면 / 해상도: 다음
     button_resolution_next_image = pygame.image.load("assets/images/arrow_right.png")
     button_resolution_next_image = pygame.transform.scale_by(
-        button_resolution_next_image, 0.2
+        button_resolution_next_image, 0.3
     )
-    button_resolution_next = Button(image=button_resolution_next_image, pos=(380, 90))
+    button_resolution_next = Button(image=button_resolution_next_image, pos=(616, 110))
 
     # 화면 / 전체화면
     button_resolution_full_path = (
@@ -148,14 +140,14 @@ def update_settings():
     )
     button_resolution_full_image = pygame.image.load(button_resolution_full_path)
     button_resolution_full_image = pygame.transform.scale_by(
-        button_resolution_full_image, 0.2
+        button_resolution_full_image, 0.4
     )
     button_resolution_full = Button(
         image=button_resolution_full_image,
-        pos=(250, 125),
-        text_offset=(50, 0),
+        pos=(350, 170),
+        text_offset=(100, 0),
         text_input="전체화면",
-        font=Font(Fonts.ILLUST, 16).to_pygame(),
+        font=Font(Fonts.ILLUST, 32).to_pygame(),
         base_color="#ffffff",
         hovering_color="White",
     )
@@ -167,50 +159,50 @@ def update_settings():
         else "assets/images/button_unchecked.png"
     )
     button_fps_image = pygame.image.load(button_fps_path)
-    button_fps_image = pygame.transform.scale_by(button_fps_image, 0.2)
+    button_fps_image = pygame.transform.scale_by(button_fps_image, 0.4)
     button_fps = Button(
         image=button_fps_image,
-        pos=(250, 150),
-        text_offset=(50, 0),
+        pos=(350, 225),
+        text_offset=(100, 0),
         text_input="FPS 표시",
-        font=Font(Fonts.ILLUST, 16).to_pygame(),
+        font=Font(Fonts.ILLUST, 32).to_pygame(),
         base_color="#ffffff",
         hovering_color="White",
     )
 
     # 텍스트: 소리
-    surface_audio = Font(Fonts.TITLE2, 18).render("소리", (255, 255, 255))
+    surface_audio = Font(Fonts.TITLE2, 36).render("소리", CONST.COL_WHITE)
 
     # 소리 / 음량: 이전
     button_audio_prev_image = pygame.image.load("assets/images/arrow_left.png")
-    button_audio_prev_image = pygame.transform.scale_by(button_audio_prev_image, 0.2)
-    button_audio_prev = Button(image=button_audio_prev_image, pos=(250, 220))
+    button_audio_prev_image = pygame.transform.scale_by(button_audio_prev_image, 0.3)
+    button_audio_prev = Button(image=button_audio_prev_image, pos=(340, 340))
 
     # 소리 / 음량: 다음
     button_audio_next_image = pygame.image.load("assets/images/arrow_right.png")
-    button_audio_next_image = pygame.transform.scale_by(button_audio_next_image, 0.2)
-    button_audio_next = Button(image=button_audio_next_image, pos=(380, 220))
+    button_audio_next_image = pygame.transform.scale_by(button_audio_next_image, 0.3)
+    button_audio_next = Button(image=button_audio_next_image, pos=(616, 340))
 
     # 버튼: 취소
     button_cancel_image = pygame.image.load("assets/images/menu_play_rect.png")
-    button_cancel_image = pygame.transform.scale(button_cancel_image, (40, 20))
+    button_cancel_image = pygame.transform.scale(button_cancel_image, (100, 50))
     button_cancel = Button(
         image=button_cancel_image,
-        pos=(350, 305),
+        pos=(485, 460),
         text_input="취소",
-        font=Font(Fonts.OPTION, 20).to_pygame(),
+        font=Font(Fonts.OPTION, 50).to_pygame(),
         base_color="#ffffff",
         hovering_color="White",
     )
 
     # 버튼: 확인
     button_ok_image = pygame.image.load("assets/images/menu_play_rect.png")
-    button_ok_image = pygame.transform.scale(button_ok_image, (40, 20))
+    button_ok_image = pygame.transform.scale(button_ok_image, (100, 50))
     button_ok = Button(
         image=button_ok_image,
-        pos=(395, 305),
+        pos=(600, 460),
         text_input="확인",
-        font=Font(Fonts.OPTION, 20).to_pygame(),
+        font=Font(Fonts.OPTION, 50).to_pygame(),
         base_color="#ffffff",
         hovering_color="White",
     )
@@ -220,24 +212,24 @@ def update_settings():
 
         mouse_pos = CONFIG.get_mouse_pos()  # 업스케일링 및 카메라 좌표가 보정된 마우스 커서 좌표 가져오기
 
-        surface_resolution = Font(Fonts.ILLUST, 18).render(  # 해상도 텍스트 폰트 렌더링
+        surface_resolution = Font(Fonts.ILLUST, 36).render(  # 해상도 텍스트 폰트 렌더링
             CONFIG.resolution_to_str(resolution), CONST.COL_WHITE
         )
-        surface_audio_text = Font(Fonts.ILLUST, 18).render(  # 음량 텍스트 폰트 렌더링
-            str(round(volume, 1)), CONST.COL_WHITE
+        surface_audio_text = Font(Fonts.ILLUST, 36).render(  # 음량 텍스트 폰트 렌더링 (백분율로 표시)
+            str(int(round(volume, 1) * 100)) + "%", CONST.COL_WHITE
         )
 
         # 렌더링 (카메라 좌표 보정)
         CONFIG.surface.blit(background, background_rect)
         CONFIG.surface.blit(
-            surface_resolution, surface_resolution.get_rect(center=(315 + CONFIG.camera_x, 90 + CONFIG.camera_y))
+            surface_resolution, surface_resolution.get_rect(center=(480 + CONFIG.camera_x, 110 + CONFIG.camera_y))
         )
         CONFIG.surface.blit(
-            surface_resolution_2, surface_resolution_2.get_rect(center=(245 + CONFIG.camera_x, 50 + CONFIG.camera_y))
+            surface_resolution_2, surface_resolution_2.get_rect(center=(340 + CONFIG.camera_x, 60 + CONFIG.camera_y))
         )
-        CONFIG.surface.blit(surface_audio, surface_audio.get_rect(center=(244 + CONFIG.camera_x, 185 + CONFIG.camera_y)))
+        CONFIG.surface.blit(surface_audio, surface_audio.get_rect(center=(340 + CONFIG.camera_x, 290 + CONFIG.camera_y)))
         CONFIG.surface.blit(
-            surface_audio_text, surface_audio_text.get_rect(center=(315 + CONFIG.camera_x, 220 + CONFIG.camera_y))
+            surface_audio_text, surface_audio_text.get_rect(center=(480 + CONFIG.camera_x, 340 + CONFIG.camera_y))
         )
 
         for button in [

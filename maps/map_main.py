@@ -23,7 +23,7 @@ class MapMain(Map):
         # NPC
         self.sign = sign
 
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 210), 0.4)  # 에밀리아
+        self.emilia = Player("assets/images/chr_emilia.png", (400, 360), 0.4)  # 에밀리아
         self.emilia.dialog = TextCollection(
             [
                 Text("*안녕!*"),
@@ -37,7 +37,7 @@ class MapMain(Map):
         self.NPCs = [self.emilia]
 
         # 적
-        self.enemy = Enemy("assets/images/chr_raon.png", (1000, 237), 0.4)
+        self.enemy = Enemy("assets/images/chr_raon.png", (1000, 387), 0.4)
         self.enemies = [self.enemy]
 
         for enemy in self.enemies:
@@ -53,7 +53,7 @@ class MapMain(Map):
             )
         },
         "default",
-        position=(800, 285),
+        position=(800, 435),
         scale=0.4))
 
         self.spike2 = Player.get_from_sprite(SpriteCollection({
@@ -64,11 +64,11 @@ class MapMain(Map):
             )
         },
         "default",
-        position=(850, 285),
+        position=(850, 435),
         scale=0.4))
 
         self.obstacles = [self.spike, self.spike2] 
         
         # 배경
-        self.background = Texture("assets/images/background_main_edited.png", (0, 0), 1, repeat_x=2, fit=True)
-        self.floor = Texture("assets/images/grass.png", (0, 320), 0.4, repeat_x=2)
+        self.background = Texture("assets/images/background_main.png", (0, 0), 1, repeat_x=2, fit=True)
+        self.floor = Texture("assets/images/grass.png", (0, 470), 0.5, repeat_x=2)

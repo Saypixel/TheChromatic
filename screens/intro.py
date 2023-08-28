@@ -31,7 +31,7 @@ def update():
                         ))
                 },
                 "walk",
-                position=(-250, 320),
+                position=(-250, 480),
                 scale=0.4,
             )
     )
@@ -74,11 +74,11 @@ def update():
             count = 0
             player_icon.sprites.get_sprite_handler().sprite.update()  # 스프라이트 애니메이션 업데이트
 
-        player_icon.move_x(0.8)  # 0.8의 속도만큼 X 좌표로 움직임
+        player_icon.move_x(1.2)  # 1.2의 속도만큼 X 좌표로 이동
         player_icon.render()  # 렌더링
 
-        title = Font(Fonts.TITLE3, 40).render(text, CONST.COL_WHITE)  # 로고 폰트 렌더링
-        title_rect = title.get_rect(center=(320, 180))  # 로고의 좌표 & 크기 (Rect) 가져오기
+        title = Font(Fonts.TITLE3, 60).render(text, CONST.COL_WHITE)  # 로고 폰트 렌더링
+        title_rect = title.get_rect(center=(480, 270))  # 로고의 좌표 & 크기 (Rect) 가져오기
 
         CONFIG.surface.blit(title, title_rect)  # 로고를 화면에 렌더링
         CONFIG.update_screen()  # 업스케일링

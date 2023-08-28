@@ -33,6 +33,15 @@ class Text:
     < : 줄바꿈 (New Line)
     """
 
+    FONT = Fonts.TITLE2
+    PT = 18
+
+    SYNTAX: dict[str, tuple[Font, int]] = {
+        "*": (Fonts.TITLE3, PT),
+        "#": (Fonts.TITLE2, PT + 4),
+        "/": (Fonts.DIALOG, PT - 4)
+    }
+
     def __init__(self, text: str, delay: Optional[int] = 30):
         """
         Text 클래스를 생성합니다.
@@ -93,19 +102,14 @@ class Text:
         ch_x = char_position[0]
         ch_y = char_position[1]
 
-        font = Fonts.DIALOG
-        pt = 15
+        font = Text.FONT
+        pt = Text.PT
         px = 0
 
-        match mutual.prefix:  # 접두어별 맞는 폰트 지정
-            case "*":
-                font = Fonts.TITLE3
-            case "#":
-                font = Fonts.TITLE2
-                pt += 2
-            case "/":
-                font = Fonts.TITLE2
-                pt -= 3
+        if mutual.prefix in Text.SYNTAX:  # 접두어별 맞는 폰트 지정
+            syntax = Text.SYNTAX[mutual.prefix]
+            font = syntax[0]
+            pt = syntax[1]
 
         px = pt / 3.0 * 4.0  # pt를 픽셀로 변환
         chs = mutual.text[index]  # 문자
