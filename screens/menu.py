@@ -11,12 +11,12 @@ from screens.settings import update_settings
 from components.sfx_collection import SFX
 
 reload = False
-
+music_playing = True
 
 def update_menu():
     def process_menu(event: pygame.event.Event):
         """인게임 이벤트 처리용 (process() child 함수)"""
-        global reload
+        global reload, music_playing
         nonlocal need_to_exit
 
         ctrl = pygame.key.get_mods() & pygame.K_LCTRL  # ctrl 키 누르는 여부
@@ -24,6 +24,7 @@ def update_menu():
         match event.type:
             case pygame.MOUSEBUTTONDOWN:  # 마우스 클릭 시
                 if button_play.check_for_input(mouse_pos):  # 시작
+                    music_playing = False
                     mixer.music.stop()
 
                     Ingame.default = Ingame()
@@ -48,17 +49,27 @@ def update_menu():
                             reload = True
                             need_to_exit = True
 
-    need_to_exit = False
+    def play_music():
+        mixer.music.load("assets/audio/bg_daily.ogg")
+        mixer.music.set_volume(SFX.volume)
+        mixer.music.play(-1)
 
-    mixer.music.load("assets/audio/bg_daily.ogg")
-    mixer.music.set_volume(SFX.volume)
-    mixer.music.play(-1)
+    global music_playing
+    
+    need_to_exit = False
 
     background = pygame.image.load("assets/images/background_menu.png")
     background = pygame.transform.scale(background, CONST.SCREEN_SIZE)
 
+    play_music()
+
     while CONFIG.is_running and not need_to_exit:
         CONFIG.clock.tick(CONFIG.FPS)
+        
+        if not music_playing:
+            music_playing = True
+            play_music()
+
         CONFIG.surface.blit(background, (0, 0))
 
         mouse_pos = CONFIG.get_mouse_pos()

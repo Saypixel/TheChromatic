@@ -1,4 +1,5 @@
 import pygame
+import pygame.mixer as mixer
 
 from characters.player import Player
 from characters.enemy import Enemy
@@ -189,6 +190,10 @@ class Ingame:
             "test": MapTest(self.player, self.sign)
         }
         MapManager.apply("main")
+
+        mixer.music.load("assets/audio/bg_untitled_theme.ogg")
+        mixer.music.set_volume(SFX.volume)
+        mixer.music.play(-1)
 
         count = 0
 
