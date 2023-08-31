@@ -1,5 +1,7 @@
 from characters.player import Player
 
+from components.events.time import TimeEvent
+
 from maps import Map
 from maps.map_main import MapMain
 
@@ -19,3 +21,6 @@ class MapManager:
         """
         
         cls.current = cls.maps[map]
+
+        cls.current.player.set_pos(200, 300)
+        TimeEvent.reset()

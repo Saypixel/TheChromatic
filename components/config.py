@@ -150,9 +150,10 @@ class CONFIG:
     def is_movable() -> bool:
         """플레이어가 움직일 수 있는가?"""
         from components.events.text import TextEvent
+        from components.events.time import TimeEvent
 
         return (
-            CONFIG.is_interactive() and TextEvent.dialog_closed and not CONFIG.game_dead
+            CONFIG.is_interactive() and TextEvent.dialog_closed and not CONFIG.game_dead and not TimeEvent.is_rewind
         )
 
     def resolution_to_str(size: tuple) -> str:

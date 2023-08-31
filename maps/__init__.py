@@ -1,4 +1,4 @@
-from components.config import CONFIG
+from components.config import CONFIG, debug
 from components.world import World
 
 from characters.player import Player
@@ -17,6 +17,15 @@ class Map:
 
     obstacles: list[Player]
     """장애물 배열"""
+
+    items: list[Texture]
+    """아이템 배열"""
+
+    others_front: list[Texture]
+    """가장 처음에 렌더링할 기타 객체 배열"""
+
+    others_back: list[Texture]
+    """나중에 렌더링할 기타 객체 배열"""
 
     obstacle_error_x = 0
     obstacle_error_y = 0
@@ -37,6 +46,9 @@ class Map:
             NPCs: list[Player] = [],
             enemies: list[Enemy] = [],
             obstacles: list[Player] = [],
+            items: list[Texture] = [],
+            others_front: list[Texture] = [],
+            others_back: list[Texture] = [],
             sign = None,
             background: Texture = None,
             floor: Texture = None
@@ -47,6 +59,8 @@ class Map:
         :param npcs: NPC 배열
         :param enemies: 적 배열
         :param obstacles: 장애물 배열
+        :param others_front: 가장 처음으로 렌더링할 기타 객체 배열
+        :param others_back: 나중에 렌더링할 기타 객체 배열
         :param background: 배경
         :param floor: 바닥
         """
@@ -54,6 +68,9 @@ class Map:
         self.NPCs = NPCs
         self.enemies = enemies
         self.obstacles = obstacles
+        self.others_front = others_front
+        self.others_back = others_back
+        self.items = items
         self.sign = sign
         self.background = background
         self.floor = floor
@@ -80,6 +97,10 @@ class Map:
                 if obstacle.is_sprite():
                     obstacle.sprites.get_sprite_handler().sprite.update()
 
+        # 기타 객체
+        for other in self.others_front:
+            other.render()
+
         # 장애물
         for obstacle in self.obstacles:
             obstacle.render()
@@ -88,9 +109,19 @@ class Map:
         for NPC in self.NPCs:
             NPC.render()
 
+        # 기타 객체
+        for other in self.others_back:
+            other.render()
+
         # 적
         for enemy in self.enemies:
             enemy.render()
+
+        # 아이템
+        self.process_item_pickup_event()
+
+        for item in self.items:
+            item.render()
 
         # 플레이어
         self.player.render()
@@ -109,18 +140,15 @@ class Map:
                 self.player.check_if_attacked(is_bound)  # 조건에 충족된 충돌 감지가 되면 플레이어가 공격받았다고 처리
 
     def process_enemy_event(self):
-        """적 관련 이벤트를 처리합니다. (적 방향, 사망, 따라가기, 공격)"""
+        """적 관련 이벤트를 처리합니다. (적 방향, 사망)"""
         for enemy in self.enemies:
-            enemy.apply_movement_flipped(enemy.image)  # 움직임을 따라 적 방향 적용
+            image = enemy.get_surface_or_sprite()
+            enemy.apply_movement_flipped(image)  # 움직임을 따라 적 방향 적용
 
             if enemy.hp <= 0:
                 if not enemy.fade_out():  # 적 사망 후 완전 투명해졌을 때
                     index = self.enemies.index(enemy)
                     self.enemies.pop(index)  # 적 제거
-            
-            if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
-                enemy.follow_player(self.obstacles)  # 적이 플레이어를 따라가기
-                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())  # 플레이어 공격 받았는지 확인
 
     def process_grace_period_animation(self):
         """무적 시간 애니메이션을 처리합니다."""
@@ -135,6 +163,17 @@ class Map:
                 elif player.grace_period.lasted:
                     image.set_alpha(255)  # 무적 시간이 아니므로 복귀
                     player.grace_period.lasted = False
+
+    def process_item_pickup_event(self):
+        """아이템 줍기 관련 이벤트를 처리합니다."""
+        pass
+
+    def process_item_use_event(self, item: Texture):
+        """
+        아이템 사용 관련 이벤트를 처리합니다.
+        :param item: 현재 쓸 아이템의 텍스쳐 
+        """
+        pass
 
     def __str__(self):
         return f"<Map Player={self.player}>"

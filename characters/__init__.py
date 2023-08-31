@@ -68,22 +68,28 @@ class Character(ABC):
     grace_period: GracePeriod
     """무적 시간"""
 
+    name: str
+    """캐릭터 이름 (선택사항)"""
+
     def __init__(
         self,
         path: str,
         position: tuple,
         scale: float = 1.0,
+        flip=False,
         flipped=False,
         fit=False,
         repeat_x=1,
         repeat_y=1,
         is_playable=False,
+        name=""
     ):
         """
         캐릭터 클래스 생성
         :param path: 캐릭터 이미지 경로
         :param position: 캐릭터가 위치한 절대좌표
         :param scale: 캐릭터 상대크기
+        :param flip: 이미지를 좌우반전 시킬지의 여부
         :param flipped: 이미지가 처음부터 좌우반전 되어 있었는가?
         :param fit: 화면 크기에 맞춰 스케일링 할 것인가?
         :param repeat_x: 이미지가 가로로 반복될 횟수
@@ -98,6 +104,9 @@ class Character(ABC):
         self.image_path = path
         self.image = pygame.image.load(path)
         self.image_flipped = flipped
+
+        if flip:  # 이미지 좌우반전
+            self.image = pygame.transform.flip(self.image, True, False)
 
         if fit:  # 화면 크기에 맞춰 스케일링
             self.image = pygame.transform.scale(self.image, CONST.SCREEN_SIZE)
@@ -129,6 +138,8 @@ class Character(ABC):
             CONFIG.player_height = self.height
 
         self.is_playable = is_playable
+
+        self.name = name
 
     def get_pos(self) -> tuple:
         """
@@ -267,6 +278,14 @@ class Character(ABC):
             return
 
         self.sign = None  # 말풍선 초기화
+
+    def change_image(self, path: str):
+        """
+        단일 이미지를 변경합니다.
+        :param path: 이미지 경로
+        """
+        self.image_path = path
+        self.refresh()
 
     def refresh(self):
         """단일 이미지를 새로고침합니다."""

@@ -67,6 +67,9 @@ class TextEvent(object):
             """각 문자 렌더링 (출력)"""
             nonlocal mutual_index, mutual_text_index, ch_x, ch_y
 
+            if cls.dialog is None:  # 대화를 너무 빨리 넘긴 경우
+                return  # 출력할 대화가 없으므로 종료
+
             if mutual_index + 1 > len(cls.dialog.current.texts):  # MutualText 배열의 범위를 벗어난 경우
                 cls.dialog_paused = True  # 텍스트 출력 완성
                 cls.dialog_delayed = True  # 텍스트 지연
@@ -77,6 +80,10 @@ class TextEvent(object):
             new_ch_pos = cls.dialog.current.write(
                 mutual, mutual_text_index, cls.dialog.position, (ch_x, ch_y), surface
             )  # 텍스트 렌더링 후 좌표 갱신
+
+            if new_ch_pos is None:  # 대화를 너무 빨리 넘긴 경우
+                return  # 출력할 대화가 없으므로 종료
+
             ch_x = new_ch_pos[0]
             ch_y = new_ch_pos[1]
 

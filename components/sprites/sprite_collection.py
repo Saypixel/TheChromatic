@@ -10,6 +10,9 @@ class SpriteCollection:
     status: str
     """현재 렌더링할 스프라이트 기본 상태 (sprites key)"""
 
+    status_next: str
+    """다음에 렌더링할 스프라이트 기본 상태 (sprites key)"""
+
     position: tuple
     """각 스프라이트가 위치할 절대좌표"""
 
@@ -39,6 +42,7 @@ class SpriteCollection:
         # 변수 초기화
         self.sprites = sprites
         self.status = status
+        self.status_next = status
         self.position = position
 
         self.set_pos(position)  # 각 스프라이트가 위치할 좌표 지정

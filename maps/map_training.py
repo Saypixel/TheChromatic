@@ -23,10 +23,10 @@ class MapTraining(Map):
         # NPC
         self.sign = sign
 
-        self.emilia = Player("assets/images/chr_emilia.png", (400, 375), 0.4)  # 에밀리아
-        self.emilia.dialog = TextCollection(
+        self.raon = Player("assets/images/chr_raon.png", (400, 400), 0.4, True)  # 라온
+        self.raon.dialog = TextCollection(
             [
-                Text("#이 쪽으로 잘 왔구나!#"),
+                Text("아까 #언니#가 소개시켜준 사람이지?"),
                 Text("여기는 훈련장이야."),
                 Text("쭉 가면 적이 출몰할거야!"),
                 Text("적은 *J키*로 공격할 수 있으니 참고하라구!")
@@ -34,11 +34,158 @@ class MapTraining(Map):
             self.sign.width
         )
 
-        self.NPCs = [self.emilia]
+        self.NPCs = [self.raon]
 
-        self.obstacles = []
-        self.enemies = []
+        # 장애물
+        self.spike = Player.get_from_sprite(SpriteCollection({
+            "default": SpriteHandler(
+                Sprite(
+                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
+                )
+            )
+        },
+        "default",
+        position=(800, 447),
+        scale=0.4))
+
+        self.spike2 = Player.get_from_sprite(SpriteCollection({
+            "default": SpriteHandler(
+                Sprite(
+                    "assets/images/object_spike_default.png", 17, 1, size=(155, 100)
+                )
+            )
+        },
+        "default",
+        position=(850, 447),
+        scale=0.4))
+
+        self.obstacles = [self.spike, self.spike2]
+        
+        # 적
+        self.robot = Enemy.get_from_sprite(Player.get_from_sprite(SpriteCollection({
+            "walk": SpriteHandler(
+                Sprite(
+                    "assets/images/chr_robot_walk.png", 3, 1, size=(505, 190)
+                )
+            ),
+            "attack": SpriteHandler(
+                Sprite(
+                    "assets/images/chr_robot_attack.png", 16, 1, size=(505, 190)
+                )
+            )
+        },
+        "walk",
+        position=(1400, 435),
+        scale=0.4,
+        )))
+        self.robot.name = "robot"
+
+        self.mimic = Enemy.get_from_sprite(Player.get_from_sprite(SpriteCollection({
+            "walk": SpriteHandler(
+                Sprite(
+                    "assets/images/chr_mimic_walk.png", 7, 1, size=(185, 180)
+                )
+            )
+        },
+        "walk",
+        position=(1000, 435),
+        scale=0.4,
+        )))
+        self.mimic.name = "mimic"
+
+        self.enemies = [self.robot, self.mimic]
+
+        for enemy in self.enemies:
+            enemy.grace_period = GracePeriod(1500)
+            enemy.hp = 2
+
+        self.items = []
+        self.others_front = []
+        self.others_back = []
 
         # 배경
         self.background = Texture("assets/images/background_training.png", (0, 0), 1, repeat_x=2, fit=True)
         self.floor = Texture("assets/images/ground_temp.png", (0, 482), 0.6, repeat_x=2)
+
+    def process_enemy_event(self):
+        """적 관련 이벤트를 처리합니다. (적 방향, 사망, 공격, 따라가기)"""
+        super().process_enemy_event()
+
+        # 일정 거리에서 공격하는 경우
+        for enemy in [self.robot]:
+            if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
+                if not enemy.is_bound(40, 50):  # 일정 거리 안에 있는 경우
+                    enemy.sprites.status_next = "walk"
+                    
+                    if enemy.sprites.status == "walk":
+                        enemy.follow_player(self.obstacles)  # 적이 플레이어를 따라가기
+                else:
+                    enemy.sprites.status_next = "attack"
+
+
+        # 플레이어를 쫓아가서 공격하는 경우
+        for enemy in [self.mimic]:
+            if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
+                enemy.follow_player(self.obstacles)  # 적이 플레이어를 따라가기
+                self.player.check_if_attacked(enemy.is_bound(40, 100) and enemy.hp > 0 and not enemy.grace_period.is_grace_period())  # 플레이어 공격 받았는지 확인
+
+    def process_item_pickup_event(self):
+        """아이템 줍기 관련 이벤트를 처리합니다."""
+        positions = {
+            "heal": (15, 12),
+            "key": (20, 22)
+        }
+
+        for item in self.items:
+            if item[0].is_bound(10, 50):  # 플레이어가 아이템을 주울 경우 아이템 삭제
+                from screens.ingame import Ingame
+                
+                index = self.items.index(item)
+                self.items.pop(index)
+
+                position = positions[item[1]]
+                item[0].set_pos(position[0], position[1])  # 상대좌표
+
+                Ingame.default.inventories[item[1]] = item[0]
+                Ingame.default.inventory_keys.append(item[1])
+                Ingame.default.inventory_keys_index = len(Ingame.default.inventory_keys) - 1
+
+    def process_item_use_event(self, status: str, item: Texture):
+        """
+        아이템 사용 관련 이벤트를 처리합니다.
+        :param status: 현재 쓸 아이템의 이름
+        :param item: 현재 쓸 아이템의 텍스쳐 
+        """
+        match status:
+            case "heal":
+                self.player.healed = True
+
+            case "key":
+                pass
+
+    def process_door_event(self):
+        """문 관련 이벤트를 처리합니다."""
+        pass
+
+    def render(self, frame_count: int):
+        """
+        맵을 렌더링합니다.
+        :param frame_count: 1초 당 누적되는 프레임 렌더링하는 개수 (범위: 0~10)
+        """
+        if frame_count % 5 == 0:  # 5프레임마다 적 스프라이트 갱신
+            self.robot.sprites.get_sprite_handler().sprite.update()
+            self.mimic.sprites.get_sprite_handler().sprite.update()
+
+            # 로봇 공격하는 애니메이션일 때 공격하기
+            if self.robot.sprites.status == "attack":
+                if self.robot.sprites.get_sprite_handler().sprite.index == 7:
+                    attacked = self.robot.is_bound(40, 100) and self.robot.hp > 0 and not self.robot.grace_period.is_grace_period()
+                    self.player.check_if_attacked(attacked)
+
+            # 스프라이트가 바뀌어야 할 상황인 경우
+            if self.robot.sprites.get_sprite_handler().sprite.index == 0 and self.robot.sprites.status != self.robot.sprites.status_next:
+                self.robot.sprites.status = self.robot.sprites.status_next  # 바뀌어야 할 스프라이트로 변경
+
+        self.process_door_event()
+
+        super().render(frame_count)

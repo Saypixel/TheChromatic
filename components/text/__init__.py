@@ -99,6 +99,9 @@ class Text:
         :param surface: 화면
         :return: 갱신해야할 문자 위치
         """
+        if index + 1 > len(mutual.text):  # 상호작용 텍스트 길이의 범위를 벗어난 경우 종료
+            return  # 이 상황은 대화를 너무 빨리 넘길 때 발생함
+
         ch_x = char_position[0]
         ch_y = char_position[1]
 

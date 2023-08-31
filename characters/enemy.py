@@ -29,3 +29,22 @@ class Enemy(Player):
             for obstacle in obstacles:
                 if obstacle.is_bound(5, 40, self.x, self.y, self.width, self.height):  # 주변에 장애물이 있다면
                     self.move_y(13)  # 점프
+
+    @classmethod
+    def get_from_sprite(cls, player: Player) -> "Enemy":
+        """
+        다중 스프라이트를 사용하는 플레이어 클래스로 파생된 적 클래스를 생성합니다.
+
+        :param player: 상속할 플레이어 클래스 
+        """
+
+        # 변수 초기화
+        enemy = Enemy("", (0, 0))  # 기본 생성자는 다중 스프라이트를 지원하지 않으므로 빈 변수로 초기화 후 다중 스프라이트 추가
+        enemy.sprites = player.sprites
+
+        enemy.x = player.x
+        enemy.y = player.y
+        enemy.width = player.width
+        enemy.height = player.height
+
+        return enemy

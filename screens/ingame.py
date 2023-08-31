@@ -17,6 +17,7 @@ from components.text.text_collection import TextCollection
 
 from components.events.text import TextEvent
 from components.events.grace_period import GracePeriod
+from components.events.time import TimeEvent
 
 from components.sprites.sprite_collection import SpriteCollection
 from components.sprites.sprite_handler import SpriteHandler
@@ -32,6 +33,8 @@ from screens.pause_menu import update_pause_menu
 
 class Ingame:
     default: "Ingame"
+    inventory_keys: list[str]
+    inventories: dict[str, Texture]
 
     def __init__(self):
         self.need_to_exit = False
@@ -63,6 +66,7 @@ class Ingame:
             True,
         )
         self.player.grace_period = GracePeriod()
+        self.player.name = "player"
 
         # FX
         self.fx = SpriteCollection({
@@ -93,6 +97,11 @@ class Ingame:
             scale=0.6
             )
         
+        self.inventory_image = Texture("assets/images/inventory.png", (0, 30), 0.8)
+        self.inventory_keys = []
+        self.inventory_keys_index = -1
+        self.inventories = {}
+        
     def update_ingame(self):
         def process_ingame_movement():
             """키 동시 입력 처리를 위한 움직임 이벤트 처리"""
@@ -115,7 +124,6 @@ class Ingame:
 
         def process_ingame(event: pygame.event.Event):
             """인게임 이벤트 처리용 (process() child 함수)"""
-
             match event.type:
                 case pygame.KEYDOWN:
                     if CONFIG.is_interactive():
@@ -160,9 +168,29 @@ class Ingame:
                                         enemy.grace_period.update()
                                         SFX.ENEMY_ATTACKED.play()
 
-                            case pygame.K_e:  # 체력 회복 or 상호작용
-                                self.player.healed = True
-                                MapManager.apply("training")
+                            case pygame.K_e:  # 아이템 상호작용
+                                if self.inventory_keys_index >= 0:
+                                    status = self.inventory_keys[self.inventory_keys_index]
+                                    item = self.inventories[status]
+                                    index_prev = self.inventory_keys_index
+
+                                    MapManager.current.process_item_use_event(item)
+
+                                    self.inventory_keys_index -= 1 if len(self.inventory_keys) == 1 or self.inventory_keys_index + 1 == len(self.inventory_keys) else 0
+                                    self.inventory_keys.pop(index_prev)
+                                    self.inventories.pop(status)
+
+                            case pygame.K_LSHIFT:  # 아이템 변경
+                                if len(self.inventory_keys) >= 2:  # 아이템이 인벤토리에 들어있고 2가지 이상인 경우
+                                    self.inventory_keys_index += 1
+
+                                    # 배열 길이 범위를 벗어난 경우
+                                    if self.inventory_keys_index >= len(self.inventory_keys):
+                                        self.inventory_keys_index = 0  # index 초기화
+
+                            case pygame.K_r:  # 시간 관리
+                                TimeEvent.is_rewind = True
+                                mixer.music.pause()
 
                 case pygame.KEYUP:
                     pass
@@ -191,7 +219,7 @@ class Ingame:
         }
         MapManager.apply("main")
 
-        mixer.music.load("assets/audio/bg_untitled_theme.ogg")
+        mixer.music.load("assets/audio/bg_untitled_theme_1.ogg")
         mixer.music.set_volume(SFX.volume)
         mixer.music.play(-1)
 
@@ -209,7 +237,44 @@ class Ingame:
             # region 카메라
             hp_sprite = self.hp.get_sprite_handler().sprite
             hp_sprite.set_pos((CONFIG.camera_x, hp_sprite.position[1]))
+
+            self.inventory_image.set_pos(CONFIG.camera_x + 30, 120)
             # endregion
+
+            if TimeEvent.is_rewind:
+                positions = TimeEvent.rewind()
+                
+                if positions is not None:
+                    for position in positions:
+                        character = position[0]
+                        x = position[1]
+                        y = position[2]
+                        x_prev = character.x
+                        y_prev = character.y
+
+                        velocity = -1
+                        compared = x - x_prev
+
+                        if compared == 0:
+                            velocity = 0
+                        elif compared < 0:
+                            velocity = 1
+                        
+                        if character.name == "player":
+                            if compared != 0:
+                                character.sprites.status = "walk"
+                            else:
+                                character.sprites.status = "stay"
+
+                        character.velocity_x = velocity
+                        character.set_pos(x, y)
+
+                else:
+                    TimeEvent.is_rewind = False
+                    mixer.music.unpause()
+            else:
+                characters = MapManager.current.enemies + [self.player]
+                TimeEvent.update(characters)
 
             MapManager.current.render(count)  # 현재 맵 렌더링
 
@@ -250,6 +315,14 @@ class Ingame:
 
                 if status_player == "stay":
                     sprite_player.update()
+
+            self.inventory_image.refresh()
+
+            if self.inventory_keys_index >= 0:
+                status = self.inventory_keys[self.inventory_keys_index]
+                self.inventories[status].render(self.inventory_image.image, False)  # 상대좌표로 인한 최적화 중지
+
+            self.inventory_image.render()
 
             process(process_ingame)
             process_ingame_movement()
@@ -357,7 +430,7 @@ class Ingame:
         TextEvent.NPC = None
         TextEvent.dialog = None
 
-        self.player.set_pos(200, 375)
+        self.player.set_pos(200, 347)  # 카메라 좌표를 초기화하기 위함
 
         CONFIG.game_dead = False
         CONFIG.camera_x = 0
