@@ -135,7 +135,7 @@ class Ingame:
                                     if npc.is_bound(80, 80):
                                         if TextEvent.dialog is None and npc.dialog is not None:
                                             TextEvent.dialog = npc.dialog
-                                        if TextEvent.NPC is None:  # 주변에 NPC가 있는 경우 대화하는 NPC 변수 갱신
+                                        if TextEvent.NPC is None or TextEvent.NPC is not npc:  # 주변에 NPC가 있는 경우 대화하는 NPC 변수 갱신
                                             TextEvent.NPC = npc
 
                                         if TextEvent.dialog is not None:
@@ -154,6 +154,7 @@ class Ingame:
 
                                 if TextEvent.dialog_closed and not MapManager.current.player.is_air and not speeched:  # 다중 점프 금지
                                     MapManager.current.player.move_y(13)  # 점프
+                                    SFX.JUMP.play()  # 점프 효과음 재생
 
                                 if not speeched:  # 주변에 NPC가 없는 경우 대화하는 NPC 변수 갱신
                                     TextEvent.NPC = None
@@ -175,6 +176,7 @@ class Ingame:
                                     index_prev = self.inventory_keys_index
 
                                     MapManager.current.process_item_use_event(item)
+                                    SFX.ENEMY_ATTACKED.play()  # 아이템 상호작용 효과음 재생
 
                                     self.inventory_keys_index -= 1 if len(self.inventory_keys) == 1 or self.inventory_keys_index + 1 == len(self.inventory_keys) else 0
                                     self.inventory_keys.pop(index_prev)
@@ -188,9 +190,12 @@ class Ingame:
                                     if self.inventory_keys_index >= len(self.inventory_keys):
                                         self.inventory_keys_index = 0  # index 초기화
 
+                                    SFX.SELECT.play()
+
                             case pygame.K_r:  # 시간 관리
                                 TimeEvent.is_rewind = True
                                 mixer.music.pause()
+                                SFX.REWIND.play()
 
                 case pygame.KEYUP:
                     pass
@@ -272,6 +277,7 @@ class Ingame:
                 else:
                     TimeEvent.is_rewind = False
                     mixer.music.unpause()
+
             else:
                 characters = MapManager.current.enemies + [self.player]
                 TimeEvent.update(characters)
@@ -487,9 +493,6 @@ class Ingame:
                 hp_attacked_sprite.sprite.update(added_index=-6)  # hp 공격받은 애니메이션 동기화
 
                 self.player.hp += 1  # 체력 1 증가
-
-                SFX.ENEMY_ATTACKED.play()  # 체력을 회복하는 효과음 재생
-
                 self.hp.status = 'healed'  #  hp 회복하는 애니메이션으로 변경
                 
             self.player.healed = False  # 회복 여부 변수 초기화

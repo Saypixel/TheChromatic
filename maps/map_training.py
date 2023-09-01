@@ -6,6 +6,7 @@ from characters.texture import Texture
 
 from components.events.grace_period import GracePeriod
 from components.events.text import TextEvent
+from components.events.time import TimeEvent
 
 from components.text import Text
 from components.text.text_collection import TextCollection
@@ -13,6 +14,8 @@ from components.text.text_collection import TextCollection
 from components.sprites.sprite import Sprite
 from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite_collection import SpriteCollection
+
+from components.sfx_collection import SFX
 
 class MapTraining(Map):
     def __init__(self, player: Player, sign):
@@ -137,26 +140,27 @@ class MapTraining(Map):
         }
 
         for item in self.items:
-            if item[0].is_bound(10, 50):  # 플레이어가 아이템을 주울 경우 아이템 삭제
+            if item.is_bound(10, 50):  # 플레이어가 아이템을 주울 경우 아이템 삭제
                 from screens.ingame import Ingame
                 
                 index = self.items.index(item)
                 self.items.pop(index)
 
-                position = positions[item[1]]
-                item[0].set_pos(position[0], position[1])  # 상대좌표
+                position = positions[item.name]
+                item.set_pos(position[0], position[1])  # 상대좌표
 
-                Ingame.default.inventories[item[1]] = item[0]
-                Ingame.default.inventory_keys.append(item[1])
+                Ingame.default.inventories[item.name] = item
+                Ingame.default.inventory_keys.append(item.name)
                 Ingame.default.inventory_keys_index = len(Ingame.default.inventory_keys) - 1
 
-    def process_item_use_event(self, status: str, item: Texture):
+                SFX.ITEM_PICKUP.play()
+
+    def process_item_use_event(self, item: Texture):
         """
         아이템 사용 관련 이벤트를 처리합니다.
-        :param status: 현재 쓸 아이템의 이름
         :param item: 현재 쓸 아이템의 텍스쳐 
         """
-        match status:
+        match item.name:
             case "heal":
                 self.player.healed = True
 
@@ -173,18 +177,26 @@ class MapTraining(Map):
         :param frame_count: 1초 당 누적되는 프레임 렌더링하는 개수 (범위: 0~10)
         """
         if frame_count % 5 == 0:  # 5프레임마다 적 스프라이트 갱신
-            self.robot.sprites.get_sprite_handler().sprite.update()
-            self.mimic.sprites.get_sprite_handler().sprite.update()
+            if self.robot in self.enemies:
+                self.robot.sprites.get_sprite_handler().sprite.update()
 
-            # 로봇 공격하는 애니메이션일 때 공격하기
-            if self.robot.sprites.status == "attack":
-                if self.robot.sprites.get_sprite_handler().sprite.index == 7:
-                    attacked = self.robot.is_bound(40, 100) and self.robot.hp > 0 and not self.robot.grace_period.is_grace_period()
-                    self.player.check_if_attacked(attacked)
+                # 로봇 공격하는 애니메이션일 때 공격하기
+                if self.robot.sprites.status == "attack":
+                    if self.robot.sprites.get_sprite_handler().sprite.index == 7:
+                        additional_attacked = self.robot.hp > 0 and not self.robot.grace_period.is_grace_period() and not TimeEvent.is_rewind
+                        attacked = self.robot.is_bound(40, 100) and additional_attacked
+                        
+                        self.player.check_if_attacked(attacked)
 
-            # 스프라이트가 바뀌어야 할 상황인 경우
-            if self.robot.sprites.get_sprite_handler().sprite.index == 0 and self.robot.sprites.status != self.robot.sprites.status_next:
-                self.robot.sprites.status = self.robot.sprites.status_next  # 바뀌어야 할 스프라이트로 변경
+                        if additional_attacked:
+                            SFX.ATTACK_LAZER.play()
+
+                # 스프라이트가 바뀌어야 할 상황인 경우
+                if self.robot.sprites.get_sprite_handler().sprite.index == 0 and self.robot.sprites.status != self.robot.sprites.status_next:
+                    self.robot.sprites.status = self.robot.sprites.status_next  # 바뀌어야 할 스프라이트로 변경
+
+            if self.mimic in self.enemies:
+                self.mimic.sprites.get_sprite_handler().sprite.update()
 
         self.process_door_event()
 

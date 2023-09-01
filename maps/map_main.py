@@ -16,6 +16,8 @@ from components.sprites.sprite import Sprite
 from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite_collection import SpriteCollection
 
+from components.sfx_collection import SFX
+
 class MapMain(Map):
     def __init__(self, player: Player, sign):
         super(Map, self).__init__()
@@ -90,6 +92,8 @@ class MapMain(Map):
                 Ingame.default.inventory_keys.append(item.name)
                 Ingame.default.inventory_keys_index = len(Ingame.default.inventory_keys) - 1
 
+                SFX.ITEM_PICKUP.play()
+
     def process_item_use_event(self, item: Texture):
         """
         아이템 사용 관련 이벤트를 처리합니다.
@@ -108,7 +112,7 @@ class MapMain(Map):
 
         if self.door.is_bound(10, 50) and not self.door_locked:
             MapManager.apply("training")
-        pass
+            SFX.MAP.play()
 
     def render(self, frame_count: int):
         """

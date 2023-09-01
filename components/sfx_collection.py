@@ -2,10 +2,6 @@ import pygame.mixer as mixer
 
 
 class SFX(object):
-    INTRO: mixer.Sound
-    UNMUTED: mixer.Sound
-    ATTACKED: mixer.Sound
-
     sounds: list[mixer.Sound]
     """효과음 배열, 음량 조절하는 데 사용"""
 
@@ -25,11 +21,23 @@ class SFX(object):
         cls.ATTACKED = mixer.Sound("assets/audio/sfx_attacked.ogg")
         cls.DEAD = mixer.Sound("assets/audio/sfx_dead.ogg")
 
+        cls.ATTACK_LAZER = mixer.Sound("assets/audio/sfx_attack_lazer.ogg")
         cls.ENEMY_ATTACKED = mixer.Sound("assets/audio/sfx_enemy_attacked.ogg")
+
+        cls.REWIND = mixer.Sound("assets/audio/sfx_rewind.ogg")
+        cls.JUMP = mixer.Sound("assets/audio/sfx_jump.ogg")
+
+        cls.ITEM_PICKUP = mixer.Sound("assets/audio/sfx_item_pickup.ogg")
+
+        cls.MAP = mixer.Sound("assets/audio/sfx_map.ogg")
+        cls.SELECT = mixer.Sound("assets/audio/sfx_select.ogg")
 
         cls.sounds = [cls.INTRO, cls.UNMUTED,
                       cls.ATTACK, cls.ATTACKED, cls.DEAD,
-                      cls.ENEMY_ATTACKED]
+                      cls.ATTACK_LAZER, cls.ENEMY_ATTACKED,
+                      cls.REWIND, cls.JUMP,
+                      cls.ITEM_PICKUP,
+                      cls.MAP, cls.SELECT]
 
     @classmethod
     def control_mute(cls):
