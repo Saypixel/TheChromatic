@@ -29,10 +29,12 @@ class MapTraining(Map):
         self.raon = Player("assets/images/chr_raon.png", (400, 400), 0.4, True)  # 라온
         self.raon.dialog = TextCollection(
             [
-                Text("아까 #언니#가 소개시켜준 사람이지?"),
+                Text("아까 언니가 소개시켜준 사람이지?"),
                 Text("여기는 훈련장이야."),
-                Text("쭉 가면 적이 출몰할거야!"),
-                Text("적은 *J키*로 공격할 수 있으니 참고하라구!")
+                Text("쭉 가면 #적#이 출몰할거야!"),
+                Text("적은 *J키*로 공격할 수 있으니 참고하라구!"),
+                Text("아 맞다.. 시간 관리 능력도 있는거 알지?"),
+                Text("*R키*를 누르면 궁지에 몰렸을 때 도움될거야!")
             ],
             self.sign.width
         )

@@ -193,9 +193,10 @@ class Ingame:
                                     SFX.SELECT.play()
 
                             case pygame.K_r:  # 시간 관리
-                                TimeEvent.is_rewind = True
-                                mixer.music.pause()
-                                SFX.REWIND.play()
+                                if TextEvent.dialog_closed:
+                                    TimeEvent.is_rewind = True
+                                    mixer.music.pause()
+                                    SFX.REWIND.play()
 
                 case pygame.KEYUP:
                     pass
