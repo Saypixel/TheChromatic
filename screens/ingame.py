@@ -248,42 +248,7 @@ class Ingame:
             self.inventory_image.set_pos(CONFIG.camera_x + 30, 120)
             # endregion
 
-            if TimeEvent.is_rewind:
-                positions = TimeEvent.rewind()
-                
-                if positions is not None:
-                    for position in positions:
-                        character = position[0]
-                        x = position[1]
-                        y = position[2]
-                        x_prev = character.x
-                        y_prev = character.y
-
-                        velocity = -1
-                        compared = x - x_prev
-
-                        if compared == 0:
-                            velocity = 0
-                        elif compared < 0:
-                            velocity = 1
-                        
-                        if character.name == "player":
-                            if compared != 0:
-                                character.sprites.status = "walk"
-                            else:
-                                character.sprites.status = "stay"
-
-                        character.velocity_x = velocity
-                        character.set_pos(x, y)
-
-                else:
-                    TimeEvent.is_rewind = False
-                    mixer.music.unpause()
-
-            else:
-                characters = MapManager.current.enemies + [self.player]
-                TimeEvent.update(characters)
-
+            self.process_time_event() # 시간 관리 이벤트
             MapManager.current.render(count)  # 현재 맵 렌더링
 
             # region 플레이어 움직임
@@ -514,4 +479,43 @@ class Ingame:
             hp_attacked_sprite.sprite.update()
         if hp_healed_index > hp_healed_sprite.sprite.index:
             hp_healed_sprite.sprite.update()
+    # endregion
+    # region 시간 관리
+    def process_time_event(self):
+        """시간 관리 이벤트를 처리합니다."""
+        if TimeEvent.is_rewind:  # 시간을 되감아야 할 경우
+            positions = TimeEvent.rewind()  # 이전의 플레이어와 적의 위치 데이터 가져오기
+            
+            if positions is not None:
+                for position in positions:
+                    character = position[0]
+                    x = position[1]
+                    y = position[2]
+                    x_prev = character.x
+                    y_prev = character.y
+
+                    velocity = -1
+                    compared = x - x_prev
+
+                    if compared == 0:
+                        velocity = 0
+                    elif compared < 0:
+                        velocity = 1
+                    
+                    if character.name == "player":
+                        if compared != 0:
+                            character.sprites.status = "walk"
+                        else:
+                            character.sprites.status = "stay"
+
+                    character.velocity_x = velocity
+                    character.set_pos(x, y)
+
+            else:
+                TimeEvent.is_rewind = False
+                mixer.music.unpause()
+
+        else:
+            characters = MapManager.current.enemies + [self.player]
+            TimeEvent.update(characters)
     # endregion
