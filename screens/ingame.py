@@ -97,6 +97,7 @@ class Ingame:
             scale=0.6
             )
         
+        # 인벤토리 & 아이템
         self.inventory_image = Texture("assets/images/inventory.png", (0, 30), 0.8)
         self.inventory_keys = []
         self.inventory_keys_index = -1
