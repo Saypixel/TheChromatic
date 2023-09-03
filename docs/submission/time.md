@@ -4,7 +4,10 @@
 
 `CharacterValue`: 시간 관리를 하기 위하여 캐릭터 값을 관리하고 저장하는 클래스
 
+## TimeEvent
 ![2](../images/time_2.png)
+
+`TimeEvent`: 시간을 되돌리기 위해 캐릭터 값을 저장하고 시간 관련 변수를 관리하는 클래스
 
 - `rewind()`: 저장된 캐릭터 값을 pop하고 불러옴
 - `update()`: 각 캐릭터 값 저장
