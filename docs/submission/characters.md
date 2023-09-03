@@ -74,10 +74,34 @@ X 좌표, Y 좌표 각각 속도 매개변수를 이용하여 이동시킴
 4. `is_bound()` 함수를 이용하여 충돌 감지 후 주변에 장애물이 있다면 적이 점프함
 
 ## 인게임
-- 추가 필요
+### 플레이어 움직임 애니메이션 동기화
+![13](../images/characters_13.png)
+
+1. 플레이어의 애니메이션이 적용된 현재 스프라이트 가져옴
+2. `Player.apply_movement_flipped()` 함수를 이용하여 움직임 애니메이션 동기화
+
+### 적 움직임 애니메이션 동기화
+![14](../images/characters_14.png)
+
+1. 현재 맵의 적 열거
+2. 단일 이미지 / 다중 스프라이트를 구분해서 가져오고 `image` 변수에 저장
+3. `Player.apply_movement_flipped()` 함수를 이용하여 움직임 애니메이션 동기화
+
+![15](../images/characters_15.png)
+
+1. 일정 거리에서 공격하는 적인 로봇의 무적시간이 끝나고 일정 거리 안에 있는 경우 공격 애니메이션으로 전환
+2. 로봇의 일정 거리 안에 없는 경우 걷는 애니메이션으로 전환 후 플레이어를 쫓아감
+3. 플레이어를 쫓아가서 공격하는 적인 미믹의 무적시간이 끝난 경우 플레이어를 쫓아감
+4. 미믹과 플레이어가 만난 경우 일정 조건과 함께 공격 받았다고 처리
+
+## 결과
+![11](../images/character_11.gif)
+![12](../images/character_12.gif)
 
 ## 참조
 - [`characters/__init__.py`](../../characters/__init__.py)
 - [`characters/player.py`](../../characters/player.py)
 - [`characters/enemy.py`](../../characters/enemy.py)
 - [`ingame.py`](../../screens/ingame.py)
+- [`maps/__init__.py`](../../maps/__init__.py)
+- [`maps/map_training.py`](../../maps/map_training.py)

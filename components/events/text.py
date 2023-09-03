@@ -104,3 +104,13 @@ class TextEvent(object):
 
         if not cls.dialog_paused:  # 텍스트 출력이 미완성인 경우
             write_each()  # 텍스트를 처음부터 출력
+
+    @classmethod
+    def reset(cls):
+        """TextEvent 클래스의 변수를 초기화합니다."""
+        TextEvent.dialog_closed = True
+        TextEvent.dialog_delayed = True
+        TextEvent.dialog_paused = True
+        TextEvent.NPC = None
+        TextEvent.dialog = None
+        

@@ -153,16 +153,16 @@ class Map:
     def process_grace_period_animation(self):
         """무적 시간 애니메이션을 처리합니다."""
         for player in self.enemies + [self.player]:  # 적 + 플레이어
-            if player.grace_period is not None:
-                image = player.get_surface_or_sprite()
+            if player.grace_period is not None:  # 무적 시간 변수가 할당되어 있는 경우
+                image = player.get_surface_or_sprite()  # 단일 이미지 / 다중 스프라이트 반환
 
                 if player.grace_period.is_grace_period():  # 무적시간인 경우
-                    player.grace_period.make_it_ui(image)
-                    player.grace_period.lasted = True
+                    player.grace_period.make_it_ui(image)  # 무적 시간인 것을 플레이어에게 UI로 보여줌
+                    player.grace_period.lasted = True  # 무적 시간 프레임 업데이트 변수 갱신
 
-                elif player.grace_period.lasted:
-                    image.set_alpha(255)  # 무적 시간이 아니므로 복귀
-                    player.grace_period.lasted = False
+                elif player.grace_period.lasted:  # 이전 프레임에서는 무적 시간이였고, 지금은 아닌 경우
+                    image.set_alpha(255)  # 무적 시간이 아니므로 UI 복귀
+                    player.grace_period.lasted = False  # 무적 시간 프레임 업데이트 변수 갱신
 
     def process_item_pickup_event(self):
         """아이템 줍기 관련 이벤트를 처리합니다."""

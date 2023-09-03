@@ -67,7 +67,16 @@
 모든 스프라이트의 투명도 설정
 
 ## 인게임
-- 추가 필요
+![12](../images/sprite_12.png)
+![13](../images/sprite_13.png)
+
+1. `SpriteCollection`, `SpriteHandler`, `Sprite`를 이용하여 주인공의 스프라이트 애니메이션과 위치 및 크기값 설정
+2. 플레이어의 현재 스프라이트 애니메이션 상태가 `stay`인 경우, 그 스프라이트 애니메이션 업데이트
+
+## 결과
+![11](../images/sprite_11.gif)
+
+플레이어와 장애물의 스프라이트 애니메이션
 
 ## 참조
 - [`sprites/sprite.py`](../../components/sprites/sprite.py)

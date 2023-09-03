@@ -119,7 +119,7 @@ class MapTraining(Map):
         # 일정 거리에서 공격하는 경우
         for enemy in [self.robot]:
             if not enemy.grace_period.is_grace_period():  # 스턴 시간이 끝난 경우
-                if not enemy.is_bound(40, 50):  # 일정 거리 안에 있는 경우
+                if not enemy.is_bound(40, 50):  # 일정 거리 안에 없는 경우
                     enemy.sprites.status_next = "walk"
                     
                     if enemy.sprites.status == "walk":

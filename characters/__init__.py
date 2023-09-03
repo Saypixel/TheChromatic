@@ -95,6 +95,7 @@ class Character(ABC):
         :param repeat_x: 이미지가 가로로 반복될 횟수
         :param repeat_y: 이미지가 세로로 반복될 횟수
         :param is_playable: 플레이어인가?
+        :param name: 캐릭터 이름 (선택사항)
         """
         if path == "":  # 다중 스프라이트로 초기화하기 위해 단일 이미지를 선택하지 않은 경우
             self.image_path = ""

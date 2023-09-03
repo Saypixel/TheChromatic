@@ -110,9 +110,31 @@
 2. 텍스트 출력이 미완성인 경우 `write_each()` 함수 실행하여 텍스트를 처음부터 출력
 
 ## 인게임
-- 추가 필요
+### 대화 애니메이션 이벤트
+![18](../images/dynamic_text_animation_18.png)
+
+1. 플레이어와 상호작용이 가능한 경우
+2. `TextEvent.process_animation_event()` 함수를 이용하여 텍스트 애니메이션 이벤트 처리
+
+### 대화 상호작용 키를 누른 경우에 진행될 대화 이벤트
+![15](../images/dynamic_text_animation_15.png)
+
+1. 현재 맵에 있는 NPC 열거
+2. NPC 일정 범위에 해당하는 경우 실행 (충돌 감지 함수 이용)
+3. 현재 대화창이 해당 NPC의 대화로 설정 되어있지 않은 경우 대화창 변수 갱신
+4. 현재 대화창이 설정되어 있는 경우, 다음 대화창과 그 애니메이션 이벤트 처리 (`TextEvent.process_next_event()`와 `PYGAME_EVENT_DIALOG` 이용)
+5. 다음 대화로 진행되어야 하는 경우 말풍선을 재렌더링하여 기존 렌더링된 텍스트를 덮어씌움
+
+![16](../images/dynamic_text_animation_16.png)
+
+1. 대화 이벤트 처리 후 대화를 하고 있는지의 여부를 `speeched` 변수에 저장
+2. 주변에 대화할 NPC가 없는 경우 대화하는 NPC 변수 초기화
 
 ## 결과
+![17](../images/dynamic_text_animation_17.png)
+
+NPC에게 대화 텍스트를 위에 설명한 클래스 형식에 맞게 적용
+
 ![14](../images/dynamic_text_animation_14.gif)
 
 `MutualText`, `Text`, `TextCollection`, `TextEvent` 클래스의 조화로 이루어진 종합적인 결과

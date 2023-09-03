@@ -1,6 +1,5 @@
 import pygame.mixer as mixer
 
-
 class SFX(object):
     sounds: list[mixer.Sound]
     """효과음 배열, 음량 조절하는 데 사용"""

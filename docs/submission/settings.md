@@ -35,8 +35,7 @@
 - `is_fullscreen`: 현재 전체화면 여부
 - `fps`: 현재 FPS 표시 여부
 - `volume`: 현재 음량 (기본: 1.0, 범위: 0.0~1.0)
-- `resolutions`: 적용할 수 있는 해상도 배열
-- `resolutions_index`: 현재 해상도 (`resolution`)에 맞는 해상도 배열의 index
+- `resolutions_index`: 현재 해상도에 맞는 적용할 수 있는 해상도 배열의 index
 
 ![7](../images/settings_7.png)
 ![8](../images/settings_8.png)

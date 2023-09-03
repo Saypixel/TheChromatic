@@ -30,5 +30,8 @@
 7. 플레이어 및 로고 렌더링
 8. 업스케일링 후 모든 화면에서 공통으로 처리하는 이벤트 처리
 
+## 결과
+![4](../images/intro_4.png)
+
 ## 참조
-- [intro.py](../../screens/intro.py)
+- [`intro.py`](../../screens/intro.py)

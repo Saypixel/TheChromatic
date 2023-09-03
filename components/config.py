@@ -62,17 +62,13 @@ class CONFIG:
     clock = pygame.time.Clock()
 
     is_fullscreen = False
+    """전체화면인가?"""
 
     is_debug = False
+    """디버깅 모드가 켜져 있는가?"""
 
     is_running = True
     """게임이 실행되고 있는가?"""
-
-    game_started = True
-    """게임이 시작되어 플레이어와 상호작용이 가능한가?"""
-
-    game_paused = False
-    """게임이 일시중지되었는가?"""
 
     game_dead = False
     """플레이어가 죽었는가?"""
@@ -145,7 +141,7 @@ class CONFIG:
 
     def is_interactive() -> bool:
         """플레이어와 상호작용 가능한가?"""
-        return CONFIG.game_started and not CONFIG.game_paused and not CONFIG.game_dead
+        return not CONFIG.game_dead
 
     def is_movable() -> bool:
         """플레이어가 움직일 수 있는가?"""
@@ -159,7 +155,12 @@ class CONFIG:
     def resolution_to_str(size: tuple) -> str:
         """해상도 크기를 문자열로 변환합니다. ex) (1920, 1080) => '1920x1080'"""
         return str(size[0]) + "x" + str(size[1])
-
+    
+    def reset():
+        """CONFIG 클래스 변수를 초기화합니다."""
+        CONFIG.game_dead = False
+        CONFIG.camera_x = 0
+        CONFIG.camera_y = 0
 
 def debug(debug: str):
     """

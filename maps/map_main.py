@@ -18,6 +18,8 @@ from components.sprites.sprite_collection import SpriteCollection
 
 from components.sfx_collection import SFX
 
+from components.inventory import Inventory
+
 class MapMain(Map):
     def __init__(self, player: Player, sign):
         super(Map, self).__init__()
@@ -73,26 +75,25 @@ class MapMain(Map):
 
     def process_item_pickup_event(self):
         """아이템 줍기 관련 이벤트를 처리합니다."""
-        positions = {
+        positions = {  # 인벤토리에 렌더링될 각 아이템의 위치
             "heal": (15, 12),
             "key": (20, 22)
         }
 
         for item in self.items:
             if item.is_bound(10, 50):  # 플레이어가 아이템을 주울 경우 아이템 삭제
-                from screens.ingame import Ingame
-                
-                index = self.items.index(item)
-                self.items.pop(index)
+                index = self.items.index(item)  # 현재 아이템의 아이템 배열 index 가져오기
+                self.items.pop(index)  # 현재 아이템을 아이템 배열에서 삭제
 
-                position = positions[item.name]
+                position = positions[item.name]  # 인벤토리에 렌더링될 현재 아이템 위치 가져오기
                 item.set_pos(position[0], position[1])  # 상대좌표
 
-                Ingame.default.inventories[item.name] = item
-                Ingame.default.inventory_keys.append(item.name)
-                Ingame.default.inventory_keys_index = len(Ingame.default.inventory_keys) - 1
+                # 인벤토리에 아이템 추가
+                Inventory.items[item.name] = item
+                Inventory.keys.append(item.name)
+                Inventory.keys_index = len(Inventory.keys) - 1
 
-                SFX.ITEM_PICKUP.play()
+                SFX.ITEM_PICKUP.play()  # 아이템 줍는 효과음 재생
 
     def process_item_use_event(self, item: Texture):
         """
@@ -110,9 +111,9 @@ class MapMain(Map):
         """문 관련 이벤트를 처리합니다."""
         from maps.map_manager import MapManager
 
-        if self.door.is_bound(10, 50) and not self.door_locked:
-            MapManager.apply("training")
-            SFX.MAP.play()
+        if self.door.is_bound(10, 50) and not self.door_locked:  # 문의 범위 안에 있고 잠겨있지 않은 경우
+            MapManager.apply("training")  # 훈련장 맵으로 이동
+            SFX.MAP.play()  # 맵 이동 효과음 재생
 
     def render(self, frame_count: int):
         """
