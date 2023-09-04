@@ -37,4 +37,4 @@
 - 체력 회복 아이템을 사용한 경우 플레이어가 회복하여 체력 증가
 
 ## 참조
-- [ingame.py](../../screens/ingame.py)
+- [`ingame.py`](../../screens/ingame.py)

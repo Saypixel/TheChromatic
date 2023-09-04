@@ -52,4 +52,4 @@
 ## 참조
 - [`grace_period.py`](../../components/events/grace_period.py)
 - [`ingame.py`](../../screens/ingame.py)
-- [`maps/__init__.py`](../../maps/__init__.py.py)
+- [`maps/__init__.py`](../../maps/__init__.py)

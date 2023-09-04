@@ -145,5 +145,5 @@ NPC에게 대화 텍스트를 위에 설명한 클래스 형식에 맞게 적용
 - [`text/mutual_text.py`](../../components/text/mutual_text.py)
 - [`text/__init__.py`](../../components/text/__init__.py)
 - [`text/text_collection.py`](../../components/text/text_collection.py)
-- [`events/text.py`](../../events/text.py)
+- [`events/text.py`](../../components/events/text.py)
 - [`ingame.py`](../../screens/ingame.py)
