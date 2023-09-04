@@ -17,7 +17,7 @@
 ## 제목: The Chromatic 게임의 구조
 ![architecture](./architecture.png)\
 The Chromatic 게임의 구조는 이 사진과 동일합니다.\
-처음에는 `main.py`` 파일에서 인수를 받아 `debug`, `fps`, `fullscreen`, `fullhd`, `quadhd`, `help` 명령어와 맞는 지 확인합니다.\
+처음에는 `main.py` 파일에서 인수를 받아 `debug`, `fps`, `fullscreen`, `fullhd`, `quadhd`, `help` 명령어와 맞는 지 확인합니다.\
 그리고 게임이 실행됩니다.
 
 ## 4 페이지
