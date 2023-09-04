@@ -23,6 +23,19 @@ class Text:
     
     delay: int = 30
     """기본 지연 시간 (ms)"""
+
+    FONT = Fonts.TITLE2
+    """기본 폰트"""
+
+    PT = 18
+    """기본 폰트 크기"""
+
+    SYNTAX: dict[str, tuple[Font, int]] = {
+        "*": (Fonts.TITLE3, PT),
+        "#": (Fonts.TITLE2, PT + 4),
+        "/": (Fonts.DIALOG, PT - 4)
+    }
+    """구문"""
     
     """
     https://gist.github.com/ihoneymon/652be052a0727ad59601 : 일부 문법은 깃허브 마크다운 문법을 참조하였습니다.
@@ -32,15 +45,6 @@ class Text:
     / : 작게
     < : 줄바꿈 (New Line)
     """
-
-    FONT = Fonts.TITLE2
-    PT = 18
-
-    SYNTAX: dict[str, tuple[Font, int]] = {
-        "*": (Fonts.TITLE3, PT),
-        "#": (Fonts.TITLE2, PT + 4),
-        "/": (Fonts.DIALOG, PT - 4)
-    }
 
     def __init__(self, text: str, delay: Optional[int] = 30):
         """
@@ -53,7 +57,7 @@ class Text:
         self.pure = text  # 일단 저장. 어차피 replace() 함수를 통해 접두어를 제거하기 때문.
         self.delay = delay
 
-        for prefix in ["*", "#", "/", "^"]:
+        for prefix in ["*", "#", "/"]:
             if prefix in self.pure:  # 텍스트에 접두어가 있는 경우
                 self.has_prefix = True
                 self.pure = self.pure.replace(prefix, "")  # 순수 텍스트는 접두어가 없으므로 접두어만 삭제
@@ -64,7 +68,7 @@ class Text:
 
         for ch in self.raw:
             match ch:
-                case "*" | "#" | "/" | "^":  # 접두어
+                case "*" | "#" | "/":  # 접두어
                     is_started = not is_started  # 접두어가 없었으면 시작, 있었으면 끝
 
                     if mutual_text_:  # mutual text가 비어있지 않은 경우
