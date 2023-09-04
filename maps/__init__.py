@@ -85,13 +85,13 @@ class Map:
         """
         self.background.set_pos(CONFIG.camera_x, self.background.y)
 
-        background_image = self.background.image.convert()
+        background_image = self.background.image.convert()  # 기존 배경 이미지
 
-        if TimeEvent.is_rewind:
-            noise = NoiseEvent.make_noise()
-            background_image = NoiseEvent.blend(noise, background_image)
+        if TimeEvent.is_rewind:  # 시간을 되감고 있는 경우
+            noise = NoiseEvent.make_noise()  # 노이즈 이미지 생성
+            background_image = NoiseEvent.blend(noise, background_image)  # 노이즈 이미지와 기존 배경 이미지를 합성 후 배경 이미지에 할당
 
-        CONFIG.surface.blit(background_image.convert(), self.background.get_pos())
+        CONFIG.surface.blit(background_image.convert(), self.background.get_pos())  # 상황에 맞게 배경 이미지 렌더링
         CONFIG.surface.blit(self.floor.image, self.floor.get_pos())
 
         World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현
