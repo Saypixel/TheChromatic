@@ -24,17 +24,17 @@ class NoiseEvent:
         :return: 노이즈 이미지
         """
 
-        noise = pygame.Surface((cls.width, cls.height), pygame.SRCALPHA, 32)
-        # noise2 = np.random.normal(0, 0.3, (cls.width, cls.height, 3))
+        noise_image = pygame.Surface((cls.width, cls.height), pygame.SRCALPHA, 32)  # 노이즈를 저장하기 위한 이미지 새로 생성
 
-        x = np.zeros(cls.width * cls.height * 3)
-        x = x.reshape((cls.width, cls.height, 3)) # flat view
+        noise_np = np.zeros(cls.width * cls.height * 3)  # 
+        noise_np = noise_np.reshape((cls.width, cls.height, 3)) # flat view
 
-        for ii in range(cls.width):
-            x[ii] += CONFIG.random.randint(0, 50)
+        for i in range(0, cls.width):
+            noise_np[i] += CONFIG.random.randint(0, 50 * cls.level)
 
-        pygame.surfarray.blit_array(noise, x)
-        return noise.convert()
+        pygame.surfarray.blit_array(noise_image, noise_np)
+
+        return noise_image.convert()
     
     @classmethod
     def multiply(cls, noise: pygame.Surface, background: pygame.Surface) -> pygame.Surface:
