@@ -89,7 +89,7 @@ class Map:
 
         if TimeEvent.is_rewind:
             noise = NoiseEvent.make_noise()
-            background_image = NoiseEvent.multiply(noise, background_image)
+            background_image = NoiseEvent.blend(noise, background_image)
 
         CONFIG.surface.blit(background_image.convert(), self.background.get_pos())
         CONFIG.surface.blit(self.floor.image, self.floor.get_pos())
