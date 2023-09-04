@@ -42,7 +42,7 @@ class SFX(object):
     def control_mute(cls):
         """음소거 되어있으면 해제하고, 되어있지 않으면 음소거합니다."""
         cls.muted = not cls.muted
-        cls.volume = 0.0 if cls.muted else 1.0  # 음소거면 음량을 0으로 조절
+        cls.volume = 0.0 if cls.muted else cls.volume  # 음소거면 음량을 0으로 조절
 
         cls.set_volume(cls.volume)  # 음량 저장
 

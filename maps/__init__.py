@@ -1,6 +1,9 @@
 from components.config import CONFIG, debug
 from components.world import World
 
+from components.events.time import TimeEvent
+from components.events.noise import NoiseEvent
+
 from characters.player import Player
 from characters.enemy import Enemy
 from characters.texture import Texture
@@ -82,7 +85,13 @@ class Map:
         """
         self.background.set_pos(CONFIG.camera_x, self.background.y)
 
-        CONFIG.surface.blit(self.background.image.convert(), self.background.get_pos())
+        background_image = self.background.image.convert()
+
+        if TimeEvent.is_rewind:
+            noise = NoiseEvent.make_noise()
+            background_image = NoiseEvent.multiply(noise, background_image)
+
+        CONFIG.surface.blit(background_image.convert(), self.background.get_pos())
         CONFIG.surface.blit(self.floor.image, self.floor.get_pos())
 
         World.process_gravity(self.enemies + [self.player], self.floor.y)  # 중력 구현

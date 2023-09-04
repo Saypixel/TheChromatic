@@ -2,7 +2,7 @@ import pygame
 
 from characters import Character
 
-from components.config import CONST, CONFIG, debug
+from components.config import CONST, CONFIG
 
 from components.sprites.sprite_collection import SpriteCollection
 from components.sprites.sprite_handler import SpriteHandler

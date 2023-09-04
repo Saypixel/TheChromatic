@@ -1,11 +1,6 @@
-import pygame
-from threading import Timer
-
 from characters.player import Player
 from characters.texture import Texture
-
-from components.config import CONFIG, CONST, debug
-from components.sprites.sprite import Sprite
+from components.config import CONFIG
 
 class Enemy(Player):
     def follow_player(self, obstacles: list[Texture]):

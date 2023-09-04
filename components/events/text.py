@@ -1,11 +1,9 @@
 import pygame
 from threading import Timer
 
-from components.config import CONFIG, CONST, debug
+from components.config import CONFIG
 
-from components.text import Text
 from components.text.text_collection import TextCollection
-from components.text.mutual_text import MutualText
 
 from characters.player import Player
 

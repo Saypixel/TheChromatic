@@ -1,13 +1,12 @@
 import pygame
 from abc import ABC
 
-from components.config import CONFIG, CONST, debug
+from components.config import CONFIG, CONST
 
 from components.text.text_collection import TextCollection
 from components.events.grace_period import GracePeriod
 
 from components.sprites.sprite_collection import SpriteCollection
-from components.sprites.sprite_handler import SpriteHandler
 from components.sprites.sprite import Sprite
 
 class Character(ABC):

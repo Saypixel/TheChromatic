@@ -1,6 +1,6 @@
 from collections import deque
 from characters.player import Player
-from components.config import CONFIG, debug
+from components.config import CONFIG
 
 class CharacterValue:
     """시간 관리를 위한 캐릭터 값 관리 클래스"""
@@ -48,7 +48,7 @@ class TimeEvent:
     @classmethod
     def update(cls, characters: list[Player]):
         """
-        플레이어의 위치를 업데이트합니다.
+        캐릭터의 위치를 업데이트합니다.
         :param characters: 현재 캐릭터 모음
         """
         positions: list[CharacterValue] = [CharacterValue(character, character.x, character.y) for character in characters]  # 캐릭터 값 각각 저장
