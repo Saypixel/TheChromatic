@@ -15,7 +15,6 @@ from components.font import Font, Fonts
 from components.events.text import TextEvent
 from components.events.grace_period import GracePeriod
 from components.events.time import TimeEvent
-from components.events.noise import NoiseEvent
 
 from components.sprites.sprite_collection import SpriteCollection
 from components.sprites.sprite_handler import SpriteHandler
