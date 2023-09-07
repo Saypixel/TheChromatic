@@ -229,7 +229,7 @@ NPC에게 대화 텍스트를 위에 설명한 클래스 형식에 맞게 적용
 
 ## 제목: 플레이 영상
 
-<video src='./The Chromatic GamePlay.mp4'/>
+> TODO: 유튜브 주소 첨가
 
 ## 11 페이지
 
