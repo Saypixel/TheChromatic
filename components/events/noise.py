@@ -25,7 +25,7 @@ class NoiseEvent:
         """
 
         noise = pygame.Surface((cls.width, cls.height), pygame.SRCALPHA, 32)
-        # noise2 = np.random.normal(0, 0.3, (cls.width, cls.height, 3))
+        #noise2 = np.random.normal(0, 0.3, (cls.width, cls.height, 3))
 
         x = np.zeros(cls.width * cls.height * 3)
         x = x.reshape((cls.width, cls.height, 3)) # flat view
