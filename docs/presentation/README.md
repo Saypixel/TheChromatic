@@ -228,8 +228,8 @@ NPC에게 대화 텍스트를 위에 설명한 클래스 형식에 맞게 적용
 ## 10 페이지
 
 ## 제목: 플레이 영상
-
-> TODO: 유튜브 주소 첨가
+[![ingame](https://i.imgur.com/b6ElhFq.jpg)](https://youtu.be/hkwRBZQYmuw)
+- https://youtu.be/hkwRBZQYmuw
 
 ## 11 페이지
 
