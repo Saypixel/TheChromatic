@@ -52,8 +52,8 @@ class CONFIG:
     """적용할 수 있는 해상도 배열"""
 
     surface = pygame.Surface(CONST.SURFACE_SIZE)
-    """크기가 [640, 360]으로 고정된 화면
-    월드 좌표는 [1280, 720]에 한정됨
+    """크기가 [960, 540]으로 고정된 화면
+    월드 좌표는 [1920, 1080]에 한정됨
     surface에 렌더링하고 업스케일링 후 screen으로 화면 표시"""
 
     screen = pygame.display.set_mode(window_size)
