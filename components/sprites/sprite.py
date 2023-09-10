@@ -67,11 +67,15 @@ class Sprite(pygame.sprite.Sprite):
         self.index = 0
         self.image = self.images[self.index]  # 애니메이션의 현재 이미지
 
-    def update(self, added_index = 1):
+    def update(self, added_index = 1, init = False):
         """
         캐릭터의 이미지가 계속 반복해서 나타나도록 하여 애니메이션의 느낌을 주도록 합니다.
         :param: added_index: 스프라이트를 업데이트할 때 어느만큼 업데이트할건지 지정하는 변수, 값에 따라 일부 프레임이 스킵될 수 있음
+        :init: index를 초기화할건지의 여부입니다.
         """
+        if init:
+            self.index = 0
+
         self.index += added_index  # index 업데이트
 
         if self.index >= len(self.images):  # index가 범위를 벗어난 경우

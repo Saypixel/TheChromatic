@@ -48,12 +48,17 @@ class Ingame:
                 {
                     "stay": SpriteHandler(
                         Sprite(
-                            "assets/images/chr_player_stay.png", 4, 1, size=(170, 270)
+                            "assets/images/chr_player_stay.png", 4, 1, size=(170, 370)
                         )),
                     "walk": SpriteHandler(
                         Sprite(
-                            "assets/images/chr_player_walk.png", 6, 1, size=(345, 270)
-                        ))
+                            "assets/images/chr_player_walk.png", 6, 1, size=(345, 370)
+                        )),
+                    "attack": SpriteHandler(
+                        Sprite(
+                            "assets/images/chr_player_attack.png", 6, 1, size=(330, 370)
+                        )
+                    )
                 },
                 "stay",
                 position=(200, 347),
@@ -63,18 +68,6 @@ class Ingame:
         )
         self.player.grace_period = GracePeriod()
         self.player.name = "player"
-
-        # FX
-        self.fx = SpriteCollection({
-            "attack": SpriteHandler(
-                Sprite(
-                    "assets/images/fx_attack.png", 9, 1, size=(150, 150)
-                )
-            )
-        },
-        "attack",
-        position=(200, 225),
-        scale=0.6)
 
         # 기타 아이템
         self.sign = Texture("assets/images/sign_big.png", (300, 100), 0.4)
@@ -101,14 +94,17 @@ class Ingame:
             if CONFIG.is_movable():  # 플레이어가 움직일 수 있을 때 (상호작용 포함)
                 is_moved = False
 
-                if keys[pygame.K_a] or keys[pygame.K_LEFT]:  # 왼쪽으로 이동
-                    self.player.move_x(-1)
-                    is_moved = True
-                if keys[pygame.K_d] or keys[pygame.K_RIGHT]:  # 오른쪽으로 이동
-                    self.player.move_x(1)
-                    is_moved = True
+                if not self.player.attack:
+                    if keys[pygame.K_a] or keys[pygame.K_LEFT]:  # 왼쪽으로 이동
+                        self.player.move_x(-1)
+                        is_moved = True
+                    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:  # 오른쪽으로 이동
+                        self.player.move_x(1)
+                        is_moved = True
 
-                if is_moved:
+                if self.player.attack:
+                    self.player.sprites.status = "attack"
+                elif is_moved:
                     self.player.sprites.status = "walk"
                 else:
                     self.player.sprites.status = "stay"
@@ -211,14 +207,6 @@ class Ingame:
             sprite_player = self.player.sprites.get_sprite_handler().sprite
             self.player.apply_movement_flipped(sprite_player)
             # endregion
-            # region FX
-            fx_sprite = self.fx.get_sprite_handler().sprite
-            fx_x = self.player.x + (10 if not fx_sprite.flipped else -40)
-            
-            self.fx.set_pos((fx_x, self.player.y))
-            self.player.apply_movement_flipped(fx_sprite)  # 플레이어 움직임에 따라서 FX 움직임 동기화
-            # endregion
-
             # hp 이벤트 처리 후 hp 애니메이션 index 변수 갱신
             hp_indicies = self.process_hp_event(hp_attacked_index, hp_healed_index)
             hp_attacked_index = hp_indicies[0]
@@ -255,15 +243,16 @@ class Ingame:
 
             # region 공격
             if self.player.attack:  # 공격을 한 경우
-                if self.fx.status != "attack":
-                    self.fx.status = "attack"
-                handler = self.fx.get_sprite_handler()
+                handler = self.player.sprites.get_sprite_handler()
 
                 if handler.sprite.index != handler.sprite.length - 1:
                     handler.group.draw(CONFIG.surface)
                 else:
+                    handler.sprite.update()
                     self.player.attack = False
-                handler.sprite.update()
+
+                if count % 3 == 0:
+                    handler.sprite.update()
             # endregion
             # region 사망 이벤트
             if CONFIG.game_dead:  # 최적화
