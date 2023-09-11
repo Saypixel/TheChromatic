@@ -1,3 +1,5 @@
+# [PDF 문서로 보기](https://github.com/Saypixel/TheChromatic/blob/main/docs/%5B1253%ED%8C%80%EC%84%B8%EC%9D%B4%ED%94%BD%EC%85%80%5DThe%20Chromatic_%EC%A0%9C%EC%B6%9C%EC%9A%A9.pdf)
+
 # 게임 구조 (제출용)
 |이름|설명|
 |:---:|:---:|
