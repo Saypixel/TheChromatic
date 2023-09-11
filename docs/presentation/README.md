@@ -1,3 +1,5 @@
+# [PDF 문서로 보기](https://github.com/Saypixel/TheChromatic/blob/main/docs/%5B1253%ED%8C%80%EC%84%B8%EC%9D%B4%ED%94%BD%EC%85%80%5DThe%20Chromatic_%EB%B0%9C%ED%91%9C%EC%9A%A9.pdf)
+
 ## 1 페이지
 
 ## 제목: 자기소개
